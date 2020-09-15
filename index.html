@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=360, user-scalable=no">
+<html>
+
+<head>
+	<title>Resilience</title>
+	<script type="text/javascript" src="./jquery-3.4.1.min.js"></script>
+	<script type="text/javascript" src="./story-strengths.js"></script>
+	<script type="text/javascript">
+		$(function(){
+
+
+			var iScreen = -1;
+			var story = storyStrengths;
+			var $screen;
+
+			function doNextScreen(){
+				iScreen++;
+				$('.screen').remove();
+
+				var s = story.screens[iScreen];
+				$screen = $('<div class="screen">').appendTo('.story');
+
+				if(s.h) $('<h1>').appendTo($screen).html(s.h);
+				if(s.text) $('<h2>').appendTo($screen).html(s.text);
+				if(s.ul){
+					var $ul = $('<ul>').appendTo($screen);
+					for(var i in s.ul) $('<li>').appendTo($ul).html(s.ul[i]).css({opacity:0,left:50}).delay(1000 + i*1500).animate({opacity:1,left:0});
+				}
+
+				if(s.type == 'story') $screen.click(doNextScreen);
+				if(s.type == 'question'){
+					if(!s.c) s.c = [];
+					for(var i in s.q) $('<button>').data({c:s.c[i],f:s.f[i]}).appendTo($screen).text(s.q[i]).click(doChoice);
+				}
+				if(s.type == 'popping'){
+					$('.ballpit').addClass('active');
+					$('.ball').click(pop);
+				}
+			}
+
+			function pop(){
+				$(this).remove();
+				if($('.ball').length == 0){
+					$('.ballpit').removeClass('active');
+					setTimeout(doNextScreen,500);
+				}
+			}
+
+			function spawnBall(btn,f){
+				var r = Math.random()*Math.PI*2;
+				var radius = 50;
+				var p = $(btn).position();
+				var x = p.left + $(btn).width()/2;
+				var y = p.top + $(btn).height()/2;
+				var g = 0;
+
+				if(f == '#green') g = 1;
+
+				$(btn).addClass('fold');
+
+				$('<div class="ball">').css({left:x-radius,top:y-radius}).appendTo('.ballpit').addClass(f.substr(1)).data({r:radius,x:x,y:y,dx:Math.cos(r),dy:Math.sin(r),g:g});
+			}
+
+			function doChoice(){
+				
+
+				var d = $(this).data();
+				if(d.f){
+					if(d.f[0] == '#'){
+						$('button').attr('disabled','disabled');
+						spawnBall(this,d.f);
+						setTimeout(doNextScreen,1000);
+					} else {
+						$(this).attr('disabled','disabled');
+						$('<div class="feedback">').appendTo($screen).html(d.f).animate({top:'50%'}).animate({top:'45%'},2000).animate({top:'-100px'},function(){
+							$(this).remove();
+						});
+
+						if(d.c){
+							$('button').attr('disabled','disabled');
+							setTimeout(doNextScreen,3000);
+						}
+					}
+				} else {
+					doNextScreen();
+				}
+			}
+
+			var W = 360;
+			var H = 640;
+
+			function tick(){
+				$('.ball').each(function(){
+					var d = $(this).data();
+					d.x += d.dx*5;
+					d.y += d.dy*5;
+
+					if(d.x<d.r){
+						d.dx = Math.abs(d.dx);
+						d.x = d.r;
+					}
+					if(d.y<d.r){
+						d.dy = Math.abs(d.dy);
+						d.y = d.r;
+					}
+					if(d.x>(W-d.r)){
+						d.dx = -Math.abs(d.dx);
+						d.x = W-d.r;
+					}
+					if(d.y>(H-d.r)){
+						d.dy = -Math.abs(d.dy);
+						d.y = H-d.r;
+						if(d.g) d.dy *= 0.7;
+					}
+
+					d.dy += d.g;
+					if(d.g) d.dx *= 0.97;
+
+					$(this).css({left:d.x-d.r,top:d.y-d.r});
+				})
+			}
+
+			setInterval(tick,50);
+			//iScreen = story.screens.length-2;
+			doNextScreen();
+		});
+	</script>
+	<script type="text/javascript">
+		$(function(){
+
+		})
+	</script>
+	<style type="text/css">
+		@font-face {
+			font-family: "BodyFont";
+			src: url("./Overpass-Light.ttf");
+		}
+
+		@font-face {
+		  font-family: BodyFont;
+		  src: url("./Overpass-Bold.ttf");
+		  font-weight: bold;
+		}	
+
+		body{
+			background: #555;
+			font-family: "BodyFont";
+			padding: 0px;
+			margin: 0px;
+			-webkit-text-size-adjust: 100%;
+			-moz-text-size-adjust: 100%;
+			-ms-text-size-adjust: 100%;
+			text-size-adjust: 100%;
+		}
+
+		.feedback{
+			position: absolute;
+			top: 100%;
+			padding: 20px;
+			background: white;
+			box-shadow: 0px 2px rgba(0,0,0,0.4);
+			left: 0px;
+			width: 100%;
+			box-sizing: border-box;
+		}
+
+		.story{
+			width: 360px;
+			height: 640px;
+			background: #A2C4C9;
+			color: black;
+			margin: auto;
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			right: 0px;
+			bottom: 0px;
+			font-size: 20px;
+			overflow: hidden;
+		}
+
+		.screen{
+			padding: 40px;
+			box-sizing: border-box;
+			width: 100%;
+			height: 100%;
+		}
+
+		.ballpit{
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			width: 100%;
+			height: 100%;
+			pointer-events: none;
+		}
+
+		.ballpit.active{
+			pointer-events: auto;
+		}
+
+		.ball{
+			width: 100px;
+			height: 100px;
+			background: rgba(255,100,100,0.8);
+			border-radius: 50px;
+			position: absolute;
+		}
+
+		.ball.green{
+			background: rgba(100,255,150,0.8);
+		}
+
+		.ball.blue{
+			background: rgba(100,120,255,0.8);
+		}
+
+		.ball.orange{
+			background: rgba(255,200,100,0.8);
+		}
+
+		.screen h1{
+			text-align: center;
+			margin-top: 0px;
+			font-size: 40px;
+		}
+
+		.screen h2{
+			font-weight: normal;
+			margin-top: 0px;
+			font-size: 30px;
+		}
+
+		.screen button{
+			display: block;
+			width: 100%;
+			font: inherit;
+			font-size: inherit;
+			text-align: left;
+			margin-bottom: 10px;
+			border: none;
+			padding: 10px 20px;
+			border-radius: 10px;
+			cursor: pointer;
+			transition: 0.2s;
+		}
+
+		.screen button.fold{
+			transform: scaleX(0.5);
+			opacity: 0;
+			background: red;
+		}
+
+		ul li{
+			position: relative;
+			margin-bottom: 10px;
+		}
+
+
+	</style>
+</head>
+<body>
+	<div class='story'>
+		<div class='ballpit'></div>
+	</div>
+</body>
+</html>
