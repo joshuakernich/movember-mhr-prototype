@@ -36,7 +36,7 @@
 				}
 				if(s.type == 'popping'){
 					$('.ballpit').addClass('active');
-					$('.ball').click(pop);
+					$('.ball').on('click touchstart',pop);
 				}
 			}
 
