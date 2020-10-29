@@ -15,6 +15,8 @@
 			var story = storyStrengths;
 			var $screen;
 
+
+
 			function doNextScreen(){
 				iScreen++;
 				$('.screen').remove();
@@ -63,14 +65,39 @@
 				$('<div class="ball">').css({left:x-radius,top:y-radius}).appendTo('.ballpit').addClass(f.substr(1)).data({r:radius,x:x,y:y,dx:Math.cos(r),dy:Math.sin(r),g:g});
 			}
 
-			function doChoice(){
-				
+			function splatto(btn,f){
 
+				$(btn).animate({opacity:0});
+				var p = $(btn).position();
+				var w = $(btn).width();
+				var h = $(btn).height();
+
+				$('<div class="mud">').css({left:-70-Math.random()*50,top:p.top-120,width:500,height:300}).appendTo('.ballpit');
+
+				for(var i=0; i<10; i++){
+
+					var d = 10+Math.random()*10;
+					var t = p.top+Math.random()*h - d/2;
+					var l = p.left+Math.random()*w - d/2;
+					
+
+
+					$('<div class="splatto">')
+					.css({left:l,top:t,width:d,height:d})
+					.appendTo('.ballpit')
+					.animate({height:d + Math.random()*100},1000+Math.random()*5000);
+				}
+				
+			}
+
+			function doChoice(){
+			
 				var d = $(this).data();
 				if(d.f){
 					if(d.f[0] == '#'){
 						$('button').attr('disabled','disabled');
-						spawnBall(this,d.f);
+						//spawnBall(this,d.f);
+						splatto(this,d.f);
 						setTimeout(doNextScreen,1000);
 					} else {
 						$(this).attr('disabled','disabled');
@@ -124,6 +151,15 @@
 
 			setInterval(tick,50);
 			//iScreen = story.screens.length-2;
+
+			var w = (320-story.screens.length*2)/(story.screens.length);
+
+
+			for(var i=0; i<story.screens.length; i++){
+				$('<div class="station">').appendTo('.stations').css({width:w});
+			}
+
+
 			doNextScreen();
 		});
 	</script>
@@ -186,6 +222,9 @@
 			box-sizing: border-box;
 			width: 100%;
 			height: 100%;
+			position: absolute;
+			top: 0px;
+			left: 0px;
 		}
 
 		.ballpit{
@@ -259,12 +298,83 @@
 			margin-bottom: 10px;
 		}
 
+		.splatto{
+			position: absolute;
+			width: 50px;
+			height: 50px;
+		}
+
+		.splatto:before{
+			content: "";
+			background: rgba(100,50,0,0.5);
+			border-radius: 100px;
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			top: 0px;
+			left: 0px;
+
+
+
+			background: linear-gradient(to bottom, transparent, rgba(180,135,101,0.9), rgba(180,135,101,0.9));
+			box-shadow: inset 0px -2px 5px #8D5D40;
+		}
+
+		.splatto-ball{
+			position: absolute;
+			left: 0px;
+			bottom: 0px;
+			background: rgba(100,50,0,0.9);
+			border-radius: 100px;
+		}
+
+		video, .overlay{
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			width: 100%;
+			height: 100%;
+		}
+
+		.mud{
+			background-image: url('./mud.png');
+			background-position: center;
+			background-repeat: no-repeat;
+			background-size: 100%;
+			position: absolute;
+		}
+
+		.stations{
+			position: absolute;
+			top: 20px;
+			left: 20px;
+			right: 20px;
+			height: 4px;
+	
+			line-height: 0px;
+			padding: 0px;
+			margin-right: 1px;
+			white-space: nowrap;
+
+		}
+
+		.station{
+			height: 100%;
+			background: white;
+			display: inline-block;
+			top: 0px;
+			vertical-align: top;
+			margin-right: 2px;
+			opacity: 0.5;
+		}
 
 	</style>
 </head>
 <body>
 	<div class='story'>
+		<video src='Verti.mp4' autoplay muted loop></video>
 		<div class='ballpit'></div>
+		<div class='stations'></div>
 	</div>
 </body>
 </html>
