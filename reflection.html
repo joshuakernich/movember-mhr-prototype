@@ -200,12 +200,15 @@
 					var $li = $('<li>').appendTo($ul).html(skills[i]).click(doSkill);
 				}
 
-				var $liAdd = $('<li></li>').appendTo($ul);
+				/*var $liAdd = $('<li></li>').appendTo($ul);
 				$('<input value="Add your own">').appendTo($liAdd);
 				$('<button>').appendTo($liAdd).text('>').click(function(){
 					$liAdd.html($liAdd.find('input').val());
 					doSkill.call($liAdd);
-				});
+				});*/
+
+				$('<li>+ Add your own </li>').appendTo($ul).click(doSkill);
+
 			}
 
 			function doHeader(text){
