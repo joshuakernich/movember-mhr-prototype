@@ -108,6 +108,10 @@
 			color: white;
 		}
 
+		.questions li.yay{
+			color: blue;
+		}
+
 		.questions li.yay:before{
 			content: "👍";
 			background: blue;
@@ -133,10 +137,15 @@
 			var skillsOff = 'Sense of humour, Adaptable, Kind, Motivated, Creative, Determined, Dedicated, Patient, Trustworthy'.split(', ');
 			var qsOn = ['Can you use this strength more?','Can you improve on this strength?','Can you help others develop this strength?'];
 			var qsOff = ['Can you use this strength more?','Can you help others with this strength?','Can you use this strength in your sport?'];
+			
+			var qisOn = ['Use this strength more.','Improve on this strength.','Help others develop this strength.'];
+			var qisOff = ['Use this strength more.','Help others with this strength.','Use this strength in your sport.'];
+			
 			var iQuestion = 0;
 			var iSkill = 0;
 			var $ulQuestion;
 			var qs;
+			var qis;
 
 			function doSkill(){
 
@@ -149,6 +158,8 @@
 				$('h2').hide();
 				$(this).show().addClass('active');
 				$(this).offset(o).animate({top:0,left:0});
+
+				var text = $(this).text();
 
 				iQuestion = -1;
 				$ulQuestion = $('<ul class="questions">').appendTo('.screen');
@@ -164,7 +175,10 @@
 			}
 
 			function doYay(){
-				$(this).closest('li').addClass('yay');
+				var $li = $(this).closest('li');
+				var index = $(this).closest('ul').find('li').index($li);
+				$li.html(qis[index]);
+				$li.addClass('yay');
 				doAnswer();
 			}
 
@@ -176,12 +190,13 @@
 			}
 
 			function doAnswer(){
+
 				$('.questions button').hide();
 				if( qs[iQuestion+1] ){
 					setTimeout( doNextQuestion, 1000 );
 				} else if(iSkill < 2){
 					setTimeout( function(){
-						doSkills('Select one of your strengths OFF the field',skillsOff,qsOff);
+						doSkills('Select one of your strengths OFF the field',skillsOff,qsOff,qisOff);
 					}, 1000 );
 				} else {
 					setTimeout(finale, 1000);
@@ -195,9 +210,10 @@
 
 			}
 
-			function doSkills(textQ,skills,qList){
+			function doSkills(textQ,skills,qList,qiList){
 
 				qs = qList;
+				qis = qiList;
 				$('<h2>').appendTo('.screen').html(textQ);
 				var $ul = $('<ul class="skills">').appendTo('.screen');
 
@@ -222,7 +238,7 @@
 
 			doHeader('Think.');
 			setTimeout(function(){
-				doSkills('Select one of your strengths ON the field',skillsOn,qsOn);
+				doSkills('Select one of your strengths ON the field',skillsOn,qsOn,qisOn);
 			},2000);
 			
 		})
