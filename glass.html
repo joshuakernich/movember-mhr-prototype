@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Glass</title>
+	<script type="text/javascript" src="./jquery-3.4.1.min.js"></script>
+	<script type="text/javascript" src="./shards/shards.js"></script>
+	<style type="text/css">
+		body{
+			background: black;
+			padding: 0px;
+			margin: 0px;
+		}
+
+		.screen{
+			width: 450px;
+			height: 800px;
+			background: #333;
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			right: 0px;
+			bottom: 0px;
+			margin: auto;
+			overflow: hidden;
+		}
+
+		.sprite{
+			position: absolute;
+			
+			background-image: url('./shards/shards.png');
+			background-size: 1024px;
+		}
+	</style>
+	<script>
+		$(function(){
+			for(var i in SPRITES.frames){
+
+				var f = SPRITES.frames[i].frame;
+				var p = SPRITES.frames[i].spriteSourceSize;
+				//console.log(p.x/2,f.w/2,p.x/2+f.w/2);
+
+				$('<div class="sprite">').appendTo('.screen').css({
+					top:p.y/2,
+					left:p.x/2,
+					width:f.w/2,
+					height:f.h/2,
+					'background-position-x':-f.x/2,
+					'background-position-y':-f.y/2,
+				}).data({x:p.x/2+f.w/4,y:p.y/2+f.h/4});
+			}
+
+			$('body').on('mousemove touchmove',function(e){
+				var o = $('.screen').offset();
+				var x = e.pageX - o.left;
+				var y = e.pageY - o.top;
+
+				$('.sprite:not(.dead)').each(function(){
+				
+					var dx = $(this).data('x')-x;
+					var dy = $(this).data('y')-y;
+
+					var d = dx*dx + dy*dy;
+
+					if( d < 1000 ){
+						var popx = -100 + Math.random()*200;
+						$(this).addClass('dead').animate({top:'-=20',left:"+="+popx/2},100).animate({top:'+=1000',left:"+="+popx/2});
+
+					}
+				})
+			});
+		})
+	</script>
+</head>
+<body>
+	<div class='screen'></div>
+</body>
+</html>

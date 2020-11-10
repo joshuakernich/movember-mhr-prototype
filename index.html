@@ -15,6 +15,7 @@
 			var story = storyStrengths;
 			var $screen;
 
+			//iScreen = 9;
 
 
 			function doNextScreen(){
@@ -34,12 +35,33 @@
 				if(s.type == 'story') $screen.click(doNextScreen);
 				if(s.type == 'question'){
 					if(!s.c) s.c = [];
-					for(var i in s.q) $('<button>').data({c:s.c[i],f:s.f[i]}).appendTo($screen).text(s.q[i]).click(doChoice);
+					for(var i in s.q){
+						$('<button>').data({c:s.c[i],f:s.f[i]}).appendTo($screen).text(s.q[i]).click(doChoice).css({transform:'rotate('+(-2+Math.random()*4)+'deg)',top:-500}).delay((3-i)*100).animate({top:0},1000,bob);
+					}
 				}
 				if(s.type == 'popping'){
-					$('.ballpit').addClass('active');
-					$('.ball').on('click touchstart',pop);
+					$(window).on('mousedown touchstart',wipeAway);
+					//$('.ball').on('click touchstart',pop);
 				}
+			}
+
+			function wipeAway(){
+				$(window).off('mousedown touchstart',wipeAway);
+				$('.ballpit').off('mousedown touchstart').animate({opacity:0},500,function(){
+					$('.ballpit').hide();
+					doNextScreen();
+				})
+			}
+
+			function bob(){
+				var is = $(this).css('top');
+				if(is > 0) is = -5-Math.random()*10;
+				else is = 5+Math.random()*10;
+				$(this).animate({top:is},500+Math.random()*500,bob);
+			}
+
+			function step(now,fx){
+				console.log(now,fx)
 			}
 
 			function pop(){
@@ -67,12 +89,15 @@
 
 			function splatto(btn,f){
 
-				$(btn).animate({opacity:0});
+				
+			
 				var p = $(btn).position();
 				var w = $(btn).width();
 				var h = $(btn).height();
 
 				$('<div class="mud">').css({left:-70-Math.random()*50,top:p.top-120,width:500,height:300}).appendTo('.ballpit');
+
+				$(btn).css({opacity:0});
 
 				for(var i=0; i<10; i++){
 
@@ -87,6 +112,11 @@
 					.appendTo('.ballpit')
 					.animate({height:d + Math.random()*100},1000+Math.random()*5000);
 				}
+
+				$('button').each(function(){
+					var p2 = $(this).position();
+					$(this).stop().animate({opacity:0,top:(p2.top - p.top)});
+				})
 				
 			}
 
@@ -238,6 +268,7 @@
 
 		.ballpit.active{
 			pointer-events: auto;
+			background: rgba(0,0,0,0.1);
 		}
 
 		.ball{
@@ -268,8 +299,21 @@
 
 		.screen h2{
 			font-weight: normal;
-			margin-top: 0px;
-			font-size: 30px;
+			margin: 20px;
+			margin-left: 20px;
+			font-size: 20px;
+			position: absolute;
+			bottom: 0px;
+			left: 0px;
+			background: rgba(255,255,255,0.5);
+			padding: 10px;
+			border-radius: 10px;
+
+
+		}
+
+		.screen button:first-of-type{
+			margin-top: 50px;
 		}
 
 		.screen button{
@@ -283,8 +327,12 @@
 			padding: 10px 20px;
 			border-radius: 10px;
 			cursor: pointer;
-			transition: 0.2s;
-			background: white;
+			
+			background: rgba(255,255,255,0.8);
+			position: relative;
+			transform: rotate(2deg);
+			box-shadow: 0px 0px 5px white;
+
 		}
 
 		.screen button.fold{
@@ -372,7 +420,7 @@
 </head>
 <body>
 	<div class='story'>
-		<video src='Verti.mp4' autoplay muted loop></video>
+		
 		<div class='ballpit'></div>
 		<div class='stations'></div>
 	</div>
