@@ -50,6 +50,7 @@
 			}
 
 			$('body').on('mousemove touchmove',function(e){
+				e.preventDefault();
 				var o = $('.screen').offset();
 				var x = e.pageX - o.left;
 				var y = e.pageY - o.top;
