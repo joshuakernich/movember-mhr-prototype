@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+<head>
+	<title>Reflection</title>
+	<script type="text/javascript" src="./jquery-3.4.1.min.js"></script>
+	<style type="text/css">
+		@font-face {
+			font-family: "BodyFont";
+			src: url("./Overpass-Light.ttf");
+		}
+
+		@font-face {
+		  font-family: BodyFont;
+		  src: url("./Overpass-Bold.ttf");
+		  font-weight: bold;
+		}	
+
+		body{
+			font-family: "BodyFont";
+			background: #555;
+			text-align: center;
+		}
+
+		.screen{
+			width: 400px;
+			height: 600px;
+			background: white;
+			padding: 0px;
+			box-sizing: border-box;
+			text-align: left;
+			display: inline-block;
+		}
+
+		.skills{
+			padding: 10px 20px;
+			margin: 0px;
+		}
+
+		.skills li{
+			display: inline-block;
+			background: #ddd;
+			border-radius: 100px;
+			padding: 5px 15px;
+			margin: 0px 5px 5px 0px;
+			position: relative;
+			cursor: pointer;
+		}
+
+		.skills li:hover, .skills li.active{
+			background: blue;
+			color: white;
+		}
+
+		input{
+			background: none;
+			border: none;
+			font: inherit;
+		}
+
+		h1{
+			font-size: 1.5em;
+			position: relative;
+			background: black;
+			color: white;
+			padding: 20px;
+			margin: 0px;
+			margin-bottom: 10px;
+		}
+
+		h2{
+			padding: 0px 20px;
+			margin: 10px 0px 0px 0px;
+			font-size: 1.2em;
+		}
+
+		.questions{
+			margin: 0px 0px 20px 0px;
+			padding: 0px 20px;
+			list-style-type: none;
+		}
+
+		.questions li{
+			position: relative;
+			padding-left: 35px;
+			margin-bottom: 10px;
+		}
+
+		.questions li button{
+			font:inherit;
+			padding: 5px 15px;
+			border-radius: 100px;
+			margin: 5px 5px 0px 0px;
+			border: none;
+		}
+
+		.questions li:before{
+			content: "?";
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			display: inline-block;
+			width: 30px;
+			height: 30px;
+			text-align: center;
+			line-height: 30px;
+			font-weight: bold;
+			background: #ddd;
+			border-radius: 100px;
+			color: white;
+		}
+
+		.questions li.yay{
+			color: blue;
+		}
+
+		.questions li.yay:before{
+			content: "👍";
+			background: blue;
+		}
+
+		button.next{
+			margin: 0px 20px;
+			width: calc( 100% - 40px );
+			color: blue;
+			font: inherit;
+			border: 1px solid blue;
+			background: white;
+			margin-top: 10px;
+			padding: 5px 0px;
+		}
+
+
+	</style>
+	<script type="text/javascript">
+		$(function(){
+
+			var skillsOn = 'Confident, Sociable, Smart, Ambitious, Motivated, Loyal, Dependable, Mature, Hardworking, Easy-going, Fun'.split(', ');
+	
+			
+			var iQuestion = 0;
+			var iSkill = 0;
+			var $ulQuestion;
+			var qs;
+			var qis;
+
+			function doSkill(){
+
+
+				iSkill ++;
+
+				var o = $(this).offset();
+
+				$(this).closest('ul').find('li').hide();
+				$('h2').hide();
+				$(this).show().addClass('active');
+				$(this).offset(o).animate({top:0,left:0});
+
+				var text = $(this).text();
+
+				iQuestion = -1;
+				$ulQuestion = $('<ul class="questions">').appendTo('.screen');
+
+				if(iSkill<2){
+					setTimeout(function(){
+					doSkills('Select one more thing you like about Adam',skillsOn);
+					},1000);
+				} else {
+					setTimeout(finale,1000);
+				}
+				
+			}
+
+			function doNextQuestion(){
+				iQuestion++;
+				var $q = $('<li>').appendTo($ulQuestion).html(qs[iQuestion]);
+				$q.append('<br>');
+				var $yeh = $('<button>Yeah</button>').appendTo($q).click(doYay)
+				var $nah = $('<button>Nah</button>').appendTo($q).click(doNay);
+			}
+
+			function doYay(){
+				var $li = $(this).closest('li');
+				var index = $(this).closest('ul').find('li').index($li);
+				$li.html(qis[index]);
+				$li.addClass('yay');
+				doAnswer();
+			}
+
+			function doNay(){
+				$(this).closest('li').animate({opacity:0},500,function(){
+					$(this).hide();
+				})
+				doAnswer();
+			}
+
+			function doAnswer(){
+
+				$('.questions button').hide();
+				if( qs[iQuestion+1] ){
+					setTimeout( doNextQuestion, 1000 );
+				} else if(iSkill < 2){
+					setTimeout( function(){
+						doSkills('Select one of your strengths OFF the field',skillsOff,qsOff,qisOff);
+					}, 1000 );
+				} else {
+					setTimeout(finale, 1000);
+					
+				}
+			}
+
+			function finale(){
+				$('<h2 style="color:blue;text-align:center;">').appendTo('.screen').html('Sounds like a great guy.').css({opacity:0}).animate({opacity:1});
+				$('<button class="next">').appendTo('.screen').text('Continue >').css({opacity:0}).delay(1000).animate({opacity:1});
+
+			}
+
+			function doSkills(textQ,skills){
+
+				
+				$('<h2>').appendTo('.screen').html(textQ);
+				var $ul = $('<ul class="skills">').appendTo('.screen');
+
+				for(var i in skills){
+					var $li = $('<li>').appendTo($ul).html(skills[i]).click(doSkill);
+				}
+
+				/*var $liAdd = $('<li></li>').appendTo($ul);
+				$('<input value="Add your own">').appendTo($liAdd);
+				$('<button>').appendTo($liAdd).text('>').click(function(){
+					$liAdd.html($liAdd.find('input').val());
+					doSkill.call($liAdd);
+				});*/
+
+				//$('<li>+ Add your own </li>').appendTo($ul).click(doSkill);
+
+			}
+
+			function doHeader(text){
+				$('<h1>').appendTo('.screen').html(text).css({top:'100%'}).animate({top:'50%'}).animate({top:'45%'},1000).animate({top:'0%'});
+			}
+
+			doHeader("Let's talk about Adam.");
+			setTimeout(function(){
+				doSkills('Select something you like about Adam',skillsOn);
+			},2000);
+			
+		})
+		
+
+	</script>
+</head>
+<body>
+	<div class='screen'>
+		
+	</div>
+
+</body>
+</html>
