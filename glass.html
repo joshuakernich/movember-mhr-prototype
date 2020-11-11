@@ -3,7 +3,7 @@
 <head>
 	<title>Glass</title>
 	<script type="text/javascript" src="./jquery-3.4.1.min.js"></script>
-	<script type="text/javascript" src="./shards/shards.js"></script>
+	<script type="text/javascript" src="./shards/shards2.js"></script>
 	<style type="text/css">
 		body{
 			background: black;
@@ -27,7 +27,7 @@
 		.sprite{
 			position: absolute;
 			
-			background-image: url('./shards/shards.png');
+			background-image: url('./shards/shards2.png');
 			background-size: 1024px;
 		}
 	</style>
@@ -64,7 +64,7 @@
 
 					if( d < 1000 ){
 						var popx = -100 + Math.random()*200;
-						$(this).addClass('dead').animate({top:'-=20',left:"+="+popx/2},100).animate({top:'+=1000',left:"+="+popx/2});
+						$(this).addClass('dead').animate({top:'+=1000',left:"+="+popx/2});
 
 					}
 				})
