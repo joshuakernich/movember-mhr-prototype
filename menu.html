@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+
+	<script type="text/javascript" src="./jquery-3.4.1.min.js"></script>
+	<style type="text/css">
+		@font-face {
+			font-family: "BodyFont";
+			src: url("./Overpass-Light.ttf");
+		}
+
+		@font-face {
+		  font-family: BodyFont;
+		  src: url("./Overpass-Bold.ttf");
+		  font-weight: bold;
+		}	
+
+		body{
+			font-family: "BodyFont";
+			background: #555;
+			text-align: center;
+		}
+
+		.screen{
+			width: 400px;
+			height: 600px;
+			background: white;
+			padding: 0px;
+			box-sizing: border-box;
+			text-align: left;
+			display: inline-block;
+			margin: auto;
+			overflow-y: auto;
+			position: relative;
+		}
+
+		.eps{
+			list-style-type: none;
+			padding: 0px;
+			margin: 0px;
+		}
+
+		.eps li{
+			display: block;
+			border: 1px solid gray;
+			height: 300px;
+			margin: 10px;
+			font-size: 30px;
+			padding: 20px;
+			background: #777;
+			position: relative;
+			cursor: pointer;
+		}
+
+		tool, clippy{
+			display: inline-block;
+			width: 50px;
+			height: 50px;
+			position: absolute;
+			background: url('./tactics.png');
+			background-position: center;
+			background-size: 80%;
+			background-repeat: no-repeat;
+			right: 15px;
+			top: 15px;
+			transform: rotate(20deg);
+			background-color: blue;
+			border-radius: 50px;
+		}
+
+
+
+		gameplan{
+			position: fixed;
+			width: 350px;
+			height: 550px;
+			top: 30px;
+			left: 0px;
+			right: 0px;
+			margin: auto;
+
+			background: white;
+			box-shadow: 0px 0px 50px #555;
+			display: none;
+			padding: 20px;
+			box-sizing: border-box;
+		}
+
+		gameplan button{
+			position: absolute;
+			bottom: 10px;
+			left: 10px;
+			right: 10px;
+			margin: auto;
+			width: 330px;
+			display: inline-block;
+			font:inherit;
+			background: blue;
+			color: white;
+			font-weight: bold;
+			border: none;
+
+			line-height: 50px;
+		}
+
+		gameplan h1{
+			margin: 0px;
+			font-weight: normal;
+		}
+
+		b{
+			background: black;
+			color: white;
+		}
+
+
+		.eps li clippy{
+			opacity: 0.2;
+			text-align: center;
+			line-height: 50px;
+			background-color: #333;
+		}
+
+		.eps li:first-of-type clippy{
+			opacity: 1;
+			background-color: blue;
+		}
+
+		.eps li tool{
+			background-color: #333;
+			opacity: 0.2;
+			right: 70px;
+			background-image: none;
+			transform: rotate(0deg);
+			color: white;
+			text-align: center;
+			font-weight: bold;
+		}
+
+		.eps li tool:after{
+			content: "?"
+
+		}
+
+		.eps li:first-of-type tool:after{
+			content: "";
+		}
+
+		.eps li:first-of-type tool {
+			opacity: 1;
+			
+			background-image: url('./strength.png');
+			background-size: 60%;
+			background-color: #ff6600;
+			border-radius: 50px;
+			transform: rotate(0deg);
+		}
+
+	</style>
+	<script type="text/javascript">
+		$(function(){
+			$('li').each(function(){
+				$('<tool>').appendTo(this);
+				$('<clippy>').appendTo(this).click(onClippy);
+			})
+
+			function onClippy(){
+				$('gameplan').show();
+			}
+
+			$('gameplan button').click(function(){
+				$('gameplan').hide();
+			})
+		})
+	</script>
+</head>
+<body>
+	<div class='screen'>
+		<ul class='eps'>
+			<li>Slop Slop Snap</li>
+			<li>Shattered</li>
+			<li>Wristy Business</li>
+			<li>Tackle Bag</li>
+			<li>The Whistle Blower</li>
+			<li>One last breath</li>
+		</ul>
+		<gameplan>
+			<h1>GAME PLAN</h1>
+			<clippy></clippy>
+
+<hr>
+<b>Play to your strengths</b> by...
+<p>
+working on your <b>passing</b>
+<li>👍 I can use it more </li>
+<li>👍 I can work on improving it</li>
+<li>👍 I can share it with others</li>
+</p>
+<p>
+and playing to your <b>patience</b>
+<li>👍 I can use it more</li>
+<li>👍 I can use it to help others</li>
+<li>👍 I can use it in my sport</li>
+
+			</p>
+			<button>GOT IT ></button>
+		</gameplan>
+	</div>
+</body>
+</html>
