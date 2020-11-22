@@ -71,7 +71,7 @@
 
 
 
-		gameplan{
+		schematic, gameplan{
 			position: fixed;
 			width: 350px;
 			height: 550px;
@@ -87,7 +87,7 @@
 			box-sizing: border-box;
 		}
 
-		gameplan button{
+		gameplan button, schematic button{
 			position: absolute;
 			bottom: 10px;
 			left: 10px;
@@ -104,7 +104,7 @@
 			line-height: 50px;
 		}
 
-		gameplan h1{
+		schematic h1, gameplan h1{
 			margin: 0px;
 			font-weight: normal;
 		}
@@ -147,7 +147,7 @@
 			content: "";
 		}
 
-		.eps li:first-of-type tool {
+		.eps li:first-of-type tool, schematic tool {
 			opacity: 1;
 			
 			background-image: url('./strength.png');
@@ -161,7 +161,7 @@
 	<script type="text/javascript">
 		$(function(){
 			$('li').each(function(){
-				$('<tool>').appendTo(this);
+				$('<tool>').appendTo(this).click(onTool);
 				$('<clippy>').appendTo(this).click(onClippy);
 			})
 
@@ -169,8 +169,16 @@
 				$('gameplan').show();
 			}
 
+			function onTool(){
+				$('schematic').show();
+			}
+
 			$('gameplan button').click(function(){
 				$('gameplan').hide();
+			})
+
+			$('schematic button').click(function(){
+				$('schematic').hide();
 			})
 		})
 	</script>
@@ -206,6 +214,15 @@ and playing to your <b>patience</b>
 			</p>
 			<button>GOT IT ></button>
 		</gameplan>
+		<schematic>
+			<h1>PLAY TO YOUR STRENGTHS</h1>
+			<tool></tool>
+			<hr>
+			<p><b>Stop</b> getting caught up in your weaknesses</p>
+			<p></p><b>Think</b> about your strengths</p>
+			<p><b>Act</b> by playing to those strengths</p>
+			<button>GOT IT ></button>
+		</schematic>
 	</div>
 </body>
 </html>
