@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Playback</title>
+	<script type="text/javascript" src="./jquery-3.4.1.min.js"></script>
+	<script type="text/javascript">
+		$(function(){
+
+			var pos = [
+				{'background-position': '-140px -640px'},
+				{'background-position': '-550px -550px'},
+				{'background-position': '-900px -550px'},
+				{'background-position': '-1250px -450px'},
+				{'background-position': '-1550px -150px'}
+
+			]
+
+			$('plan').each(function(){
+				$('<button>NEXT</button>').appendTo(this).click(nextPlan);
+			})
+
+			$("<button class='start'>LET'S GO</button>").appendTo('.screen').click(nextPlan).css({position:'absolute',left:5,bottom:5});
+
+			var iPlan = -1;
+
+			function nextPlan(e){
+
+				if(e) $(e.target).remove();
+
+				iPlan++;
+				$('.bg').css(pos[iPlan]);
+				$('.bg').css({'background-size':'500%','opacity':'1'});
+				$('plans').css({left:-iPlan*402,opacity:1});
+
+				//$('plan').removeClass('active').eq(iPlan).show().addClass('active');
+			}
+
+			//nextPlan();
+		})
+	</script>
+	<style type="text/css">
+		@font-face {
+			font-family: "BodyFont";
+			src: url("./Overpass-Light.ttf");
+		}
+
+		@font-face {
+		  font-family: BodyFont;
+		  src: url("./Overpass-Bold.ttf");
+		  font-weight: bold;
+		}	
+
+		body{
+			font-family: "BodyFont";
+			color: orange;
+			background: black;
+			text-align: center;
+		}
+
+		.screen{
+			height: 640px;
+			width: 360px;
+			background: white;
+			text-align: left;
+			overflow: auto;
+			display: inline-block;
+			padding: 20px;
+			background: #222;
+
+			background: linear-gradient(black,#3333ff);
+			position: relative;
+		}
+
+		b{
+			background: orange;
+			color: #222;
+			font-weight: normal;
+			padding: 0px 5px;
+		}
+
+		plan{
+			display: none;
+			border: 1px solid orange;
+			padding: 20px;
+			margin-bottom: 10px;
+			background: rgba(255,200,0,0.02);
+			position: relative;
+			display: inline-block;
+			width: 320px;
+			margin: 20px;
+			white-space: normal;
+			vertical-align: top;
+			transition: all 2s;
+			background: rgba(0,0,150,0.8);
+		}
+
+		plan.active{
+			background: white;
+			color: #222;
+		}
+
+		button{
+			width: 100%;
+			background: rgba(255,180,0,0.4);
+			padding: 15px;
+			color: white;
+			margin-top: 10px;
+			border: 1px solid orange;
+			color: orange;
+			font-size: 1.2em;
+
+		}
+
+		button.start{
+			width: 390px;
+		}
+
+		.sta{
+			list-style-type: none;
+		}
+
+		.bg{
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			right: 0px;
+			bottom: 0px;
+			background-image: url('./layer-map.png');
+			background-size: 100%;
+			background-repeat: no-repeat;
+			
+			transition: all 1.5s;
+		}
+
+		.bg.char{
+			background-image: url('./layer-characters.png');
+			transition: all 1.8s;
+			opacity: 0;
+		}
+
+		plans{
+			position: absolute;
+			top: 50px;
+			left: 0px;
+			white-space: nowrap;
+			transition: all 2s;
+			opacity: 0;
+		}
+
+		h1{
+			margin:0px;
+		}
+
+		.icon{
+			width: 70px;
+			text-align: center;
+			display: inline-block;
+			vertical-align: middle;
+		}
+
+		.intention{
+			display: inline-block;
+			vertical-align: middle;
+			margin-left: 10px;
+		}
+
+		.sta b{
+			width: 50px;
+			display: inline-block;
+			text-align: center;
+			margin-bottom: 2px;
+		}
+
+	</style>
+</head>
+<body>
+
+	<div class='screen'>
+		<div class='bg map'></div>
+		<div class='bg char'></div>
+		<h1>Gameplan</h1>
+		<plans><plan>
+		<img class='icon' src='./icon-thoughts.png'><div class='intention'><p>When I <b>make mistakes</b>,<br>I will <b>manage my self-talk</b>.</p></div>
+		<hr>
+		
+		<li class='sta'><b>Stop</b> being so hard on myself.</li>
+		<li class='sta'><b>Think</b> about how I would speak to a teammate.</li>
+		<li class='sta'><b>Act</b> by building myself up when I’m down.</li>
+		</plan><plan>
+		<img class='icon' src='./icon-solution.png'><div class='intention'><p>When there’s <b>difficult problems</b>,<br>I will <b>seek solutions</b>.</p></div>
+		<hr>
+			<li class='sta'><b>Stop</b> getting caught up in the worst case.</li>
+			<li class='sta'><b>Think</b> about what options I have.</li>
+			<li class='sta'><b>Act</b> by experimenting with some ideas of what to do next.</li>
+		
+		</plan><plan>
+		<img class='icon' src='./icon-strength.png'><div class='intention'><p>When I seek to <b>improve</b>,<br>I will <b>play to my strengths</b>.</p></div>
+		<hr>
+			<li class='sta'><b>Stop</b> getting caught up in my weaknesses</li>
+			<li class='sta'><b>Think</b> about what I’m good at</li>
+			<li class='sta'><b>Act</b> on those strengths</li>
+		
+
+		<p>Working on <b>passing</b></p>
+		<ul>
+			<li>I can use it more</li>
+			<li>I can work on improving it</li>
+			<li>I can share it with others</li>
+		</ul>
+		<p>Playing to my <b>patience</b></p>
+		<ul>
+			<li>I can use it more</li>
+			<li>I can use it to help others</li>
+		</ul></plan><plan>
+		<img class='icon' src='./icon-controllable.png'><div class='intention'><p>When I start the <b>blame-game</b>,<br>I will <b>control the controllables</b>.</p></div>
+		<hr>
+		<li class='sta'><b>Stop</b> getting caught up in things I can’t control</li>
+		<ul>
+			<li>What other people think</li>
+			<li>Your decisions during the game</li>
+		</ul>
+		<li class='sta'><b>Think</b> about the things I can control</li>
+		<ul>
+			<li>The work you put in</li>
+			<li>What you do</li>
+			<li>What you say</li>
+		</ul>
+		<li class='sta'><b>Act</b> by making changes on one thing I can control</li>
+		</plan><plan>
+		<img class='icon' src='./icon-cool.png'><div class='intention'><p>When I’m getting <b>overwhelmed</b>,<br>I will <b>keep my cool</b> by</p></div>
+		<hr>
+		<li class='sta'><b>Stop</b> psyching myself up</li>
+		<li class='sta'><b>Think</b> more clearly through deep breathing</li>
+		<li class='sta'><b>Act</b> from a place of calm</li>
+	</plan>
+</plans>
+	</div>
+</body>
+</html>
