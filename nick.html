@@ -13,6 +13,7 @@
 			text-align: center;
 			font-family: "Overpass";
 			font-size: 15px;
+			background: #777;
 		}
 
 		.screen{
@@ -107,10 +108,14 @@
 		$(function(){
 			
 
-			function doNoTranstion(){
-				$('.strengths').hide();
-				$('h2').hide();
-				$('.card').css({display:'inline-block'});
+			function doNoTranstion(btn){
+				$(btn).addClass('selected');
+				setTimeout(function(){
+					$('.strengths').hide();
+					$('h2').hide();
+					$('.card').css({display:'inline-block'});
+				},500)
+				
 			}
 
 			function doNickTranstion(btn){
@@ -132,31 +137,35 @@
 
 				$(btn).addClass('selected');
 
-				var p = $(btn).offset();
-
-				var $btnClone = $(btn).clone().appendTo('.screen')
-
-
-				$('.strengths').hide();
-				$('h2').hide();
-				$($btnClone).css({position:'absolute'}).offset(p);
-				$('.card').css({'display':'inline-block','opacity':'0'});
-
-				var pTo = $('.card').offset();
-
-				$btnClone.animate({left:7,top:78,'padding-top':20,height:90,'padding':20,width:300});
-
 				setTimeout(function(){
-					$('.card').css({opacity:1,height:90}).animate({height:400});
-					$btnClone.hide();
+					var p = $(btn).offset();
+
+					var $btnClone = $(btn).clone().appendTo('.screen')
+
+
+					$('.strengths').hide();
+					$('h2').hide();
+					$($btnClone).css({position:'absolute'}).offset(p);
+					$('.card').css({'display':'inline-block','opacity':'0'});
+
+					var pTo = $('.card').offset();
+
+					$btnClone.animate({left:7,top:78,'padding-top':20,height:90,'padding':20,width:300});
+
+					setTimeout(function(){
+						$('.card').css({opacity:1,height:90}).animate({height:400});
+						$btnClone.hide();
+					},500);
 				},500);
+
+				
 
 
 			}
 
 			$('button').click(function(e){
 				var idx = $('button').index(e.currentTarget);
-				if(idx == 0) doNoTranstion();
+				if(idx == 0) doNoTranstion($('li').eq(0));
 				if(idx == 1) doNickTranstion($('li').eq(0));
 				if(idx == 2) doJoshTranstion($('li').eq(0));
 
