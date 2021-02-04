@@ -15,25 +15,75 @@
 
 			]
 
-			$('plan').each(function(){
+			/*$('plan').each(function(){
 				$('<button>NEXT</button>').appendTo(this).click(nextPlan);
-			})
+			})*/
 
-			$("<button class='start'>LET'S GO</button>").appendTo('.screen').click(nextPlan).css({position:'absolute',left:5,bottom:5});
+			//$("<button class='start'>LET'S GO</button>").appendTo('.screen').click(nextPlan).css({position:'absolute',left:5,bottom:5});
 
 			var iPlan = -1;
 
 			function nextPlan(e){
 
-				if(e) $(e.target).remove();
+				//if(e) $(e.target).remove();
 
 				iPlan++;
-				$('.bg').css(pos[iPlan]);
-				$('.bg').css({'background-size':'500%','opacity':'1'});
-				$('plans').css({left:-iPlan*402,opacity:1});
+				
+
+				doPlan(iPlan);
 
 				//$('plan').removeClass('active').eq(iPlan).show().addClass('active');
 			}
+
+			function prevPlan(e){
+
+				//if(e) $(e.target).remove();
+
+				iPlan--;
+				doPlan(iPlan);
+
+				//$('plan').removeClass('active').eq(iPlan).show().addClass('active');
+			}
+
+			function toMenu(e){
+				$('plans').hide();
+				$('button.back').hide();
+				$('h1').show();
+				$('.nav').hide();
+				$('.plan-menu').show();
+
+				$('.bg').css({'background-size':'100%','background-position':'0px 400px'});
+			}
+
+			function onMenu(e){
+				var index = $('.plan-menu li').index(this);
+				doPlan(index);
+
+				$('plans').show();
+				$('button.back').show();
+				$('h1').hide();
+				$('.nav').show();
+
+
+
+				$('.plan-menu').hide();
+				
+			}
+
+			function doPlan(i){
+				
+				iPlan = i%pos.length;
+
+				$('.bg').css(pos[iPlan]);
+				$('.bg').css({'background-size':'500%','opacity':'1'});
+				$('plans').css({left:40-iPlan*330,opacity:1});
+			}
+
+			$('.plan-menu li').click(onMenu);
+
+			$('.nav button').eq(0).click(prevPlan);
+			$('.nav button').eq(1).click(nextPlan);
+			$('button.back').click(toMenu);
 
 			//nextPlan();
 		})
@@ -87,11 +137,12 @@
 			position: relative;
 			display: inline-block;
 			width: 320px;
-			margin: 20px;
+			margin: 5px;
 			white-space: normal;
 			vertical-align: top;
 			transition: all 2s;
 			background: rgba(0,0,150,0.8);
+			box-sizing: border-box;
 		}
 
 		plan.active{
@@ -130,6 +181,7 @@
 			background-repeat: no-repeat;
 			
 			transition: all 1.5s;
+			background-position: 0px 400px;
 		}
 
 		.bg.char{
@@ -140,19 +192,21 @@
 
 		plans{
 			position: absolute;
-			top: 50px;
+			top: 80px;
 			left: 0px;
 			white-space: nowrap;
 			transition: all 2s;
 			opacity: 0;
+			display: none;
 		}
 
 		h1{
-			margin:0px;
+			margin:0px 0px 10px 0px;
+			text-align: center;
 		}
 
 		.icon{
-			width: 70px;
+			width: 50px;
 			text-align: center;
 			display: inline-block;
 			vertical-align: middle;
@@ -161,7 +215,7 @@
 		.intention{
 			display: inline-block;
 			vertical-align: middle;
-			margin-left: 10px;
+	
 		}
 
 		.sta b{
@@ -171,14 +225,102 @@
 			margin-bottom: 2px;
 		}
 
+		.plan-menu{
+			list-style-type: none;
+			padding: 0px;
+			margin: 0px;
+		}
+
+		.plan-menu img{
+			width: 40px;
+			vertical-align: middle;
+			margin: 10px;
+		}
+
+		.plan-menu li{
+
+			background: rgba(0,0,150,0.8);
+			
+			padding: 10px;
+			margin: 0px 0px 5px 0px;
+			border: 1px solid orange;
+			position: relative;
+			cursor: pointer;
+		
+		}
+
+		.nav{
+			position: absolute;
+			bottom: 0px;
+			left: 0px;
+			right: 0px;
+			text-align: center;
+			display: none;
+		}
+
+		.nav button{
+			width: 50px;
+			height: 50px;
+			padding: 0px;
+			text-align: center;
+			line-height: 50px;
+			position: absolute;
+			bottom: 0px;
+			left:0px;
+			font-size: 40px;
+			font-weight: bold;
+			background: none;
+			border: none;
+		}
+
+		.nav button:last-of-type{
+			right: 0px;
+			left: auto;
+		}
+
+		button.back{
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			right: 0px;
+			width: 170px;
+			height: 60px;
+			background: none;
+			border: none;
+			background-image: url('./layer-map.png');
+			background-size: 100%;
+			background-position: 0px -55px;
+			margin: auto;
+			display: none;
+		}
+
+		crumb{
+			display: inline-block;
+			width: 10px;
+			height: 10px;
+			background: orange;
+			margin: 15px 5px;
+			border-radius: 100px;
+		}
+
+
+
 	</style>
 </head>
 <body>
 
 	<div class='screen'>
+
 		<div class='bg map'></div>
 		<div class='bg char'></div>
 		<h1>Gameplan</h1>
+		<ul class="plan-menu">
+			<li><img src='./icon-thoughts.png'>Managing Self-Talk</li>
+			<li><img src='./icon-solution.png'>Problem Solving</li>
+			<li><img src='./icon-strength.png'>Playing to my Strengths</li>
+			<li><img src='./icon-controllable.png'>Controlling the Controllables</li>
+			<li><img src='./icon-cool.png'>Keeping your Cool</li>
+		</ul>
 		<plans><plan>
 		<img class='icon' src='./icon-thoughts.png'><div class='intention'><p>When I <b>make mistakes</b>,<br>I will <b>manage my self-talk</b>.</p></div>
 		<hr>
@@ -233,7 +375,14 @@
 		<li class='sta'><b>Think</b> more clearly through deep breathing</li>
 		<li class='sta'><b>Act</b> from a place of calm</li>
 	</plan>
+
 </plans>
+<div class='nav'>
+	<button><</button>
+	<crumb></crumb><crumb></crumb><crumb></crumb><crumb></crumb><crumb></crumb>
+	<button>></button>
+</div>
+<button class='back'>^</button>
 	</div>
 </body>
 </html>

@@ -5,6 +5,9 @@
 	<title>Reflection</title>
 	<script type="text/javascript" src="./jquery-3.4.1.min.js"></script>
 	<style type="text/css">
+
+		@import url('https://fonts.googleapis.com/css2?family=Teko&display=swap');
+
 		@font-face {
 			font-family: "BodyFont";
 			src: url("./Overpass-Light.ttf");
@@ -31,12 +34,14 @@
 			box-sizing: border-box;
 			text-align: left;
 			display: inline-block;
-			background-image: url('https://www.onlygfx.com/wp-content/uploads/2019/11/9-soft-grunge-texture-3-1.png');
-			background-size: 100%;
+			position: relative;
+			overflow-y: auto;
+			overflow-x: hidden;
+			background: #333;
 		}
 
 		.skills{
-			padding: 10px 20px;
+			padding: 10px 0px;
 			margin: 0px;
 		}
 
@@ -48,10 +53,9 @@
 			margin: 0px 5px 5px 0px;
 			position: relative;
 			cursor: pointer;
-			background-color: green;
-			background-image: url('https://www.onlygfx.com/wp-content/uploads/2019/11/9-soft-grunge-texture-3-1.png');
-			background-size: 200px;
-			border: 2px solid green;
+			background-color: white;
+			border: 2px solid blue;
+			color: blue;
 		}
 
 		.skills li:hover, .skills li.active{
@@ -65,25 +69,56 @@
 			font: inherit;
 		}
 
-		h1{
-			font-size: 1.5em;
+		h1,h3{
+			
 			position: relative;
-			background: black;
+
 			color: white;
-			padding: 20px;
+			padding: 0px 0px 0px 0px;
 			margin: 0px;
-			margin-bottom: 10px;
+			margin-bottom: 0px;
+			padding-bottom: 0px;
+
+			text-align: left;
+			
+			color: white;
+			color: blue;
+			display: block;
+		}
+
+		h1{
+			font-family: 'Teko', sans-serif;
+			font-weight: normal;
+			font-size: 60px;
+			line-height: 40px;
+			
+		}
+
+		
+
+		h3{
+			font-size: 15px;
+			line-height: 30px;
+			text-shadow: none;
+			font-weight: normal;
+
 		}
 
 		h2{
-			padding: 0px 20px;
-			margin: 10px 0px 0px 0px;
+			padding: 0px 0px;
+			margin: 0px 0px 0px 0px;
 			font-size: 1.2em;
+			position: relative;
+			color: #333;
+			font-size: 15px;
+			line-height: 30px;
+			font-weight: normal;
+			font-style: italic;
 		}
 
 		.questions{
 			margin: 0px 0px 20px 0px;
-			padding: 0px 20px;
+			padding: 0px 0px;
 			list-style-type: none;
 		}
 
@@ -96,9 +131,13 @@
 		.questions li button{
 			font:inherit;
 			padding: 5px 15px;
-			border-radius: 100px;
+		
 			margin: 5px 5px 0px 0px;
 			border: none;
+			border: 1px solid blue;
+			box-shadow: 1px 1px blue;
+			color: blue;
+			background: white;
 		}
 
 		.questions li:before{
@@ -112,9 +151,12 @@
 			text-align: center;
 			line-height: 30px;
 			font-weight: bold;
-			background: #ddd;
-			border-radius: 100px;
-			color: white;
+			background: white;
+			border-radius: 0px;
+			color: #999;
+			border: 1px solid #999;
+			box-sizing: border-box;
+
 		}
 
 		.questions li.yay{
@@ -127,16 +169,68 @@
 		}
 
 		button.next{
-			margin: 0px 20px;
-			width: calc( 100% - 40px );
+			
+			width: calc( 100% );
 			color: blue;
 			font: inherit;
 			border: 1px solid blue;
 			background: white;
 			margin-top: 10px;
 			padding: 5px 0px;
+			box-shadow: 1px 1px blue;
 		}
 
+		.scene{
+			width: 100%;
+			height: 100%;
+			background-image: url('./rugby-scene.jpg');
+			background-size: cover;
+			background-position: center;
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			filter: blur(10px);
+		}
+
+		.mud{
+			width: 100%;
+			height: 100%;
+			background-image: url('./muddy.png');
+			background-size: 150%;
+			background-position: center;
+			position: absolute;
+			top: 0px;
+			left: 0px;
+		}
+
+		.card{
+			background: white;
+			border-radius: 0px;
+			margin: 10px;
+			position: relative;
+			background: rgba(255,255,255,0.95);
+			overflow: hidden;
+			height: 0px;
+			padding: 20px;
+			box-shadow: 2px 2px blue;
+		}
+
+		.card-content{
+			position: relative;
+			
+		}
+
+		.card-name{
+			position: absolute;
+			top:20px;
+			left: 20px;
+			text-align: center;
+		}
+
+		img{
+			margin: auto;
+			position: relative;
+		}
 
 	</style>
 	<script type="text/javascript">
@@ -171,7 +265,9 @@
 				var text = $(this).text();
 
 				iQuestion = -1;
-				$ulQuestion = $('<ul class="questions">').appendTo('.screen');
+				$ulQuestion = $('<ul class="questions">');
+
+				addToCard($ulQuestion);
 				setTimeout( doNextQuestion, 1000);
 			}
 
@@ -181,6 +277,8 @@
 				$q.append('<br>');
 				var $yeh = $('<button>Yeah</button>').appendTo($q).click(doYay)
 				var $nah = $('<button>Nah</button>').appendTo($q).click(doNay);
+
+				refreshCard();
 			}
 
 			function doYay(){
@@ -214,17 +312,34 @@
 			}
 
 			function finale(){
-				$('<h2 style="color:blue;text-align:center;">').appendTo('.screen').html('Looks like a plan to me.').css({opacity:0}).animate({opacity:1});
-				$('<button class="next">').appendTo('.screen').text('Continue >').css({opacity:0}).delay(1000).animate({opacity:1});
+				
+				var $next = $('<button class="next">').text('LOOKS LIKE A PLAN TO ME');
+				addToCard($next);
 
+				$next.click(wrapItUp);
+			}
+
+			function wrapItUp(){
+				$('button').hide();
+				$('.card-content').delay(1300).animate({opacity:0});
+				$('.card-name').append('<h1>PLAY TO YOUR STRENGTHS</h1>').css({opacity:0}).delay(1300).animate({opacity:1});
+
+				$('.card').delay(1000).animate({height:$('.card-name').height()-20},).animate({height:$('.card-name').height()});
 			}
 
 			function doSkills(textQ,skills,qList,qiList){
 
 				qs = qList;
 				qis = qiList;
-				$('<h2>').appendTo('.screen').html(textQ);
-				var $ul = $('<ul class="skills">').appendTo('.screen');
+				var $h2 = $('<h2>').html(textQ);
+
+				addToCard($h2);
+
+				var $ul = $('<ul class="skills">');
+
+				setTimeout(function(){
+					addToCard($ul);
+				},1000);
 
 				for(var i in skills){
 					var $li = $('<li>').appendTo($ul).html(skills[i]).click(doSkill);
@@ -241,14 +356,54 @@
 
 			}
 
-			function doHeader(text){
-				$('<h1>').appendTo('.screen').html(text).css({top:'100%'}).animate({top:'50%'}).animate({top:'45%'},1000).animate({top:'0%'});
+			function addToCard($thing){
+				$thing.appendTo('.card-content');
+				refreshCard();
 			}
 
-			doHeader('Think.');
+			function refreshCard(){
+				$('.card').animate({height:$('.card-content').height()+20},200).animate({height:$('.card-content').height()},200);
+			}
+
+			function doHeader(text){
+				addToCard($('<h1>'+text+'</h1>'));
+
+				
+			}
+
+			function doInstruction(b){
+				addToCard($('<h3>'+b+'</h3>'));
+			}
+
+			setTimeout(function(){
+				doHeader('STOP');
+			},2000);
+
+			setTimeout(function(){
+				doInstruction("Don't get caught up in your weaknesses.");
+			},4000);
+
+			setTimeout(function(){
+				$("<img src='./swipe-prompt.png'>").appendTo('.screen');
+			},6000);
+
+			setTimeout(function(){
+				$("img").remove();
+				$('.mud').animate({opacity:0});
+			},9000);
+
+			setTimeout(function(){
+				$('<br>').appendTo('.card-content');
+				doHeader('PLAY TO YOUR STRENGTHS');
+			},10000);
+
+			setTimeout(function(){
+				//doInstruction("PLAY TO YOUR STRENGTHS");
+			},12000);
+
 			setTimeout(function(){
 				doSkills('Select one of your strengths ON the field',skillsOn,qsOn,qisOn);
-			},2000);
+			},12000);
 			
 		})
 		
@@ -257,7 +412,9 @@
 </head>
 <body>
 	<div class='screen'>
-		
+		<div class='scene'></div>
+		<div class='mud'></div>
+		<div class='card'><div class='card-name'></div><div class='card-content'></div></div>
 	</div>
 
 </body>

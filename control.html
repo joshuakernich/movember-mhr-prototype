@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script type="text/javascript" src='./jquery-3.4.1.min.js'></script>
+	<script type="text/javascript">
+		$(function(){
+
+			var things = [
+				{name:'the ref',f:"No matter how much you kick & scream, the ref will never change their decision.<br><br>In fact, it's their job to ignore your plees. The ref is not within your control."},
+				{name:'the opponents',f:"Your opponents have their own game to play.<br><br>Your opponents are not within your control."},
+				{name:'his teammates',f:"You might have some influence on your teammates. But they will often suprise you.<br><br>Teammates are not within your control."},
+				{name:'the weather',f:"You can shake your fist at the clouds, but they will still rain.<br><br>The weather is not within your control."},
+				{name:'his performance',correct:true},
+				{name:'his language',correct:true},
+				{name:'the coach', f:'The coach is trying to get the best out of you and your team. You might have some influence on them, but they are a free agent.<br><br>The coach is not within your control.'},
+				{name:'his effort',correct:true},
+				{name:'his fitness',correct:true,f2:"Building fitness is a long process. Is there something else he can control right now?"},
+				{name:'his reactions',correct:true},
+				{name:'the pitch', f:"The condition of the pitch has been determined by other people and the weather.<br><br>The pitch is not within your control."},
+				{name:'the wind',f:"The wind comes and goes. It ebbs and blows.<br><br>The wind is not within your control."}
+			]
+
+			var inFocusTask = false;
+
+			for(var i in things){
+				$('<div class="tile">').appendTo('.body').html(things[i].name).data(things[i]).click(onTile);
+			}
+
+			function onTile(){
+				var d = $(this).data();
+				if( d.correct && (!inFocusTask || !d.f2) ){
+					$(this).addClass('correct');
+					var count = $('.correct').length;
+					$('.feedback-positive').html(count + ' of 5 controllables found');
+					
+					if(inFocusTask) setTimeout( doFinale, 500 );
+					if(count == 5) setTimeout( doFocusTask, 500 );
+
+
+					
+				} else {
+					$(this).addClass('incorrect');
+					doFeedback(d);
+				}
+			}
+
+			function doFeedback(d){
+				var $f = $('<div class="feedback">').appendTo('.screen');
+				var $fi = $('<div class="feedback-inner">').appendTo($f).html('<h1>'+d.name+'?</h1><p>'+(inFocusTask?d.f2:d.f)+'</p>');
+				$('<button>Well, damn!</button>').appendTo($fi).click(function(){
+					$f.remove();
+				})
+			}
+
+			function filterAndShrink(){
+				$('.correct').each(function(){
+					$(this).data('offset',$(this).offset());
+				})
+				$('.tile:not(".correct")').hide();
+
+				$('.correct').each(function(){
+					$(this).offset($(this).data('offset')).animate({top:0,left:0});
+				})
+			}
+
+			function doFocusTask(e){
+
+				inFocusTask = true;
+				filterAndShrink();
+				
+
+				$('h2').html('Select the FIRST thing he can control').css({opacity:0}).delay(1000).animate({opacity:1});
+
+
+				setTimeout(function(){
+					$('.correct').removeClass('correct');
+				},1000);
+			}
+
+			function doFinale(){
+				$('h2').css({opacity:0}).html("This is a great place to start").delay(1000).animate({opacity:1});
+				filterAndShrink();
+
+				setTimeout(function(){
+					$('.correct').removeClass('correct');
+					$('<br><button>I better get on with it ></button>').appendTo('.body');
+				},1000);
+			}
+		})
+	</script>
+	<style type="text/css">
+		@font-face {
+			font-family: "BodyFont";
+			src: url("./Overpass-Light.ttf");
+		}
+
+		@font-face {
+		  font-family: BodyFont;
+		  src: url("./Overpass-Bold.ttf");
+		  font-weight: bold;
+		}	
+
+
+
+		body{
+			background: #333;
+			font-family: "BodyFont";
+
+		}
+
+
+
+		.feedback-inner{
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			right: 0px;
+			border: 1px solid black;
+
+			box-shadow: 0px 1px 5px #999;
+			padding: 20px;
+			background: white;
+			margin: 60px;
+			text-align: left;
+		}
+
+		.feedback{
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			right: 0px;
+			bottom: 0px;
+			background: rgba(230,230,230,0.8);
+		}
+
+		.feedback h1{
+			font-size: 20px;
+		}
+
+		.feedback h1:before{
+			content: "";
+			width: 30px;
+			height: 30px;
+			display: inline-block;
+			vertical-align: middle;
+			background-image: url('./cross.svg');
+			background-size: cover;
+			margin-right: 10px;
+		}
+
+		.screen{
+			width: 400px;
+			height: 700px;
+			border: 1px solid black;
+			margin: auto;
+			background: white;
+			text-align: center;
+			
+			position: relative;
+		}
+
+		.body{
+			position: absolute;
+			top: 0px;
+			right: 0px;
+			bottom: 0px;
+			left: 0px;
+			overflow: auto;
+		}
+
+		.tile{
+			display: inline-block;
+			width: 150px;
+			height: 150px;
+			border: 1px solid black;
+			margin: 2px;
+			vertical-align: top;
+			cursor: pointer;
+			box-shadow: 0px 1px 5px black;
+			position: relative;
+		}
+
+		.tile:before{
+			content:"";
+			width: 80px;
+			height: 80px;
+			display: block;
+			margin: auto;
+			margin: 20px auto;
+
+
+			background-image: url('./team.svg');
+			background-size: cover;
+		}
+
+		.tile.correct{
+			background: blue;
+			color: white;
+		}
+
+		.tile.correct:after{
+			content: "";
+			position: absolute;
+			display: block;
+			right: 5px;
+			top: 5px;
+			width: 30px;
+			height: 30px;
+			background-image: url('./tick.svg');
+			background-size: cover;
+		}
+
+		.tile.incorrect{
+			opacity: 0.2;
+		}
+
+
+		.feedback-positive{
+			position: absolute;
+			bottom: 10px;
+			left: 10px;
+			right: 10px;
+			background: green;
+			padding: 20px;
+			color: white;
+			display: none;
+		}
+
+		button{
+			font: inherit;
+			background: blue;
+			border: none;
+			color: white;
+			width: 80%;
+			margin: 10%;
+			padding: 20px;
+		}
+	</style>
+</head>
+<body>
+	<div class='screen'>
+		<div class='body'>
+		<h1>Control the Controllables</h1>
+		<h2>Find all the things he can control</h2>
+		</div>
+		<div class='feedback-positive'></div>
+	</div>
+</body>
+</html>

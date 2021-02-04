@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Menu with Gameplan</title>
+	<script type="text/javascript" src="./jquery-3.4.1.min.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			$('.eps').scroll(didScroll);
+
+			var idScroll;
+			var isAnim = false;
+
+			function didScroll(){
+
+				var sl = $('.eps').scrollLeft();
+				var i = Math.round(sl/400);
+				$('.crumb').removeClass('current').eq(i).addClass('current');
+
+				if(isAnim) return;
+				
+				window.clearTimeout(idScroll);
+
+				idScroll = window.setTimeout(onScrollOver,50);
+			}
+
+			function onScrollOver(){
+				isAnim = true;
+				var sl = $('.eps').scrollLeft();
+				$('.eps').animate({'scrollLeft':Math.round(sl/400)*400},100,onSnapped);
+			}
+
+			function onSnapped(){
+				isAnim = false;
+			}
+
+		})
+	</script>
+	<style type="text/css">
+		@font-face {
+			font-family: "BodyFont";
+			src: url("./Overpass-Light.ttf");
+		}
+
+		@font-face {
+		  font-family: BodyFont;
+		  src: url("./Overpass-Bold.ttf");
+		  font-weight: bold;
+		}	
+
+		body{
+			font-family: "BodyFont";
+		}
+
+		.screen{
+			width: 400px;
+			height: 700px;
+			border: 1px solid black;
+			margin: auto;
+			background-image: url('./goal.png');
+			background-position: center;
+			background-size: cover;
+			position: relative;
+		}
+
+		.eps{
+			white-space: nowrap;
+			overflow-x: scroll;
+		}
+
+		.ep{
+			width: 400px;
+			height: 700px;
+			display: inline-block;
+			white-space: normal;
+			box-sizing: border-box;
+			padding: 50px 0px 0px 0px;
+			vertical-align: top;
+			font-size: 25px;
+
+		}
+
+		.vid{
+			height: 560px;
+			border: 1px solid white;
+			background: rgba(255,255,255,0.5);
+			box-sizing: border-box;
+			padding: 10px;
+			color: white;
+			text-shadow: 0px 1px 5px black;
+			position: relative;
+			background: none;
+			border: none;
+		}
+
+		.plan{
+			min-height: 50px;
+			border: 1px solid white;
+			margin-top: 10px;
+			background: rgba(255,255,255,0.5);
+		}
+
+		.plan{
+			background: white;
+		}
+
+		h1{
+			padding: 0px;
+			line-height: 50px;
+			margin: 0px;
+			font-size: 25px;
+			font-weight: normal;
+			color: orange;
+			display: inline-block;
+			vertical-align: middle;
+		}
+
+		.bread{
+			text-align: center;
+			line-height: 50px;
+			position: absolute;
+			left: 0px;
+			top: 0px;
+			right: 0px;
+		}
+
+		.crumb{
+			display: inline-block;
+			width: 20px;
+			height: 20px;
+			background: white;
+			margin: 0px 2px;
+			vertical-align: middle;
+			border-radius: 100px;
+			color: black;
+			font-size: 18px;
+			font-weight: bold;
+			text-align: center;
+			line-height: 20px;
+		}
+
+		.plan:before{
+			content: "";
+			width: 40px;
+			height: 40px;
+			display: inline-block;
+			background-image: url('./icon-thoughts.png');
+			background-size: 100%;
+			background-position: center;
+			vertical-align: middle;
+			margin: 10px;
+		}
+
+		.vid:after{
+			content: "▶";
+			width: 100px;
+			height: 70px;
+			background: rgba(0,0,0,0.5);
+			color: white;
+			font-size: 50px;
+			line-height: 70px;
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			right: 0px;
+			bottom: 0px;
+			margin: auto;
+			text-align: center;
+			border-radius: 20px;
+			box-shadow: 0px 1px 5px white;
+			display: none;
+		}
+
+		.crumb.current{
+			background: orange;
+		}
+
+		.ep.done .vid{
+			height: 100px;
+		}
+
+		.plan .playback{
+			font-size: 17px;
+			padding: 10px;
+			color: #333;
+		}
+
+		.ep{
+			background-image: url('./bg-mud.png');
+			background-size: cover;
+			position: relative;
+		}
+
+		.ep:nth-of-type(2){
+			background-image: url('./bg-help.png');
+		}
+
+		.ep:nth-of-type(4){
+			background-image: url('./bg-bag.png');
+		}
+
+		.ep:before{
+			content: "";
+			position: absolute;
+			bottom: 0px;
+			left: 0px;
+			right: 0px;
+			height: 20%;
+			background: linear-gradient(to top, black, transparent);
+		}
+
+
+		.ep:after{
+			content: "Replay Chapter";
+			background: blue;
+			color: white;
+			position: absolute;
+			bottom: 10px;
+			left: 10px;
+			right: 10px;
+			line-height: 50px;
+			text-align: center;
+			border: 1px solid white;
+		}
+
+		.ep:nth-of-type(3):after{
+			content: "Play Chapter";
+		}
+
+		.ep:nth-of-type(4):after{
+			content: "Complete Chapter 3";
+			background: gray;
+		}
+
+		.ep:nth-of-type(5):after{
+			content: "Complete Chapter 4";
+			background: gray;
+		}
+
+		.ep:nth-of-type(6):after{
+			content: "Complete Chapter 5";
+			background: gray;
+		}
+
+
+	</style>
+</head>
+<body>
+	<div class="screen">
+		<div class='eps'>
+			<div class='ep'>
+				<div class='vid'></div>
+			</div><div class='ep done'>
+				
+				<div class='plan'><h1>Manage Self-talk</h1>
+					<div class='playback'>
+						<div class='intention'><p>When I <b>make mistakes</b>,<br>I will <b>manage my self-talk</b>.</p></div>
+		<hr>
+		
+		<li class='sta'><b>Stop</b> being so hard on myself.</li>
+		<li class='sta'><b>Think</b> about how I would speak to a teammate.</li>
+		<li class='sta'><b>Act</b> by building myself up when I’m down.</li>
+					</div>
+					</div>
+					<div class='vid'></div>
+			</div><div class='ep'>
+				<div class='vid'></div>
+			</div><div class='ep'>
+				<div class='vid'></div>
+			</div><div class='ep'>
+				<div class='vid'></div>
+			</div><div class='ep'>
+				<div class='vid'></div>
+			</div>
+			<div class='bread'>
+				<div class='crumb'>1</div>
+				<div class='crumb'>2</div>
+				<div class='crumb'>3</div>
+				<div class='crumb'>4</div>
+				<div class='crumb'>5</div>
+				<div class='crumb'>6</div>
+			</div>
+		</div>
+
+	</div>
+</body>
+</html>
