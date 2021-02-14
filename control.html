@@ -6,19 +6,61 @@
 	<script type="text/javascript">
 		$(function(){
 
+
+
+
 			var things = [
-				{name:'the ref',f:"No matter how much you kick & scream, the ref will never change their decision.<br><br>In fact, it's their job to ignore your plees. The ref is not within your control."},
-				{name:'the opponents',f:"Your opponents have their own game to play.<br><br>Your opponents are not within your control."},
-				{name:'his teammates',f:"You might have some influence on your teammates. But they will often suprise you.<br><br>Teammates are not within your control."},
-				{name:'the weather',f:"You can shake your fist at the clouds, but they will still rain.<br><br>The weather is not within your control."},
-				{name:'his performance',correct:true},
-				{name:'his language',correct:true},
-				{name:'the coach', f:'The coach is trying to get the best out of you and your team. You might have some influence on them, but they are a free agent.<br><br>The coach is not within your control.'},
-				{name:'his effort',correct:true},
-				{name:'his fitness',correct:true,f2:"Building fitness is a long process. Is there something else he can control right now?"},
-				{name:'his reactions',correct:true},
-				{name:'the pitch', f:"The condition of the pitch has been determined by other people and the weather.<br><br>The pitch is not within your control."},
-				{name:'the wind',f:"The wind comes and goes. It ebbs and blows.<br><br>The wind is not within your control."}
+				{
+					name:'the ref',
+					f:"No matter how much you kick & scream, the ref will never change their decision.<br><br>In fact, it's their job to ignore your plees. The ref is not within your control."},
+				{
+					name:'the opponents',
+					f:"Your opponents have their own game to play.<br><br>Your opponents are not within your control."},
+				{
+					name:'his teammates',
+					f:"You might have some influence on your teammates. But they will often suprise you.<br><br>Teammates are not within your control."},
+				{
+					name:'the weather',
+					f:"You can shake your fist at the clouds, but they will still rain.<br><br>The weather is not within your control."},
+				{
+					name:'his performance',
+					correct:true,
+					c2:false,
+					f2:"There are a lot of forces that can effect his performance. These are often beyond his control, or might require long-term work. Perhaps there is something he can work on more immediately.",
+					f:"There are a lot of things that can influence your performance. But it's mostly helped along by how much of your own energy you put in.<br><br>Your performance is within your control."},
+				{
+					name:'his language',
+					c2:true,
+					correct:true,
+					feedback:"It's easy to get carried away with our language when we are frustrated. But this can make things worse. Watching his language and how he speaks to those around him is something he can control.",
+					f2:"Watching his language is something he can immediately control."
+				},
+				{
+					name:'the coach', f:'The coach is trying to get the best out of you and your team. You might have some influence on them, but they are a free agent.<br><br>The coach is not within your control.'},
+				{
+					name:'his effort',
+					f:"It's easy to be distracted, lose interest, or feel low on energy. This can effect the amount of effort we put in. But how much effort we choose to put in is something we can control.",
+					f2:"It's easy to play lazy or sloppy when we are upset. But we can take control by re-focusing on our effort in the moment.",
+					c2:true,
+					correct:true},
+				{
+					name:'his fitness',
+					correct:true,
+					c2:false,
+					f:"Building fitness is a long process. It requires dedication and collaboration. It's definitely something he can control.",
+					f2:"Building fitness is a long process. Is there something else he can control right now?"},
+				{
+					name:'his reactions',
+					f:"It may not be easy sometimes, but he can definitely choose to react differently to the people around him. This is a great way to take control of the controllables.",
+					f2:"It may take practice, but changing how he reacts is something he can do immediately.",
+					c2:true,
+					correct:true},
+				{
+					name:'the pitch',
+					f:"The condition of the pitch has been determined by other people and the weather.<br><br>The pitch is not within your control."},
+				{
+					name:'the wind',
+					f:"The wind comes and goes. It ebbs and blows.<br><br>The wind is not within your control."}
 			]
 
 			var inFocusTask = false;
@@ -29,27 +71,47 @@
 
 			function onTile(){
 				var d = $(this).data();
-				if( d.correct && (!inFocusTask || !d.f2) ){
+
+				//$(this).offset();
+
+				//disable scroll
+				//$(this).closest('.screen').overflow('hidden');
+
+				var oTile = $(this).offset();
+				var oBody = $('.body').offset();
+
+				var difX = oTile.left-oBody.left;
+				var difY = oTile.top-oBody.top;
+
+				
+				$('.body').css({left:-difX + 125,top:-difY + 200}).addClass('darkened');
+
+				
+				$(this).addClass('selected');
+
+				if( (inFocusTask && d.c2) || (!inFocusTask && d.correct) ){
 					$(this).addClass('correct');
-					var count = $('.correct').length;
-					$('.feedback-positive').html(count + ' of 5 controllables found');
-					
-					if(inFocusTask) setTimeout( doFinale, 500 );
-					if(count == 5) setTimeout( doFocusTask, 500 );
-
-
-					
+					doFeedback($(this).closest('.screen'),d);
 				} else {
 					$(this).addClass('incorrect');
-					doFeedback(d);
+					doFeedback($(this).closest('.screen'),d);
 				}
 			}
 
-			function doFeedback(d){
-				var $f = $('<div class="feedback">').appendTo('.screen');
-				var $fi = $('<div class="feedback-inner">').appendTo($f).html('<h1>'+d.name+'?</h1><p>'+(inFocusTask?d.f2:d.f)+'</p>');
+			function doFeedback($screen,d){
+				var $f = $('<div class="feedback">').appendTo($screen);
+				var $fi = $('<div class="feedback-inner">').appendTo($f).html('<p>'+(inFocusTask?d.f2:d.f)+'</p>');
+
+				var h = $fi.outerHeight();
+				$fi.css({bottom:-h}).animate({bottom:0});
+
 				$('<button>Well, damn!</button>').appendTo($fi).click(function(){
 					$f.remove();
+					$('.body').removeClass('darkened').css({left:0,top:0});
+					$('.tile').removeClass('selected');
+
+					if(!inFocusTask && $('.correct').length == 3) doFocusTask();
+					else if(inFocusTask &&  $('.correct').length == 1) doFinale();
 				})
 			}
 
@@ -79,17 +141,198 @@
 			}
 
 			function doFinale(){
-				$('h2').css({opacity:0}).html("This is a great place to start").delay(1000).animate({opacity:1});
+				$('.controllables h2').css({opacity:0}).html("This is a great place to start").delay(1000).animate({opacity:1});
 				filterAndShrink();
 
 				setTimeout(function(){
 					$('.correct').removeClass('correct');
-					$('<br><button>I better get on with it ></button>').appendTo('.body');
+					$('<br><button>I better get on with it ></button>').appendTo('.body').click(next);
 				},1000);
 			}
+
+			$('.next').click(next);
+
+			function piePaint(p){
+
+				var r = -Math.PI/2 + Math.PI*2*p;
+				var x = 50+Math.cos(r)*50;
+				var y = 50+Math.sin(r)*50;
+
+				var s = 'polygon(50% 50%, 50% 0%, 100% 0%, '+((p>0.25)?'100% 100%, ':'')+((p>0.5)?'0% 100%, ':'')+((p>0.75)?'0% 0%, ':'')+x+'% '+y+'%)';
+
+				$('.breather .pie').css({'clip-path':s});
+			}
+
+
+
+			function next(a){
+
+				if(a.target) a = this;
+
+				var $s = $(a).closest('.screen');
+				var iPage = $s.find('.page').index($(a).closest('.page'));
+				var $p = $s.find('.page').hide().eq(iPage+1).show();
+
+
+				$p.find('.swipe').delay(500).animate({opacity:1,left:100}).animate({opacity:0},100).animate({left:0}).animate({opacity:1}).animate({opacity:1,left:100}).animate({opacity:0},100)
+
+				if($p.find('.breather.enabled').length){
+					var $b = $p.find('.breather');
+					var $l = $b.find('.lung');
+					var $h = $b.find('h2');
+					var reps = 3;
+
+					message('Get Ready...');
+
+					$l.delay(2000)
+					.animate({width:'10%',height:'10%'},{duration:5000,start:messagePrepare})
+					.animate({width:'10%'},{duration:200,complete:doOneBreath});
+					
+					function doOneBreath(){
+						reps--;
+
+						var next = (reps>0)?doOneBreath:finalise;
+						var messageKickOff = (reps==1)?messageOneMoreTime:messageIn;
+
+						$l.animate({width:'100%',height:'100%'},{duration:5000,start:messageKickOff})
+						.animate({width:'100%'},{duration:2000,start:messageHold})
+						.animate({width:'10%',height:'10%'},{duration:5000,start:messageOut})
+						.animate({width:'10%'},{duration:1500,start:messageBlank,complete:next});
+					}
+
+					function message(m){
+						$h.find('p').animate({opacity:0,top:-30},500,function(){ $(this).remove(); });
+						$('<p>').appendTo($h).css({opacity:0,top:30}).animate({opacity:1,top:0},500).html(m);
+					}
+
+					function messagePrepare(){
+						message("Bring attention<br>to your breath");
+					}
+
+					function messageIn(){
+						message("Breathe in<br>for 5 seconds");
+					}
+
+					function messageOut(){
+						message("Breathe out<br>for 5 seconds");
+					}
+
+					function messageHold(){
+						message("Hold<br>for 2 seconds");
+					}
+
+					function messageBlank(){
+						message("");
+					}
+
+					function messageOneMoreTime(){
+						message("One more time");
+					}
+
+					function finalise(){
+						message("That's it!");
+					}
+
+					/*var timeStart = new Date().getTime();
+
+					setInterval(function(){
+						var timeNow = new Date().getTime();
+						var elapsed = timeNow-timeStart;
+
+						elapsed = elapsed%17000;
+
+						var seconds = Math.floor(elapsed/1000);
+
+						if(seconds<5){
+							$b.find('p').text('Pay attention to your breathing');
+							var p = elapsed/5000;
+							piePaint(p);
+
+							p = 1-p;
+
+
+							$b.find('.lung').css({width:p*100+'%',height:p*100+'%'});
+
+						} else if(seconds<10){
+							$b.find('p').text('Breathe in for 5 seconds');
+							var p = (elapsed-5000)/5000;
+							piePaint(p);
+							//$b.find('h1').text(seconds-5);
+							var ms = elapsed-5000;
+							//$b.css({transform:'scale('+(1+0.5*(ms/5000))+')'});
+							$b.find('.lung').css({width:p*100+'%',height:p*100+'%'});
+						} else if(seconds<12){
+							var p = (elapsed-10000)/2000;
+							piePaint(p);
+							$b.find('p').text('HOLD for 2 seconds');
+							$b.find('.lung').css({width:'100%',height:'100%'});
+							//$b.find('h1').text(seconds-10);
+						} else if(seconds<17){
+							var p = (elapsed-12000)/5000;
+							piePaint(p);
+							$b.find('p').text('Breathe out for 5 seconds');
+							//$b.find('h1').text(seconds-12);
+							var ms = elapsed-12000;
+							var inverse = 5000-ms;
+							p = 1-p;
+							//$b.css({transform:'scale('+(1+0.5*(inverse/5000))+')'});
+							$b.find('.lung').css({width:p*100+'%',height:p*100+'%'});
+						} 
+					},100);*/
+				}
+			}
+
+			$('.screen').eq(0).find('.page').eq(0).show();
+			$('.screen').eq(1).find('.page').eq(0).show();
+
+			function checkIfLast(t){
+
+				if( $(t).closest('.stickers').children('.sticker:not(.unstuck)').length == 0 ){
+					next(t);
+				}
+			}
+			
+
+			$('.sticker').mousedown(function(){
+				var t = this;
+				var anim = {p:0};
+
+				var $stickers = $(this).closest('.stickers');
+
+				var $masker = $('<div class="sticker-masker">').appendTo($stickers);
+				$masker.offset($(this).offset()).width($(this).outerWidth()).height($(this).outerHeight());
+				
+				var $clone = $(this).clone().appendTo($masker).css({position:'absolute',top:0,left:'auto',margin:0,right:'0px'});
+
+				$(this).css({opacity:0});
+
+
+				var $back = $('<div class="sticker-back">').appendTo($stickers).offset($masker.offset()).height($masker.height());
+				$back.animate({left:'+='+($masker.width()-10),width:$masker.width()},1000).animate({top:'100vh'},500,function(){
+					$(t).addClass('unstuck');
+					checkIfLast(t);
+				})
+				$masker.animate({left:'+='+$masker.width(),width:0},1000);
+
+				//$back.offset($(this).offset()).width($(this).outerWidth()).height($(this).outerHeight());
+
+				//var p = $back.position();
+				/*var w = $(this).width();
+
+				$(anim).animate({p:1},{duration:1000,step:function(a){
+					//var clip = 'polygon('+a*100+'% 0%, '+(a*100+10)+'% 100%, 100% 100%, 100% 0%)';
+					//$(t).css({'clip-path':clip});
+
+					$back.css({left:a*w,width:w*a+'px'})
+
+				},complete:function(){$(t).css({opacity:0}).addClass('unstuck');checkIfLast(t);}})*/
+			})
+
 		})
 	</script>
 	<style type="text/css">
+		@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
+
 		@font-face {
 			font-family: "BodyFont";
 			src: url("./Overpass-Light.ttf");
@@ -101,19 +344,45 @@
 		  font-weight: bold;
 		}	
 
-
-
 		body{
 			background: #333;
 			font-family: "BodyFont";
-
+			text-align: center;
 		}
 
+		.sticker-masker{
+			display: block;
 
+			position: absolute;
+			overflow: hidden;
+			white-space: nowrap;
+			text-align: right;
+		}
+
+		.sticker-masker:after{
+			content: "";
+			position: absolute;
+			left: 0px;
+			top: 0px;
+			width: 100%;
+			height: 100%;
+			background: linear-gradient(to right, gray,transparent, transparent);
+		}
+
+		.sticker-back{
+			display: block;
+			background: gray;
+			transform-origin: top left;
+			transform: rotate(-15deg) translate(-30px,0px);
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			background: linear-gradient(to right, gray,white, white);
+		}
 
 		.feedback-inner{
 			position: absolute;
-			top: 0px;
+			bottom: 0px;
 			left: 0px;
 			right: 0px;
 			border: 1px solid black;
@@ -121,8 +390,10 @@
 			box-shadow: 0px 1px 5px #999;
 			padding: 20px;
 			background: white;
-			margin: 60px;
+			
 			text-align: left;
+			color: black;
+			box-shadow: 0px -5px 20px rgba(0,0,0,0.5);
 		}
 
 		.feedback{
@@ -131,11 +402,13 @@
 			left: 0px;
 			right: 0px;
 			bottom: 0px;
-			background: rgba(230,230,230,0.8);
+			
+
 		}
 
 		.feedback h1{
 			font-size: 20px;
+			padding: 0px;
 		}
 
 		.feedback h1:before{
@@ -158,27 +431,54 @@
 			text-align: center;
 			
 			position: relative;
+			display: inline-block;
+			vertical-align: top;
+			margin-top: 60px;
+			
+			color: white;
+			background: black;
+			overflow: hidden;
 		}
 
 		.body{
 			position: absolute;
 			top: 0px;
-			right: 0px;
-			bottom: 0px;
 			left: 0px;
+			height: 100%;
+			width: 100%;
+			transition: 0.5s all;
 			overflow: auto;
+		}
+
+		.body.darkened{
+
+		}
+
+		.body.darkened:after{
+			content: "";
+			top: -50vw;
+			left: -50vh;
+			background: #222626;
+			width: 200vw;
+			height: 500vh;
+			display: block;
+			position: absolute;
+			opacity: 0.7;
 		}
 
 		.tile{
 			display: inline-block;
 			width: 150px;
 			height: 150px;
-			border: 1px solid black;
-			margin: 2px;
+			
+			margin: 5px;
 			vertical-align: top;
 			cursor: pointer;
 			box-shadow: 0px 1px 5px black;
 			position: relative;
+			background: white;
+			color: black;
+			border-radius: 10px;
 		}
 
 		.tile:before{
@@ -192,6 +492,7 @@
 
 			background-image: url('./team.svg');
 			background-size: cover;
+			position: relative;
 		}
 
 		.tile.correct{
@@ -203,16 +504,44 @@
 			content: "";
 			position: absolute;
 			display: block;
-			right: 5px;
-			top: 5px;
+			right: -5px;
+			top: -5px;
 			width: 30px;
 			height: 30px;
 			background-image: url('./tick.svg');
 			background-size: cover;
 		}
 
+		.tile.selected{
+			z-index: 1;
+		}
+
 		.tile.incorrect{
-			opacity: 0.2;
+			/*opacity: 0.2;*/
+			background: orange;
+		}
+
+		.tile.incorrect:after{
+			content: "";
+			position: absolute;
+			display: block;
+			right: -5px;
+			top: -5px;
+			width: 30px;
+			height: 30px;
+			background-image: url('./alert.svg');
+			background-size: cover;
+		}
+
+		.tile-shadow{
+			content: "";
+			width: 1000px;
+			height: 1000px;
+			background: black;
+			left: -500px;
+			top: -500px;
+
+			position: absolute;
 		}
 
 
@@ -236,15 +565,283 @@
 			margin: 10%;
 			padding: 20px;
 		}
+
+		.page{
+			display: none;
+			position: absolute;
+			height: 100%;
+			width: 100%;
+		}
+
+		.page:first-of-type{
+			display: block;
+		}
+
+		.sticker{
+			padding: 5px 10px;
+			border: 2px solid orange;
+			color: orange;
+			border-width: 2px 4px 4px 4px;
+			display: inline-block;
+			margin: 15px;
+			background: white; 
+		}
+
+		p{
+			margin-bottom: 0px;
+			margin-top: 0px;
+		}
+
+		header{
+			position: absolute;
+			top: -50px;
+			width: 100%;
+			text-align: center;
+			color: white;
+		}
+
+		.stickers{
+			position: absolute;
+			bottom: 50px;
+			left: 0px;
+		}
+
+		.sticker.blue{
+			transform: rotate(2deg);
+			color: blue;
+			border-color: blue;
+		}
+
+		.sticker.orange{
+			transform: rotate(-2deg);
+		}
+
+		.breather{
+			width: 200px;
+			height: 200px;
+			background: rgba(255,255,255,0.4);
+			margin: 60px auto;
+			
+			
+			box-sizing: border-box;
+			border-radius: 100px;
+			position: relative;
+			text-align: center;
+			line-height: 200px;
+		}
+
+		.breather h2{
+			position: absolute;
+			top: 210px;
+			line-height: 25px;
+			text-align: center;
+			width: 100%;
+		}
+
+		.breather h2 p{
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			width: 100%;
+		}
+
+		.breather .lung{
+			width: 100%;
+			height: 100%;
+			display: inline-block;
+			background: white;
+			border-radius: 100px;
+			vertical-align: middle;
+			background-image: url('./lungs.svg');
+			background-size: 50%;
+			background-position: center;
+			background-repeat: no-repeat;
+		}
+
+		.breather.enabled .lung{
+			background-image: none;
+		}
+
+		.breather .pie{
+			content: "";
+			display: block;
+			width: 100%;
+			height: 100%;
+			position: absolute;	
+			top: 0px;
+			left: 0px;
+			border: 5px solid black;
+			box-sizing: border-box;
+			border-radius: 100px;
+  			clip-path: polygon(50% 50%);
+  			display: none;
+		}
+
+		.bg{
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			right: 0px;
+			bottom: 0px;
+			background-image: url('./breathing.png');
+			background-size: cover;
+			background-position: center;
+			filter: blur(10px);
+			overflow: hidden;
+			opacity: 0.5;
+		}
+
+		.bg.ref{
+
+			background-image: url('./ref.jpg');
+		}
+
+		h1{
+			background: white;
+			color: blue;
+			margin-top: 10px;
+			text-transform: uppercase;
+			padding: 20px;
+
+			font-family: 'Anton', sans-serif;
+			font-weight: normal;
+		}
+
+		h2{
+			font-weight: normal;
+			font-size: 20px;
+			color: white;
+		}
+
+		.note{
+			text-align: left;
+			padding-left: 20px;
+			border-left: 2px solid white;
+			margin-left: 20px;
+		}
+
+		
+
+		.swipe{
+			position: absolute;
+			background-image: url('./swipe.png');
+			width: 60px;
+			height: 60px;
+			background-size: cover;
+			top: 5px;
+			left: 5px;
+			z-index: 1;
+
+		}
+
+		.icon{
+			width: 200px;
+			height: 200px;
+			background: white;
+			border-radius: 100px;
+			display: inline-block;
+			margin-top: 60px;
+		}
+
 	</style>
 </head>
 <body>
 	<div class='screen'>
-		<div class='body'>
-		<h1>Control the Controllables</h1>
-		<h2>Find all the things he can control</h2>
+		<div class='bg'></div>
+		<header>Keeping your Cool</header>
+		<div class='page'>
+			<div class='stickers'>
+				<div class='sticker orange'>Gotta psych myself up for this!</div>
+				<div class='sticker blue'>Everyone is watching.</div>
+				<div class='sticker orange'>What will everyone think of this!?</div>
+				<div class='sticker blue'>Look at this dickhead.</div>
+			</div>
+			<button class='next'>KEEP YOUR COOL<hr>START DEMO</button>
 		</div>
-		<div class='feedback-positive'></div>
+		<!--
+		<div class='page'>
+			<h1>STOP</h1>
+			<div class='note'>
+				<p><h2>Don't get worked up</h2></p> 
+				<p>When we get fired up or anxious, the emotional and instinctual parts of the brain take over.</p>
+				<p>Because of this we make dumb decisions, we get distracted, and we focus on irrelevant things.</p>
+			</div>
+			<div class='stickers'>
+				<div class='sticker'><div class='swipe'></div>Gotta psych myself up for this!</div>
+				<div class='sticker'>Everyone is watching.</div>
+				<div class='sticker'>What will everyone think of this!?</div>
+				<div class='sticker'>Look at this dickhead.</div>
+			</div>
+		</div>-->
+		<div class='page'>
+			<h1>KEEP YOUR COOL</h1>
+			<div class="breather">
+				<h2>A simple breathing exercise</h2>
+				<div class='lung'></div>
+				<div class='pie'></div>
+			</div>
+			<button class='next'>START</button>
+		</div>
+		<div class='page'>
+			<h1>KEEP YOUR COOL</h1>
+
+			<div class="breather enabled">
+				<h2></h2>
+				<div class='lung'></div>
+				<div class='pie'></div>
+			</div>
+		</div>
+	</div>
+	<div class='screen controllables'>
+		<div class='bg ref'></div>
+		<header>Control the Controllables</header>
+		<div class='page intro'>
+			<div class='stickers'>
+				<div class='sticker orange'>Get your eyes tested, mate</div>
+				<div class='sticker blue'>Shit weather for rugby!</div>
+				<div class='sticker orange'>The coach is on my back</div>
+			</div>
+			<button class='next'>CONTROL THE CONTROLLABLES<hr>START DEMO</button>
+
+		</div>
+		<div class='page intro'>
+			<h1>STOP</h1>
+			<div class='note'>
+				<h2>Don't get hung up on things you can’t control.</h2>
+				<p>Blaming others will get you nowhere.</p>
+				<p>Blaming the weather won’t help, either.</p>
+				<p>Stop thinking everything is against you.</p>
+			</div>
+			
+			<div class='stickers'>
+				<div class='sticker orange'><div class='swipe'></div>Get your eyes tested, mate</div>
+				<div class='sticker blue'>Shit weather for rugby!</div>
+				<div class='sticker orange'>The coach is on my back</div>
+			</div>
+		</div>
+		<div class='page segue'>
+			<h1>CONTROL THE CONTROLLABLES</h1>
+			<div class='icon' style='background-image:url(./control.svg)'></div>
+			<button class='next'>GIVE IT A GO</button>
+		</div>
+		<div class='page reflect'>
+			<div class='body'>
+			<h1>Control the Controllables</h1>
+			<h2>Select 3 things he CAN control.</h2>
+			
+			</div>
+			<div class='feedback-positive'></div>
+		</div>
+		<div class='page outro'>
+			<h1>STOP</h1>
+			<div class='note'>
+				<p>Blaming others will get you nowhere.</p>
+				<p>Blaming the weather won’t help, either.</p>
+				<p>Stop thinking everything is against you.</p>
+				<p>Stop getting hung up on things you can’t control.</p>
+		</div>
+			<h1>CONROL THE CONTROLLABLES</h1>
+		</div>
 	</div>
 </body>
 </html>
