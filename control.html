@@ -111,7 +111,7 @@
 					$('.tile').removeClass('selected');
 
 					if(!inFocusTask && $('.correct').length == 3) doFocusTask();
-					else if(inFocusTask &&  $('.correct').length == 1) doFinale();
+					else if(inFocusTask &&  $('.correct').length == 1) doFinale($screen);
 				})
 			}
 
@@ -132,7 +132,7 @@
 				filterAndShrink();
 				
 
-				$('h2').html('Select the FIRST thing he can control').css({opacity:0}).delay(1000).animate({opacity:1});
+				$('.controllables .instruction').html('Select the FIRST thing he can control').css({opacity:0}).delay(1000).animate({opacity:1});
 
 
 				setTimeout(function(){
@@ -141,7 +141,7 @@
 			}
 
 			function doFinale(){
-				$('.controllables h2').css({opacity:0}).html("This is a great place to start").delay(1000).animate({opacity:1});
+				$('.controllables .instruction').css({opacity:0}).html("This is a great place to start").delay(1000).animate({opacity:1});
 				filterAndShrink();
 
 				setTimeout(function(){
@@ -177,6 +177,9 @@
 				$p.find('.swipe').delay(500).animate({opacity:1,left:100}).animate({opacity:0},100).animate({left:0}).animate({opacity:1}).animate({opacity:1,left:100}).animate({opacity:0},100)
 
 				if($p.find('.breather.enabled').length){
+
+					$p.find('button').hide();
+
 					var $b = $p.find('.breather');
 					var $l = $b.find('.lung');
 					var $h = $b.find('h2');
@@ -192,7 +195,9 @@
 						reps--;
 
 						var next = (reps>0)?doOneBreath:finalise;
-						var messageKickOff = (reps==1)?messageOneMoreTime:messageIn;
+						var messageKickOff = messageIn;
+						if(reps==1) messageKickOff = messageAgain;
+						if(reps==0) messageKickOff = messageOneMoreTime;
 
 						$l.animate({width:'100%',height:'100%'},{duration:5000,start:messageKickOff})
 						.animate({width:'100%'},{duration:2000,start:messageHold})
@@ -225,65 +230,25 @@
 						message("");
 					}
 
+					function messageAgain(){
+						message("Breath in again");
+					}
+
 					function messageOneMoreTime(){
 						message("One more time");
 					}
 
 					function finalise(){
 						message("That's it!");
+						$p.find('button').show();
+
 					}
-
-					/*var timeStart = new Date().getTime();
-
-					setInterval(function(){
-						var timeNow = new Date().getTime();
-						var elapsed = timeNow-timeStart;
-
-						elapsed = elapsed%17000;
-
-						var seconds = Math.floor(elapsed/1000);
-
-						if(seconds<5){
-							$b.find('p').text('Pay attention to your breathing');
-							var p = elapsed/5000;
-							piePaint(p);
-
-							p = 1-p;
-
-
-							$b.find('.lung').css({width:p*100+'%',height:p*100+'%'});
-
-						} else if(seconds<10){
-							$b.find('p').text('Breathe in for 5 seconds');
-							var p = (elapsed-5000)/5000;
-							piePaint(p);
-							//$b.find('h1').text(seconds-5);
-							var ms = elapsed-5000;
-							//$b.css({transform:'scale('+(1+0.5*(ms/5000))+')'});
-							$b.find('.lung').css({width:p*100+'%',height:p*100+'%'});
-						} else if(seconds<12){
-							var p = (elapsed-10000)/2000;
-							piePaint(p);
-							$b.find('p').text('HOLD for 2 seconds');
-							$b.find('.lung').css({width:'100%',height:'100%'});
-							//$b.find('h1').text(seconds-10);
-						} else if(seconds<17){
-							var p = (elapsed-12000)/5000;
-							piePaint(p);
-							$b.find('p').text('Breathe out for 5 seconds');
-							//$b.find('h1').text(seconds-12);
-							var ms = elapsed-12000;
-							var inverse = 5000-ms;
-							p = 1-p;
-							//$b.css({transform:'scale('+(1+0.5*(inverse/5000))+')'});
-							$b.find('.lung').css({width:p*100+'%',height:p*100+'%'});
-						} 
-					},100);*/
 				}
 			}
 
 			$('.screen').eq(0).find('.page').eq(0).show();
 			$('.screen').eq(1).find('.page').eq(0).show();
+			$('.screen').eq(2).find('.page').eq(0).show();
 
 			function checkIfLast(t){
 
@@ -620,7 +585,7 @@
 			width: 200px;
 			height: 200px;
 			background: rgba(255,255,255,0.4);
-			margin: 60px auto;
+			margin: auto;
 			
 			
 			box-sizing: border-box;
@@ -743,44 +708,198 @@
 			margin-top: 60px;
 		}
 
+		.breather-prompt{
+			display: inline-block;
+			width: 100px;
+			font-size: 13px;
+		}
+
+		.bpi{
+			width: 100px;
+			height: 100px;
+			background: rgba(255,255,255,0.2);
+			border-radius: 50px;
+			margin-bottom: 10px;
+			position: relative;
+		}
+
+		.bpi:after,.bpi:before{
+			content: "";
+			width: 100px;
+			height: 100px;
+			background: white;
+			display: block;
+			border-radius: 50px;
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			right: 0px;
+			bottom: 0px;
+			margin: auto;
+			opacity: 0.5;
+		}
+
+		.bpi.in:before{
+			width: 60px;
+			height: 60px;
+		}
+
+		.bpi.in:after{
+			width: 70px;
+			height: 70px;
+		}
+
+		.bpi.out:before{
+			width: 20px;
+			height: 20px;
+		}
+
+		.bpi.out:after{
+			width: 30px;
+			height: 30px;
+		}
+
+
+
+		.panel{
+			margin: 10px;
+			
+			height: 400px;
+
+			color: black;
+			
+
+			transition: transform 0.8s;
+  			transform-style: preserve-3d;
+
+  			transform: rotateY(0deg);
+ 			
+		}
+
+		.panel-front, .panel-back{
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			top: 0px;
+			left: 0px;
+			-webkit-backface-visibility: hidden; /* Safari */
+			backface-visibility: hidden;
+
+			background: white;
+			border: 2px solid white;
+			border-radius: 10px;
+			box-shadow: inset 0px 80px blue;
+
+			
+
+		}
+
+		.panel-back{
+			background-color: dodgerblue;
+		  transform: rotateY(180deg);
+		}
+
+		.panel:hover{
+			transform: rotateY(180deg);
+
+		}
+
+		.yesno{
+			width: 50px;
+			height: 50px;
+			border-radius:25px;
+			line-height: 50px;
+			display: inline-block;
+			font-size: 40px;
+			box-sizing: border-box;
+			padding: 0px;
+
+
+		}
+
+		.copy{
+			text-align: left;
+			width:80%;
+			margin:10px 10%;
+
+		}
+
+
+
 	</style>
 </head>
 <body>
-	<div class='screen'>
-		<div class='bg'></div>
-		<header>Keeping your Cool</header>
+	<div class="screen myt">
+		<div class="bg" style="background-image:url(./bg-mud.jpg)"></div>
 		<div class='page'>
 			<div class='stickers'>
-				<div class='sticker orange'>Gotta psych myself up for this!</div>
-				<div class='sticker blue'>Everyone is watching.</div>
+				<div class='sticker orange'>I'm so pathetic</div>
+				<div class='sticker blue'>I've let the team down</div>
+				<div class='sticker orange'>I want to hide</div>
+			</div>
+			<button class='next'>MANAGE YOUR SELF-TALK<hr>START DEMO</button>
+		</div>
+		<div class='page'>
+			<h1>MANAGE YOUR SELF-TALK</h1>
+			<div class='panel'>
+				<div class='panel-front'>
+					<div class='sticker blue'>I've let the team down</div>
+					<br><br>
+					<p>What would you say to a teammate?</p>
+					<button class='yesno'>×</button>
+					<button class='yesno'>✓</button>
+				</div>
+				<div class='panel-back'>
+					<div class='sticker blue'>I've let the team down</div>
+					<br><br>
+					<p>What would you say to a teammate?</p>
+					<button class='yesno'>×</button>
+					<button class='yesno'>✓</button>
+				</div>
+			</div>
+			
+
+		</div>
+	</div>
+	<div class='screen'>
+		<div class='bg'></div>
+		<div class='page'>
+			<div class='stickers'>
+				<div class='sticker blue'>Gotta psych myself up for this!</div>
 				<div class='sticker orange'>What will everyone think of this!?</div>
-				<div class='sticker blue'>Look at this dickhead.</div>
+				<div class='sticker blue'>I'm such a dickhead.</div>
 			</div>
 			<button class='next'>KEEP YOUR COOL<hr>START DEMO</button>
 		</div>
-		<!--
+		
 		<div class='page'>
 			<h1>STOP</h1>
-			<div class='note'>
-				<p><h2>Don't get worked up</h2></p> 
-				<p>When we get fired up or anxious, the emotional and instinctual parts of the brain take over.</p>
-				<p>Because of this we make dumb decisions, we get distracted, and we focus on irrelevant things.</p>
-			</div>
+			
+			<h2>Don’t let the pressure get to you.</h2>
+			
 			<div class='stickers'>
-				<div class='sticker'><div class='swipe'></div>Gotta psych myself up for this!</div>
-				<div class='sticker'>Everyone is watching.</div>
-				<div class='sticker'>What will everyone think of this!?</div>
-				<div class='sticker'>Look at this dickhead.</div>
+				<div class='sticker blue'><div class='swipe'></div>Gotta psych myself up for this!</div>
+				<div class='sticker orange'>What will everyone think of this!?</div>
+				<div class='sticker blue'>I'm such a dickhead.</div>
 			</div>
-		</div>-->
+		</div>
 		<div class='page'>
 			<h1>KEEP YOUR COOL</h1>
 			<div class="breather">
-				<h2>A simple breathing exercise</h2>
 				<div class='lung'></div>
 				<div class='pie'></div>
 			</div>
 			<button class='next'>START</button>
+		</div>
+		<div class='page'>
+			<h1>KEEP YOUR COOL</h1>
+			<div class="breather">
+				<div class='lung'></div>
+				<div class='pie'></div>
+			</div>
+			<h2>We're going to do a simple<br>breathing exercise.</h2>
+			<p class='copy'>Effective breathing is a quick hack to calm our body in tense moments. Find a quiet place and take a few moments to complete this exercise. It will take less than a minute.</p>
+			<button class='next'>OK, I'M READY.</button>
 		</div>
 		<div class='page'>
 			<h1>KEEP YOUR COOL</h1>
@@ -790,11 +909,24 @@
 				<div class='lung'></div>
 				<div class='pie'></div>
 			</div>
+			<br><br>
+			<button>once more ↺</button>
+			<button class="next">CARRY ON</button>
+		</div>
+		
+		<div class="page">
+			<h2>REMEMBER</h2>
+			<h1>KEEP YOUR COOL</h1>
+			<p class="copy">It’s easy to get fired up, or anxious in high-pressure moments. But pausing for a moment to take a few breaths can help keep us cool, calm, and in control.</p>
+			<div class="breather-prompt"><div class='bpi in'></div><p>In for<br>5 seconds</p></div>
+			<div class="breather-prompt"><div class='bpi hold'></div><p>Hold for<br>2 seconds</p></div>
+			<div class="breather-prompt"><div class='bpi out'></div><p>Out for<br>5 seconds</p></div>
+			<h2>Repeat, whenever you need it.</h2>
+			<button>COOL, THANKS!</button>
 		</div>
 	</div>
 	<div class='screen controllables'>
 		<div class='bg ref'></div>
-		<header>Control the Controllables</header>
 		<div class='page intro'>
 			<div class='stickers'>
 				<div class='sticker orange'>Get your eyes tested, mate</div>
@@ -806,12 +938,7 @@
 		</div>
 		<div class='page intro'>
 			<h1>STOP</h1>
-			<div class='note'>
-				<h2>Don't get hung up on things you can’t control.</h2>
-				<p>Blaming others will get you nowhere.</p>
-				<p>Blaming the weather won’t help, either.</p>
-				<p>Stop thinking everything is against you.</p>
-			</div>
+			<h2>Don't get hung up on things you can’t control.</h2>
 			
 			<div class='stickers'>
 				<div class='sticker orange'><div class='swipe'></div>Get your eyes tested, mate</div>
@@ -827,20 +954,16 @@
 		<div class='page reflect'>
 			<div class='body'>
 			<h1>Control the Controllables</h1>
-			<h2>Select 3 things he CAN control.</h2>
-			
+			<h2 class='instruction'>Select 3 things he CAN control.</h2>
 			</div>
 			<div class='feedback-positive'></div>
 		</div>
 		<div class='page outro'>
-			<h1>STOP</h1>
-			<div class='note'>
-				<p>Blaming others will get you nowhere.</p>
-				<p>Blaming the weather won’t help, either.</p>
-				<p>Stop thinking everything is against you.</p>
-				<p>Stop getting hung up on things you can’t control.</p>
-		</div>
-			<h1>CONROL THE CONTROLLABLES</h1>
+			<h2>REMEMBER</h2>
+			<h1>CONTROL THE CONTROLLABLES</h1>
+			
+			<p class='copy'>It’s easy to get lost in the things you can’t control. But this can only lead to frustration. By concentrating on the things we can control, we are more likely to have a positive impact on our experience.</p>
+			<button class='next'>GREAT, THANKS!</button>
 		</div>
 	</div>
 </body>
