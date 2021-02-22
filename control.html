@@ -176,6 +176,24 @@
 
 				$p.find('.swipe').delay(500).animate({opacity:1,left:100}).animate({opacity:0},100).animate({left:0}).animate({opacity:1}).animate({opacity:1,left:100}).animate({opacity:0},100)
 
+				if($p.hasClass('self-talk')){
+					doNextHangup();
+				}
+
+				if($p.find('.breather:not(.enabled)').length){
+
+					console.log('throb');
+					var $b = $p.find('.breather');
+					var $l = $b.find('.lung');
+
+					function throb(){
+						$l.animate({width:'70%',height:'70%'},{duration:2000})
+						.animate({width:'90%',height:'90%'},{duration:2000,complete:throb})
+					}
+
+					throb();
+				}
+
 				if($p.find('.breather.enabled').length){
 
 					$p.find('button').hide();
@@ -187,10 +205,13 @@
 
 					message('Get Ready...');
 
-					$l.delay(2000)
-					.animate({width:'10%',height:'10%'},{duration:5000,start:messagePrepare})
+					$l.animate({width:'70%',height:'70%'},{duration:2000})
+					.animate({width:'90%',height:'90%'},{duration:2000})
+					.animate({width:'10%',height:'10%'},{duration:3000,start:messageIntroOut})
 					.animate({width:'10%'},{duration:200,complete:doOneBreath});
 					
+
+
 					function doOneBreath(){
 						reps--;
 
@@ -208,6 +229,10 @@
 					function message(m){
 						$h.find('p').animate({opacity:0,top:-30},500,function(){ $(this).remove(); });
 						$('<p>').appendTo($h).css({opacity:0,top:30}).animate({opacity:1,top:0},500).html(m);
+					}
+
+					function messageIntroOut(){
+						message("Breathe out");
 					}
 
 					function messagePrepare(){
@@ -256,6 +281,60 @@
 					next(t);
 				}
 			}
+
+			var HANGUPS = [
+				{
+					front:"I feel so stupid.",
+					back:"Tough break out there.<br>It'll be okay.",
+					feedback:"<b>Positive messages</b> can help us move on from our mistakes, rather than making them seem worse than they are.",
+				},
+				{
+					front:"I'm not good enough.",
+					back:"You'll get there if you keep your training up.",
+					feedback:"<b>Instructional messages</b> can spawn us to take action, rather than getting bogged down in our mistakes.",
+				},
+				{
+					front:"I'll never live this down.",
+					back:"Keep going mate.<br>You've got this.",
+					feedback:"<b>Motivational messages</b> can help maintain our confidence so we don't make further mistakes."
+				},
+			]
+
+			var iHangup = -1;
+			function doNextHangup(){
+				iHangup++;
+				$('.panel:not(.discarded) .panel-front h3').html(HANGUPS[iHangup].front);
+				$('.panel:not(.discarded) .panel-back h3').html(HANGUPS[iHangup].back);
+				$('.panel:not(.discarded) .panel-back p').html(HANGUPS[iHangup].feedback);
+
+				$('.panel:not(.discarded)').removeClass('flip').css({left:'-500px'}).delay(1500).animate({left:0},600);
+				$('.self-talk h2').eq(0).delay(500).animate({opacity:1});
+				$('.self-talk h2').eq(1).delay(3000).animate({opacity:1});
+				$('.self-talk button').text('FLIP IT').css({opacity:0}).delay(5000).animate({opacity:1});
+			}
+
+			$('.self-talk h2').css({opacity:0})
+
+			
+
+			$('.flipit').click(function(e){
+
+				$('.panel.discarded').remove();
+
+				if( $('.panel').hasClass('flip') ){
+					var $discard = $('.panel').clone().css({position:'absolute'}).appendTo('.self-talk').width($('.panel').width()).offset($('.panel').offset()).addClass('discarded');
+					
+					
+
+					doNextHangup();
+					
+					
+				} else {
+					$('.panel').addClass('flip');
+					$('.self-talk h2').animate({opacity:0.2});
+					$('.self-talk button').text('NEXT >');
+				}
+			})
 			
 
 			$('.sticker').mousedown(function(){
@@ -572,13 +651,13 @@
 		}
 
 		.sticker.blue{
-			transform: rotate(2deg);
+			/*transform: rotate(2deg);*/
 			color: blue;
 			border-color: blue;
 		}
 
 		.sticker.orange{
-			transform: rotate(-2deg);
+			/*transform: rotate(-2deg);*/
 		}
 
 		.breather{
@@ -617,7 +696,7 @@
 			background: white;
 			border-radius: 100px;
 			vertical-align: middle;
-			background-image: url('./lungs.svg');
+			
 			background-size: 50%;
 			background-position: center;
 			background-repeat: no-repeat;
@@ -764,16 +843,20 @@
 		.panel{
 			margin: 10px;
 			
-			height: 400px;
+			height: 300px;
 
 			color: black;
 			
-
-			transition: transform 0.8s;
   			transform-style: preserve-3d;
 
   			transform: rotateY(0deg);
- 			
+  			position: relative;
+		}
+
+		
+
+		.panel h2{
+			color: black;
 		}
 
 		.panel-front, .panel-back{
@@ -788,20 +871,24 @@
 			background: white;
 			border: 2px solid white;
 			border-radius: 10px;
-			box-shadow: inset 0px 80px blue;
-
-			
-
+			transform: rotate(0deg);
+			background-size: 110%;
+			background-position: center;
 		}
 
 		.panel-back{
 			background-color: dodgerblue;
-		  transform: rotateY(180deg);
+		  	transform: rotateY(180deg);
 		}
 
-		.panel:hover{
+		.panel.flip{
 			transform: rotateY(180deg);
+			transition: all 0.8s;
 
+		}
+
+		.panel.discarded{
+			transform: rotateY(180deg) translateX(-500px) rotateZ(-20deg);
 		}
 
 		.yesno{
@@ -824,7 +911,33 @@
 
 		}
 
+		.panel-bg{
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			right: 0px;
+			bottom: 0px;
+		}
+		
+		.panel-content{
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			top: 0px;
+			left: 0px;
+			background: linear-gradient( to bottom, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+		}
 
+
+		.panel-content h3{
+			font-family: serif;
+			font-style: italic;
+			font-size: 30px;
+		}
+
+		.panel-content h3:before, .panel-content h3:after{
+			content: '"';
+		}
 
 	</style>
 </head>
@@ -839,24 +952,29 @@
 			</div>
 			<button class='next'>MANAGE YOUR SELF-TALK<hr>START DEMO</button>
 		</div>
-		<div class='page'>
+		<div class='page self-talk' style='perspective: 600px;'>
 			<h1>MANAGE YOUR SELF-TALK</h1>
+			<h2>We might say to ourselves:</h2>
 			<div class='panel'>
-				<div class='panel-front'>
-					<div class='sticker blue'>I've let the team down</div>
-					<br><br>
-					<p>What would you say to a teammate?</p>
-					<button class='yesno'>×</button>
-					<button class='yesno'>✓</button>
+				<div class='panel-front' style='background-image:url(./self-talk-negative.jpg)'>
+					
+					<div class='panel-content'>
+						
+						<h3></h3>
+	
+						
+					</div>
 				</div>
-				<div class='panel-back'>
-					<div class='sticker blue'>I've let the team down</div>
-					<br><br>
-					<p>What would you say to a teammate?</p>
-					<button class='yesno'>×</button>
-					<button class='yesno'>✓</button>
+				<div class='panel-back' style='background-image:url(./self-talk-positive.png)'>
+					
+					<div class='panel-content'>
+						<h3></h3>
+						<p class='copy'></p>
+					</div>
 				</div>
 			</div>
+			<h2>What would you say to a teammate?</h2>
+			<button class='flipit'>FLIP IT</button>
 			
 
 		</div>
@@ -885,10 +1003,7 @@
 		</div>
 		<div class='page'>
 			<h1>KEEP YOUR COOL</h1>
-			<div class="breather">
-				<div class='lung'></div>
-				<div class='pie'></div>
-			</div>
+			<div class='icon' style='background-size:70%;background-repeat:no-repeat;background-position:center;background-image:url(./lungs.svg)'></div>
 			<button class='next'>START</button>
 		</div>
 		<div class='page'>
@@ -897,8 +1012,8 @@
 				<div class='lung'></div>
 				<div class='pie'></div>
 			</div>
-			<h2>We're going to do a simple<br>breathing exercise.</h2>
-			<p class='copy'>Effective breathing is a quick hack to calm our body in tense moments. Find a quiet place and take a few moments to complete this exercise. It will take less than a minute.</p>
+			<h2>Pay attention to your breathing.</h2>
+			<p class='copy'>Controlled breathing is a quick hack to calm our body in tense moments. Find a quiet place and take a few moments to complete this exercise. It will take less than a minute.</p>
 			<button class='next'>OK, I'M READY.</button>
 		</div>
 		<div class='page'>
