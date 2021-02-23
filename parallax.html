@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Parallax</title>
+	<script type="text/javascript" src='./jquery-3.4.1.min.js'></script>
+	<script type="text/javascript">
+		$(function(){
+			$('.screen').scroll(function(){
+				var left = $(this).scrollLeft();
+
+				$('.parallax').css({left:left/2});
+			})
+		})
+	</script>
+	<style type="text/css">
+		.screen{
+			width: 400px;
+			height: 600px;
+			border: 1px solid black;
+			
+			position: absolute;
+			overflow-x: scroll;
+
+			top: 0px;
+			left: 0px;
+			right: 0px;
+			bottom: 0px;
+			margin: auto;
+		}
+
+		.scroller{
+			white-space: nowrap;
+			position: absolute;
+			top: 0px;
+			left: 0px;
+		}
+
+		.parallax{
+			white-space: nowrap;
+			position: absolute;
+			bottom: 0px;
+			left: 0px;
+		}
+
+
+		.page{
+			text-align: center;
+			font-size: 50px;
+			padding: 20px;
+			box-sizing: border-box;
+			border: 1px solid blue;
+
+		}
+
+		.scroller .page{
+			width: 400px;
+			height: 600px;
+			display: inline-block;
+		}
+
+		.parallax{
+			padding-left: 100px;
+		}
+
+
+
+		.parallax .page{
+			width: 100px;
+			margin: 50px;
+			height: 100px;
+			display: inline-block;
+			font-size: 20px;
+		}
+	</style>
+</head>
+<body>
+	<div class='screen'>
+		<div class="scroller">
+			<div class="page">Chapter 1</div><div class="page">Chapter 2</div><div class="page">Chapter 3</div><div class="page">Chapter 4</div>
+		</div>
+		<div class="parallax">
+			<div class="page">Tool 1</div><div class="page">Tool 2</div><div class="page">Tool 3</div><div class="page">Tool 4</div>
+		</div>
+	</div>
+</body>
+</html>
