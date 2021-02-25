@@ -178,8 +178,10 @@
 
 				$p.find('.swipe').delay(500).animate({opacity:1,left:100}).animate({opacity:0},100).animate({left:0}).animate({opacity:1}).animate({opacity:1,left:100}).animate({opacity:0},100)
 
-				if($p.hasClass('self-talk')){
-					doNextHangup();
+				console.log($p,$p.hasClass('cyt-quiz'));
+
+				if($p.hasClass('cyt-quiz')){
+					makeCYT($p);
 				}
 
 				if($p.find('.breather:not(.enabled)').length){
@@ -194,6 +196,10 @@
 					}
 
 					throb();
+				}
+
+				if($p.hasClass('cyt-quiz').length){
+					makeCYT($p);
 				}
 
 				if($p.find('.breather.enabled').length){
@@ -411,7 +417,7 @@
 				},complete:function(){$(t).css({opacity:0}).addClass('unstuck');checkIfLast(t);}})*/
 			})
 
-			$('.cyt-quiz').each(function(){
+			function makeCYT($cyt){
 
 				var CYT = [
 					{
@@ -422,8 +428,8 @@
 							"You made a mistake. But it'll be okay."
 						],
 						f:[
-							"I think he already feels bad.",
-							"Wow. That's just mean.",
+							"<img src='./icon-sad-chat.png'> I think he already feels bad.",
+							"<img src='./icon-sad-chat.png'> Wow. That's just mean.",
 							"<img src='./icon-positive.png'> Good choice. This is a great example of <b>positive talk</b>.",
 						],
 					},
@@ -435,8 +441,8 @@
 							"You'll get there. Just got to keep training.",
 						],
 						f:[
-							"Good one. But not very helpful.",
-							"Rude, man. Just rude.",
+							"<img src='./icon-sad-chat.png'> Good one. But not very helpful.",
+							"<img src='./icon-sad-chat.png'> Rude, man. Just rude.",
 							"<img src='./icon-idea.png'> Good choice. This is a great example of <b>instructive talk</b>."
 						]
 					},
@@ -448,8 +454,8 @@
 							"Keep going mate. You've got this."
 						],
 						f:[
-							"Ouch! This guy needs some love.",
-							"You're a bully. Not cool.",
+							"<img src='./icon-sad-chat.png'> Ouch! This guy needs some love.",
+							"<img src='./icon-sad-chat.png'> You're a bully. Not cool.",
 							"<img src='./icon-fist.png'> Good choice. This is a great example of <b>motivational talk</b>."
 						]
 					},
@@ -461,8 +467,8 @@
 							"I made a mistake. But it'll be okay.",
 						],
 						f:[
-							"It's easy to think this way. But maybe you can turn it around.",
-							"It's easy to think this way. But maybe you can turn it around.",
+							"<img src='./icon-sad-thought.png'> It's easy to think this way. But maybe you can turn it around.",
+							"<img src='./icon-sad-thought.png'> It's easy to think this way. But maybe you can turn it around.",
 							"<img src='./icon-positive.png'> Good Choice. Choosing <b>positive thoughts</b> can help us move on from our mistakes, rather than making them seem worse than they are.",
 						]
 					},
@@ -475,8 +481,8 @@
 							"I'll get there. Just got to keep training.",
 						],
 						f:[
-							"That's not going to help. Maybe you can find a way to turn this around.",
-							"You make it sound so hopeless. Maybe you can be a little more proactive.",
+							"<img src='./icon-sad-thought.png'> That's not going to help. Maybe you can find a way to turn this around.",
+							"<img src='./icon-sad-thought.png'> You make it sound so hopeless. Maybe you can be a little more proactive.",
 							"<img src='./icon-idea.png'> Good choice. Choosing <b>instructive thoughts</b> will spawn us to take action, rather than getting bogged down in our mistakes.",
 						]
 					},
@@ -488,20 +494,20 @@
 							"I’ve got keep going. I’ve got this."
 						],
 						f:[
-							"It's easy to think this way. But maybe you can try and motivate yourself.",
-							"That's some low thoughts. Maybe you can try and motivate yourself.",
+							"<img src='./icon-sad-thought.png'> It's easy to think this way. But maybe you can try and motivate yourself.",
+							"<img src='./icon-sad-thought.png'> That's some low thoughts. Maybe you can try and motivate yourself.",
 							"<img src='./icon-fist.png'> Good choice. Choosing <b>motivational thoughts</b> can help you maintain confidence when we're down."
 						]
 
 					}
 				]
 
-				var self = this;
-				var $question = $(this).find('h2');
-				var $card = $(this).find('.cyt-card');
-				var $li = $(this).find('li');
-				var $feedback = $(this).find('.cyt-feedback');
-				var $button = $(this).find('button');
+				var $self = $cyt;
+				var $question = $self.find('h2');
+				var $card = $self.find('.cyt-card');
+				var $li = $self.find('li');
+				var $feedback = $self.find('.cyt-feedback');
+				var $button = $self.find('button');
 				var iQuestion = -1;
 				var isCorrect;
 				var q;
@@ -531,7 +537,7 @@
 
 					if(isCorrect){
 
-						var $clone = $card.clone().css({position:'absolute'}).appendTo(self).offset($card.offset());
+						var $clone = $card.clone().css({position:'absolute'}).appendTo($self).offset($card.offset());
 						$clone.animate({left:500});
 
 
@@ -578,7 +584,7 @@
 
 				nextQuestion();
 
-			});
+			};
 
 		})
 	</script>
@@ -886,6 +892,7 @@
 			display: inline-block;
 			margin: 15px;
 			background: white; 
+			position: relative;
 		}
 
 		p{
@@ -905,6 +912,7 @@
 			position: absolute;
 			bottom: 50px;
 			left: 0px;
+			width: 100%;
 		}
 
 		.sticker.blue{
@@ -1288,6 +1296,28 @@
 	</div-->
 	<div class="screen choose-your-thoughts">
 		<div class="bg" style="background-image:url(./bg-mud.jpg)"></div>
+		<div class="page">
+			<button class='next'>CHOOSE YOUR THOUGHTS<hr>START DEMO</button>
+			<div class='stickers'>
+				<div class='sticker blue'>I'm hopeless!</div><br>
+				<div class='sticker orange'>This is pointless.</div><br>
+				<div class='sticker blue'>I should quit.</div>
+			</div>
+		</div>
+		<div class="page">
+			<h1>STOP</h1>
+			<h2>Don’t beat yourself up<br>with negative thoughts.</h2>
+			<div class='stickers'>
+				<div class='sticker blue'><div class='swipe'></div>I'm hopeless!</div><br>
+				<div class='sticker orange'>This is pointless.</div><br>
+				<div class='sticker blue'>I should quit.</div>
+			</div>
+		</div>
+		<div class="page">
+			<h1>CHOOSE YOUR THOUGHTS</h1>
+			<div class='icon' style='background-size:70%;background-repeat:no-repeat;background-position:center;background-image:url(./icon-choose-your-thoughts.svg)'></div>
+			<button class='next'>START</button>
+		</div>
 		<div class='page cyt-quiz'>
 			<h1>CHOOSE YOUR THOUGHTS</h1>
 			<div class='cyt-card'></div>
