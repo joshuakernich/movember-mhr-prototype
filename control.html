@@ -169,6 +169,8 @@
 
 				if(a.target) a = this;
 
+				console.log('here',a)
+
 				var $s = $(a).closest('.screen');
 				var iPage = $s.find('.page').index($(a).closest('.page'));
 				var $p = $s.find('.page').hide().eq(iPage+1).show();
@@ -284,38 +286,70 @@
 
 			var HANGUPS = [
 				{
-					front:"I feel so stupid.",
-					back:"Tough break out there.<br>It'll be okay.",
-					feedback:"<b>Positive messages</b> can help us move on from our mistakes, rather than making them seem worse than they are.",
+					front:"I really screwed up.<br>This is a disaster.",
+					options:[
+						"You're right. You're useless.",
+						"You'll get over it.",
+						"You made a mistake.<br>But it'll be okay."
+					],
+					back:"You made a mistake.<br>But it'll be okay.",
+					feedback:"<h1>BE POSITIVE</h1><p>Staying positive can help us move on from our mistakes, rather than making them seem worse than they are.</p>",
 				},
 				{
-					front:"I'm not good enough.",
-					back:"You'll get there if you keep your training up.",
-					feedback:"<b>Instructional messages</b> can spawn us to take action, rather than getting bogged down in our mistakes.",
+					front:"It's hopeless.<br>I'm letting the team down.",
+					back:"You'll get there.<br>Just got to keep training.",
+					feedback:"<h1>BE INSTRUCTIONAL</h1><p>Thinking about what we CAN do will spawn us to take action, rather than getting bogged down in our mistakes.</p>",
 				},
 				{
-					front:"I'll never live this down.",
+					front:"I should give up.<br>I'm useless.",
 					back:"Keep going mate.<br>You've got this.",
-					feedback:"<b>Motivational messages</b> can help maintain our confidence so we don't make further mistakes."
-				},
+					feedback:"<h1>BE MOTIVATIONAL</h1><p>Using motivational language can help you maintain confidence when we're down.</p>"
+				}
 			]
 
 			var iHangup = -1;
 			function doNextHangup(){
 				iHangup++;
+
+
 				$('.panel:not(.discarded) .panel-front h3').html(HANGUPS[iHangup].front);
 				$('.panel:not(.discarded) .panel-back h3').html(HANGUPS[iHangup].back);
-				$('.panel:not(.discarded) .panel-back p').html(HANGUPS[iHangup].feedback);
+				$('.self-talk .copy').html(HANGUPS[iHangup].feedback).hide();
 
 				$('.panel:not(.discarded)').removeClass('flip').css({left:'-500px'}).delay(1500).animate({left:0},600);
-				$('.self-talk h2').eq(0).delay(500).animate({opacity:1});
+				$('.self-talk h2').css({height:'auto'});
+				//$('.self-talk h2').eq(0).delay(500).animate({opacity:1});
 				$('.self-talk h2').eq(1).delay(3000).animate({opacity:1});
 				$('.self-talk button').text('FLIP IT').css({opacity:0}).delay(5000).animate({opacity:1});
 			}
 
 			$('.self-talk h2').css({opacity:0})
 
-			
+			function bringTheCardsBack(){
+
+				$('.flipit').off('click');
+
+				iHangup = -1;
+
+				
+				doNextRevision();
+				$('.flipit').click(doNextRevision);
+				//$('.self-talk .copy').show();
+			}
+
+			function doNextRevision(e){
+
+				if(HANGUPS[iHangup+1]){
+					doNextHangup();
+
+					$('.panel:not(.discarded)').show().stop().addClass('flip').animate({left:0});
+					$('.self-talk .copy').show().animate({opacity:1});
+					$('.self-talk h2').hide();
+					$('.self-talk button').stop().text('NEXT >');
+				} else {
+					next(e.target);
+				}
+			}
 
 			$('.flipit').click(function(e){
 
@@ -324,14 +358,19 @@
 				if( $('.panel').hasClass('flip') ){
 					var $discard = $('.panel').clone().css({position:'absolute'}).appendTo('.self-talk').width($('.panel').width()).offset($('.panel').offset()).addClass('discarded');
 					
-					
-
-					doNextHangup();
-					
-					
+					if(HANGUPS[iHangup+1]) doNextHangup();
+					else{
+						$('.panel:not(.discarded)').hide();
+						$('.self-talk button').css({opacity:0});
+						$('.self-talk .copy').css({opacity:0});
+						
+						setTimeout(bringTheCardsBack,800);
+					}
+				
 				} else {
 					$('.panel').addClass('flip');
-					$('.self-talk h2').animate({opacity:0.2});
+					$('.self-talk h2').css({opacity:0});
+					//$('.self-talk .copy').show().css({opacity:0}).delay(1500).animate({opacity:1});
 					$('.self-talk button').text('NEXT >');
 				}
 			})
@@ -372,9 +411,219 @@
 				},complete:function(){$(t).css({opacity:0}).addClass('unstuck');checkIfLast(t);}})*/
 			})
 
+			$('.cyt-quiz').each(function(){
+
+				var CYT = [
+					{
+						q:"What you would you say if this was your <b>teammate</b>?",
+						o:[
+							"Mate, you’ll never get over this.",
+							"You really let every down today.",
+							"You made a mistake. But it'll be okay."
+						],
+						f:[
+							"I think he already feels bad.",
+							"Wow. That's just mean.",
+							"<img src='./icon-positive.png'> Good choice. This is a great example of <b>positive talk</b>.",
+						],
+					},
+					{
+						q:"What you would you say if this was your <b>teammate</b>?",
+						o:[
+							"Give up and go play tennis, I reckon.",
+							"Were you born with two left feet?",
+							"You'll get there. Just got to keep training.",
+						],
+						f:[
+							"Good one. But not very helpful.",
+							"Rude, man. Just rude.",
+							"<img src='./icon-idea.png'> Good choice. This is a great example of <b>instructive talk</b>."
+						]
+					},
+					{
+						q:"What you would you say if this was your <b>teammate</b>?",
+						o:[
+							"Go home, ya dickhead.",
+							"We’d be better off without you.",
+							"Keep going mate. You've got this."
+						],
+						f:[
+							"Ouch! This guy needs some love.",
+							"You're a bully. Not cool.",
+							"<img src='./icon-fist.png'> Good choice. This is a great example of <b>motivational talk</b>."
+						]
+					},
+					{
+						q:"What would you say to <b>yourself</b> in this moment?",
+						o:[
+							"I’ll never get over this.",
+							"I’ve let everyone down today.",
+							"I made a mistake. But it'll be okay.",
+						],
+						f:[
+							"It's easy to think this way. But maybe you can turn it around.",
+							"It's easy to think this way. But maybe you can turn it around.",
+							"<img src='./icon-positive.png'> Good Choice. Choosing <b>positive thoughts</b> can help us move on from our mistakes, rather than making them seem worse than they are.",
+						]
+					},
+					{
+						q:"What would you say to <b>yourself</b> in this moment?",
+						o:[
+
+							"I should give up. I’ll never be great at this.",
+							"I’m just not built for Rugby.",
+							"I'll get there. Just got to keep training.",
+						],
+						f:[
+							"That's not going to help. Maybe you can find a way to turn this around.",
+							"You make it sound so hopeless. Maybe you can be a little more proactive.",
+							"<img src='./icon-idea.png'> Good choice. Choosing <b>instructive thoughts</b> will spawn us to take action, rather than getting bogged down in our mistakes.",
+						]
+					},
+					{
+						q:"What would you say to yourself in this moment?",
+						o:[
+							"I wish I could just go home.",
+							"This team would be better off without me.",
+							"I’ve got keep going. I’ve got this."
+						],
+						f:[
+							"It's easy to think this way. But maybe you can try and motivate yourself.",
+							"That's some low thoughts. Maybe you can try and motivate yourself.",
+							"<img src='./icon-fist.png'> Good choice. Choosing <b>motivational thoughts</b> can help you maintain confidence when we're down."
+						]
+
+					}
+				]
+
+				var self = this;
+				var $question = $(this).find('h2');
+				var $card = $(this).find('.cyt-card');
+				var $li = $(this).find('li');
+				var $feedback = $(this).find('.cyt-feedback');
+				var $button = $(this).find('button');
+				var iQuestion = -1;
+				var isCorrect;
+				var q;
+
+				$li.click(doOption);
+
+				$button.click(doButton);
+
+				function doOption(){
+
+					var o = $(this).offset();
+
+					var i = $li.index(this);
+					$li.hide();
+					$(this).show().offset(o).animate({top:0});
+					$feedback.show().html(q.f[i]).css({opacity:0}).delay(500).animate({opacity:1});
+
+
+					isCorrect = (i==2);
+
+					$button.show().text(isCorrect?"NEXT >":"TRY AGAIN").css({opacity:0}).delay(2000).animate({opacity:1});
+				}
+
+				function doButton(e){
+
+					$button.hide();
+
+					if(isCorrect){
+
+						var $clone = $card.clone().css({position:'absolute'}).appendTo(self).offset($card.offset());
+						$clone.animate({left:500});
+
+
+
+						if(CYT[iQuestion+1]) nextQuestion();
+						else{
+							$card.hide();
+							$li.hide();
+							$button.hide();
+							$feedback.hide();
+							$question.hide();
+
+							setTimeout(function(){next(e.target);},1000);
+						}
+					} else{
+						$feedback.hide();
+						$li.show();
+					}
+				}
+
+				function nextQuestion(){
+
+					iQuestion++;
+
+
+					$li.show();
+					$feedback.hide();
+					$button.hide();
+
+					q = CYT[iQuestion];
+
+					$question.html(q.q).css({opacity:0}).delay(800).animate({opacity:1});
+					$question.find('b').delay(1200).css({position:'relative'})
+					.animate({top:-2},200).animate({top:2},200)
+					.animate({top:-2},200).animate({top:2},200)
+					.animate({top:0},200);
+					$card.css({left:-500}).animate({left:0});
+
+					for(var i in CYT[iQuestion].o){
+						$li.eq(i).html(CYT[iQuestion].o[i]).css({opacity:0}).delay(2500+i*100).animate({opacity:1});
+					}
+
+				}
+
+				nextQuestion();
+
+			});
+
 		})
 	</script>
 	<style type="text/css">
+
+		.cyt-quiz h2{
+			width: 80%;
+			margin: auto;
+		}
+
+		.cyt-quiz ul{
+			padding: 0px;
+		}
+
+		.cyt-quiz li{
+			background: white;
+			border-radius: 5px;
+			list-style-type: none;
+			margin: 5px 50px;
+			color: blue;
+			border: 1px solid blue;
+			display: block;
+			padding: 10px;
+
+		}
+
+		.cyt-quiz li:before, .cyt-quiz li:after{
+			content: '"';
+		}
+
+		.cyt-card{
+			width: 300px;
+			height: 200px;
+			background-image: url('./self-talk-negative.jpg');
+			background-size: cover;
+			background-position: center;
+			margin: 10px auto;
+			position: relative;
+		}
+
+		.cyt-quiz .copy img{
+			float: left;
+			margin-right: 10px;
+		}
+
 		@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
 
 		@font-face {
@@ -448,6 +697,14 @@
 			bottom: 0px;
 			
 
+		}
+
+		h1.copy {
+			background: none;
+			padding: 0px;
+			color: white;
+			font-weight: normal;
+			font-size: 24px;
 		}
 
 		.feedback h1{
@@ -843,7 +1100,7 @@
 		.panel{
 			margin: 10px;
 			
-			height: 300px;
+			height: 200px;
 
 			color: black;
 			
@@ -851,6 +1108,8 @@
 
   			transform: rotateY(0deg);
   			position: relative;
+  			line-height: 200px;
+  			box-sizing: border-box;
 		}
 
 		
@@ -873,7 +1132,7 @@
 			border-radius: 10px;
 			transform: rotate(0deg);
 			background-size: 110%;
-			background-position: center;
+			background-position: center -50px;
 		}
 
 		.panel-back{
@@ -884,7 +1143,7 @@
 		.panel.flip{
 			transform: rotateY(180deg);
 			transition: all 0.8s;
-
+			
 		}
 
 		.panel.discarded{
@@ -904,11 +1163,27 @@
 
 		}
 
+		.self-talk .copy{
+			margin: 20px auto;
+		}
+
 		.copy{
 			text-align: left;
 			width:80%;
 			margin:10px 10%;
 
+		}
+
+		.copy li{
+			text-align: left;
+		}
+
+		.copy h1{
+			background: none;
+			padding: 0px;
+			margin: 0px;
+			text-align: center;
+			color: white;
 		}
 
 		.panel-bg{
@@ -920,12 +1195,11 @@
 		}
 		
 		.panel-content{
-			position: absolute;
-			width: 100%;
-			height: 100%;
-			top: 0px;
-			left: 0px;
-			background: linear-gradient( to bottom, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+			
+			
+			line-height: 1.5em;
+			display: inline-block;
+			
 		}
 
 
@@ -933,16 +1207,28 @@
 			font-family: serif;
 			font-style: italic;
 			font-size: 30px;
+
+			background: blue;
+			color: white;
+			padding: 5px;
+
+			display: inline-block;
+			line-height: 1.5em;
 		}
 
 		.panel-content h3:before, .panel-content h3:after{
 			content: '"';
 		}
 
+		h2 b{
+			background: blue;
+			display: inline-block;
+		}
+
 	</style>
 </head>
 <body>
-	<div class="screen myt">
+	<!--div class="screen myt">
 		<div class="bg" style="background-image:url(./bg-mud.jpg)"></div>
 		<div class='page'>
 			<div class='stickers'>
@@ -950,11 +1236,12 @@
 				<div class='sticker blue'>I've let the team down</div>
 				<div class='sticker orange'>I want to hide</div>
 			</div>
-			<button class='next'>MANAGE YOUR SELF-TALK<hr>START DEMO</button>
+			<button class='next'>WATCH YOUR SELF-TALK<hr>START DEMO</button>
 		</div>
 		<div class='page self-talk' style='perspective: 600px;'>
-			<h1>MANAGE YOUR SELF-TALK</h1>
-			<h2>We might say to ourselves:</h2>
+			<h1>CHOOSE YOUR SELF-TALK</h1>
+
+			<h2>When <b>YOU</b> make a mistake,<br>you might think:</h2>
 			<div class='panel'>
 				<div class='panel-front' style='background-image:url(./self-talk-negative.jpg)'>
 					
@@ -969,14 +1256,60 @@
 					
 					<div class='panel-content'>
 						<h3></h3>
-						<p class='copy'></p>
 					</div>
 				</div>
+				
 			</div>
-			<h2>What would you say to a teammate?</h2>
+			<p class='copy'></p>
+			<h2>If this was your <b>teammate</b>,<br>what would you say?</h2>
+			<ul>
+				<li>A</li>
+				<li>B</li>
+				<li>C</li>
+			</ul>
 			<button class='flipit'>FLIP IT</button>
 			
 
+		</div>
+		<div class="page">
+			<h2>REMEMBER</h2>
+			<h1>WATCH YOUR SELF-TALK</h1>
+			<p class="copy">It's easy to talk down to yourself when you make mistakes. Stop, and question if you would speak to your teammate that way. Then, flip it!</p>
+			<h1 class="copy"><img src='./icon-positive.png'>  Be positive.</h1>
+			<p class="copy">Choose positive self-talk to help minimise mistakes. “Stay positive, it’ll be okay.”</p>
+			<h1 class="copy"><img src='./icon-idea.png'>  Be instructive.</h1>
+			<p class="copy"> Choose instructive self-talk to help promote action. “Keep your eye on the ball.”</p>
+
+			<h1 class="copy"><img src='./icon-fist.png'>  Be motivational.</h1>
+			<p class="copy">Choose motivational self-talk to maintain confidence. “Keep going, you can do this.”</p>
+
+			
+		</div>
+	</div-->
+	<div class="screen choose-your-thoughts">
+		<div class="bg" style="background-image:url(./bg-mud.jpg)"></div>
+		<div class='page cyt-quiz'>
+			<h1>CHOOSE YOUR THOUGHTS</h1>
+			<div class='cyt-card'></div>
+			<h2>Question</h2>
+			<ul>
+				<li></li>
+				<li></li>
+				<li></li>
+			</ul>
+			<p class="copy cyt-feedback"></p>
+			<button>Try Again</button>
+		</div>
+		<div class='page'>
+			<h2>REMEMBER</h2>
+			<h1>CHOOSE YOUR THOUGHTS</h1>
+			<p class="copy">It’s easy to beat ourselves up when we make mistakes. Think about what you would say to a teammate in these moments. Choose thoughts that will help you bounce back.</p>
+			<h1 class="copy"><img src='./icon-positive.png'> positive thoughts</h1>
+			<p class="copy">“I made a mistake. But it'll be okay.”</p>
+			<h1 class="copy"><img src='./icon-idea.png'> instructive thoughts</h1>
+			<p class="copy">“I'll get there. Just got to keep training.”</p>
+			<h1 class="copy"><img src='./icon-fist.png'> motivational thoughts</h1>
+			<p class="copy">“I’ve got keep going. I’ve got this."</p>
 		</div>
 	</div>
 	<div class='screen'>
