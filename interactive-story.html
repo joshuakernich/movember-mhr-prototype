@@ -73,6 +73,43 @@
 			transition: all 0.5s;
 		}
 
+		.timer{
+			position: absolute;
+			width: 100%;
+			left: 0px;
+			bottom: -10px;
+			height: 10px;
+			transition: 5s all;
+			transition: all 0.5s;
+			background: rgba(0,0,0,0.5);
+		}
+
+		.timer:before, .timer:after{
+			content: "";
+			position: absolute;
+			left: 0px;
+			width: 0px;
+			background: white;
+			height: 100%;
+			transition: all 0.5s;
+		}
+
+		.timer:after{
+			left: auto;
+			right: 0px;
+		}
+
+		.timer.active{
+			bottom:100px;
+			transition: 2s all;
+		}
+
+		.timer.active:before, .timer.active:after{
+			width: 50%;
+			transition: 5s all;
+			transition-timing-function: linear;
+		}
+
 		.overlay{
 			position: absolute;
 			top:0px;
@@ -86,7 +123,7 @@
 		.overlay:after,.overlay:before{
 			content: "";
 			position: absolute;
-			bottom: -100px;
+			bottom: -110px;
 			left: 0px;
 			height: 100px;
 			background: #111;
@@ -96,23 +133,23 @@
 		}
 
 		.overlay:after{
-			top: -100px;
+			top: -110px;
 			bottom: auto;
 		}
 
 		.overlay.active:before{
-			transition: all 5s;
+			transition: all 2s;
 			bottom: 0px;
 		}
 
 		.overlay.active:after{
-			transition: all 5s;
+			transition: all 2s;
 			top: 0px;
 		}
 
 		.sticker-party{
 			position: absolute;
-			bottom: 100px;
+			top: 200px;
 			left: 0px;
 			text-align: center;
 			width: 100%;
@@ -231,6 +268,7 @@
 						else $s.addClass('text').html(moments[iMoment].options[s]);
 					}
 					$('.overlay').addClass('active');
+					$('.timer').addClass('active');
 
 					//$('video').addClass('zoom');
 					//vid.playbackRate = 0.5;
@@ -241,7 +279,7 @@
 				if(moments[iMoment] && vid.currentTime > moments[iMoment].end) forceSelection();
 				if(reflections[iReflection] && vidReflection.currentTime > reflections[iReflection].at){
 					
-					var $s = $('<div class="sticker">').appendTo('.sticker-party');
+					var $s = $('<div class="sticker">').appendTo('.sticker-party').css({transform:'scale(1.5) rotate(-5deg)'})
 					if(reflections[iReflection].sticker == '.') $s.addClass('image').css({'background-image':'url('+reflections[iReflection].sticker+')'});
 					else $s.addClass('text').html(reflections[iReflection].sticker);
 
@@ -255,8 +293,9 @@
 
 			function onSticker(e){
 				$('.sticker-party').empty();
-				$(e.target).appendTo('.sticker-party').delay(2000).animate({opacity:0});
+				$(e.target).appendTo('.sticker-party').css({transform:'scale(1.5) rotate(-5deg)'}).delay(2000).animate({opacity:0});
 				$('.overlay').removeClass('active');
+				$('.timer').removeClass('active');
 				iMoment++;
 
 				$('video').removeClass('zoom');
@@ -306,6 +345,7 @@
 		</video>
 		<div class='sticker-party'></div>
 		<div class='overlay'></div>
+		<div class='timer'></div>
 		<div class='stop'>
 			<h1>STOP</h1>
 			<h2>Don't get caught up in the things you can't control.</h2>
