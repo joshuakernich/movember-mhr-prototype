@@ -44,6 +44,7 @@
 			display: inline-block;
 			margin: 15px;
 			position: relative;	
+
 		}
 
 		.sticker.image{
@@ -55,18 +56,20 @@
 		}
 
 		.sticker.text{
-			padding: 5px 10px;
+			padding: 15px 20px;
 			border: 2px solid blue;
 			color: blue;
 			border-width: 2px 4px 4px 4px;
 			transform: rotate(-5deg);
 			background: white; 
 			text-transform: uppercase;
+			font-size: 20px;
+
 		}
 
 		video{
 			position: relative;
-			left: -350px;
+			
 			transition: all 0.5s;
 		}
 
@@ -133,43 +136,121 @@
 			color: white;
 		}
 
+		.overlay{
+			pointer-events: none;
+		}
+
+		.play{
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			top:0px;
+			left:0px;
+			font-size: 100px;
+			color: white;
+			background: transparent;
+		}
+
+		.stop, .remember{
+			display: none;
+			position: absolute;
+			top:0px;
+			left: 0px;
+			width: 100%;
+			height: 100%;
+			padding-top: 100px;
+			box-sizing: border-box;
+			background: rgba(0,0,0,0.5);
+			color: white;
+		}
+
+		h1, h2{
+			background: white;
+			color: blue;
+		}
+
+		.remember{
+			background: background: rgba(0,0,0,0.8);
+		}
+
+		.remember p{
+			background: white;
+			color: black;
+			text-align: center;
+			padding: 40px;
+		}
+
+		button{
+			padding: 15px;
+			background: blue;
+			color: white;
+			font:inherit;
+		}
+
 	</style>
 	<script type="text/javascript" src='./jquery-3.4.1.min.js'></script>
 	<script type="text/javascript">
 		$(function(){
 
 			var iMoment = 0;
+			var iReflection = 0;
 
 			var moments = [
-				{start:1,end:4.3,options:['What a dickhead!','./sticker-lol.png','./sticker-omg.png']},
-				{start:8,end:10,options:['GET ANGRY!','RAGE!','$^#&%!']},
-				{start:12,end:14,options:['Total wipeout!','HAHA','Crazy shit!']},
+				{start:12,end:17,options:['CRUNCH!','LOL','BOOM!']},
+				{start:30,end:35,options:['KMART SUCKS!','RAGE!','$^#&%!']},
+				{start:42,end:47,options:['ANNOYED','*GROAN*','FRUSTRATED!']},
 			]
 
+			var reflections = [
+				{at:12,sticker:'CRUNCH!'},
+				{at:15,sticker:'RAGE!'},
+				{at:20,sticker:'FRUSTRATED!'},
+				{at:22,sticker:'FRUSTRATED!'},
+				{at:23,sticker:'KMART SUCKS!'},
+				{at:24,sticker:'FRUSTRATED!'},
+			]
+
+			
 			var vid = $('video')[0];
+			var vidReflection = $('video')[1];
 
 			setInterval(tick,100);
 
 			function tick(){
 
-				if(!moments[iMoment].isShown && vid.currentTime > moments[iMoment].end){
+				if(moments[iMoment] && !moments[iMoment].isShown && vid.currentTime > moments[iMoment].start){
 					moments[iMoment].isShown = true;
 
 					$('.overlay').empty();
+					$('.sticker-party').empty();
+
 					for(var s in moments[iMoment].options){
-						var $s = $('<div class="sticker">').appendTo('.overlay').click(onSticker);
+						var $s = $('<div class="sticker">').appendTo('.sticker-party').click(onSticker);
 
 						if(moments[iMoment].options[s][0] == '.') $s.addClass('image').css({'background-image':'url('+moments[iMoment].options[s]+')'});
 						else $s.addClass('text').html(moments[iMoment].options[s]);
 					}
 					$('.overlay').addClass('active');
 
-					$('video').addClass('zoom');
-					vid.playbackRate = 0.5;
+					//$('video').addClass('zoom');
+					//vid.playbackRate = 0.5;
 				}
 
 				//loop
-				if(vid.currentTime > moments[iMoment].end) vid.currentTime = moments[iMoment].start;
+				//if(vid.currentTime > moments[iMoment].end) vid.currentTime = moments[iMoment].start;
+				if(moments[iMoment] && vid.currentTime > moments[iMoment].end) forceSelection();
+				if(reflections[iReflection] && vidReflection.currentTime > reflections[iReflection].at){
+					
+					var $s = $('<div class="sticker">').appendTo('.sticker-party');
+					if(reflections[iReflection].sticker == '.') $s.addClass('image').css({'background-image':'url('+reflections[iReflection].sticker+')'});
+					else $s.addClass('text').html(reflections[iReflection].sticker);
+
+					iReflection++;
+				}
+			}
+
+			function forceSelection(){
+				$('.sticker').eq(0).trigger('click');
 			}
 
 			function onSticker(e){
@@ -181,16 +262,61 @@
 				$('video').removeClass('zoom');
 				vid.playbackRate = 1;
 			}
+
+			$('.play').click(doVideo);
+
+			function doVideo(){
+				$('.play').hide();
+				$('video')[0].play();
+			}
+
+			$('video').on('ended',onVideoEnd);
+
+			function onVideoEnd(){
+				var index = $('video').index(this);
+				if(index == 0) $('video').hide().eq(1).show()[0].play();
+				if(index == 1) $('.stop').show();
+			}
+
+			$('.stop button').click(function(){
+				$('.stop').hide();
+				$('.remember').show();
+			});
+
+			$('.remember button').click(function(){
+				$('.sticker-party').empty();
+				$('.remember').hide();
+				$('video').hide().eq(2).show()[0].play();
+			});
+
+			
 		})
 	</script>
 </head>
 <body>
 	<div class='screen'>
-		<video autoplay muted>
-			<source src="./The Worst Rugby Tackle Ever.mp4" type="">
+		<video controls width="100%" height="100%;">
+			<source src="./video-lego-builder.mp4" type="">
+		</video>
+		<video preload style='display:none' controls width="100%" height="100%;">
+			<source src="./video-reflection-angry.mp4" type="">
+		</video>
+		<video preload style='display:none' controls width="100%" height="100%;">
+			<source src="./video-reflection-control.mp4" type="">
 		</video>
 		<div class='sticker-party'></div>
 		<div class='overlay'></div>
+		<div class='stop'>
+			<h1>STOP</h1>
+			<h2>Don't get caught up in the things you can't control.</h2>
+			<button>THERE'S A BETTER WAY ></button>
+		</div>
+		<div class='remember'>
+			<h1>CONTROL THE CONTROLLABLES</h1>
+			<p>It’s easy to get lost in the things you can’t control. But this can only lead to frustration. By concentrating on the things we can control, we are more likely to have a positive impact on our experience.</p>
+			<button>OK, THANKS ></button>
+		</div>
+		<button class='play'>▶</button>
 	</div>
 </body>
 </html>
