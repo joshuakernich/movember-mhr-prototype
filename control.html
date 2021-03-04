@@ -419,8 +419,10 @@
 
 			function makeCYT($cyt){
 
+				var QS = '<li>Would you say this to a teammate?</li><li>How would you feel if someone said this to you?</li>';
+
 				var CYT = [
-					{
+					/*{
 						q:"What you would you say if this was your <b>teammate</b>?",
 						o:[
 							"Mate, you’ll never get over this.",
@@ -458,22 +460,27 @@
 							"<img src='./icon-sad-chat.png'> You're a bully. Not cool.",
 							"<img src='./icon-fist.png'> Good choice. This is a great example of <b>motivational talk</b>."
 						]
-					},
+					},*/
 					{
-						q:"What would you say to <b>yourself</b> in this moment?",
+						
+						s:"I'm such a failure",
+						r:'<li>How would you feel if someone said this to you?</li><li>Would you say this to a teammate?</li>',
+						q:"What could you say instead?",
 						o:[
 							"I’ll never get over this.",
 							"I’ve let everyone down today.",
 							"I made a mistake. But it'll be okay.",
 						],
 						f:[
-							"<img src='./icon-sad-thought.png'> It's easy to think this way. But maybe you can turn it around.",
-							"<img src='./icon-sad-thought.png'> It's easy to think this way. But maybe you can turn it around.",
+							"<img src='./icon-sad-thought.png'> "+QS+"It's easy to think this way. But maybe you can turn it around.",
+							"<img src='./icon-sad-thought.png'> "+QS+"It's easy to think this way. But maybe you can turn it around.",
 							"<img src='./icon-positive.png'> Good Choice. Choosing <b>positive thoughts</b> can help us move on from our mistakes, rather than making them seem worse than they are.",
 						]
 					},
 					{
-						q:"What would you say to <b>yourself</b> in this moment?",
+						s:"I'm hopeless.",
+						r:'<li>How would you feel if someone said this to you?</li><li>Would you say this to a teammate?</li>',
+						q:"What could you say instead?",
 						o:[
 
 							"I should give up. I’ll never be great at this.",
@@ -481,21 +488,23 @@
 							"I'll get there. Just got to keep training.",
 						],
 						f:[
-							"<img src='./icon-sad-thought.png'> That's not going to help. Maybe you can find a way to turn this around.",
-							"<img src='./icon-sad-thought.png'> You make it sound so hopeless. Maybe you can be a little more proactive.",
+							"<img src='./icon-sad-thought.png'> "+QS+"That's not going to help. Maybe you can find a way to turn this around.",
+							"<img src='./icon-sad-thought.png'> "+QS+"You make it sound so hopeless. Maybe you can be a little more proactive.",
 							"<img src='./icon-idea.png'> Good choice. Choosing <b>instructive thoughts</b> will spawn us to take action, rather than getting bogged down in our mistakes.",
 						]
 					},
 					{
-						q:"What would you say to yourself in this moment?",
+						s:"I should quit!",
+						r:'<li>How would you feel if someone said this to you?</li><li>Would you say this to a teammate?</li>',
+						q:"What could you say instead?",
 						o:[
 							"I wish I could just go home.",
 							"This team would be better off without me.",
 							"I’ve got keep going. I’ve got this."
 						],
 						f:[
-							"<img src='./icon-sad-thought.png'> It's easy to think this way. But maybe you can try and motivate yourself.",
-							"<img src='./icon-sad-thought.png'> That's some low thoughts. Maybe you can try and motivate yourself.",
+							"<img src='./icon-sad-thought.png'> "+QS+"It's easy to think this way. But maybe you can try and motivate yourself.",
+							"<img src='./icon-sad-thought.png'> "+QS+"That's some low thoughts. Maybe you can try and motivate yourself.",
 							"<img src='./icon-fist.png'> Good choice. Choosing <b>motivational thoughts</b> can help you maintain confidence when we're down."
 						]
 
@@ -504,10 +513,13 @@
 
 				var $self = $cyt;
 				var $question = $self.find('h2');
+				var $sticker = $self.find('.sticker');
 				var $card = $self.find('.cyt-card');
-				var $li = $self.find('li');
+				var $li = $self.find('.cyt-options li');
 				var $feedback = $self.find('.cyt-feedback');
-				var $button = $self.find('button');
+				var $reflection = $self.find('.cyt-reflection');
+				var $button = $self.find('.cyt-next');
+				var $yesno = $self.find('.yesno');
 				var iQuestion = -1;
 				var isCorrect;
 				var q;
@@ -515,6 +527,8 @@
 				$li.click(doOption);
 
 				$button.click(doButton);
+				$yesno.eq(0).click(doYes);
+				$yesno.eq(1).click(doNo);
 
 				function doOption(){
 
@@ -558,28 +572,44 @@
 					}
 				}
 
+				function doYes(){
+					$feedback.show().html("<img src='./icon-sad-chat.png'> This could be very discouraging. Maybe you should rethink your answer.")
+				}
+
+				function doNo(){
+
+					$feedback.hide();
+					$reflection.hide();
+					$yesno.hide();
+					$sticker.hide();
+
+					$question.show().html(q.q).css({opacity:0}).animate({opacity:1});
+
+
+					$li.show();
+
+					for(var i in q.o){
+						$li.eq(i).html(CYT[iQuestion].o[i]).css({opacity:0}).delay(2500+i*100).animate({opacity:1});
+					}
+
+				}
+
 				function nextQuestion(){
 
 					iQuestion++;
 
-
-					$li.show();
+					$li.hide();
+					$question.hide();
 					$feedback.hide();
 					$button.hide();
 
 					q = CYT[iQuestion];
 
-					$question.html(q.q).css({opacity:0}).delay(800).animate({opacity:1});
-					$question.find('b').delay(1200).css({position:'relative'})
-					.animate({top:-2},200).animate({top:2},200)
-					.animate({top:-2},200).animate({top:2},200)
-					.animate({top:0},200);
+					
+					$sticker.show().html(q.s).css({opacity:0}).delay(800).animate({opacity:1});
+					$reflection.show().html(q.r).css({opacity:0}).delay(1500).animate({opacity:1});
+					$yesno.show().css({opacity:0}).delay(2500).animate({opacity:1});
 					$card.css({left:-500}).animate({left:0});
-
-					for(var i in CYT[iQuestion].o){
-						$li.eq(i).html(CYT[iQuestion].o[i]).css({opacity:0}).delay(2500+i*100).animate({opacity:1});
-					}
-
 				}
 
 				nextQuestion();
@@ -590,6 +620,17 @@
 	</script>
 	<style type="text/css">
 
+		button.yesno{
+			width: 30%;
+			font-size: 15px;
+			display: inline-block;
+			border-radius: 0px;
+		}
+
+		.cyt-reflection{
+			font-size: 20px;
+		}
+
 		.cyt-quiz h2{
 			width: 80%;
 			margin: auto;
@@ -599,7 +640,7 @@
 			padding: 0px;
 		}
 
-		.cyt-quiz li{
+		.cyt-options li{
 			background: white;
 			border-radius: 5px;
 			list-style-type: none;
@@ -611,7 +652,7 @@
 
 		}
 
-		.cyt-quiz li:before, .cyt-quiz li:after{
+		.cyt-options li:before, .cyt-options li:after{
 			content: '"';
 		}
 
@@ -625,10 +666,18 @@
 			position: relative;
 		}
 
+		.cyt-card .sticker{
+			margin-top:50px;
+			transform:scale(1.5) rotate(-5deg);
+
+		}
+
 		.cyt-quiz .copy img{
 			float: left;
 			margin-right: 10px;
 		}
+
+
 
 		@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
 
@@ -869,7 +918,7 @@
 			border: none;
 			color: white;
 			width: 80%;
-			margin: 10%;
+			margin: 20px 10%;
 			padding: 20px;
 		}
 
@@ -1299,18 +1348,18 @@
 		<div class="page">
 			<button class='next'>CHOOSE YOUR THOUGHTS<hr>START DEMO</button>
 			<div class='stickers'>
-				<div class='sticker blue'>I'm hopeless!</div><br>
-				<div class='sticker orange'>This is pointless.</div><br>
-				<div class='sticker blue'>I should quit.</div>
+				<div class='sticker blue'>I'm such a failure</div><br>
+				<div class='sticker orange'>I'm hopeless</div><br>
+				<div class='sticker blue'>I should quit</div>
 			</div>
 		</div>
 		<div class="page">
 			<h1>STOP</h1>
 			<h2>Don’t beat yourself up<br>with negative thoughts.</h2>
 			<div class='stickers'>
-				<div class='sticker blue'><div class='swipe'></div>I'm hopeless!</div><br>
-				<div class='sticker orange'>This is pointless.</div><br>
-				<div class='sticker blue'>I should quit.</div>
+				<div class='sticker blue'><div class='swipe'></div>I'm such a failure</div><br>
+				<div class='sticker orange'>I'm hopeless</div><br>
+				<div class='sticker blue'>I should quit</div>
 			</div>
 		</div>
 		<div class="page">
@@ -1320,15 +1369,18 @@
 		</div>
 		<div class='page cyt-quiz'>
 			<h1>CHOOSE YOUR THOUGHTS</h1>
-			<div class='cyt-card'></div>
+			<div class='cyt-card'><div class='sticker blue'></div></div>
+			<p class='copy cyt-reflection'></p>
+			<button class="yesno">I MIGHT</button><button class="yesno">PROBABLY NOT</button>
+
 			<h2>Question</h2>
-			<ul>
+			<ul class='cyt-options'>
 				<li></li>
 				<li></li>
 				<li></li>
 			</ul>
 			<p class="copy cyt-feedback"></p>
-			<button>Try Again</button>
+			<button class='cyt-next'>Try Again</button>
 		</div>
 		<div class='page'>
 			<h2>REMEMBER</h2>
