@@ -224,6 +224,14 @@
 			font:inherit;
 		}
 
+		.swipe-prompt{
+			display: none;
+			position: absolute;
+			top:0px;
+			left:0px;
+			right: 0px;
+		}
+
 	</style>
 	<script type="text/javascript" src='./jquery-3.4.1.min.js'></script>
 	<script type="text/javascript">
@@ -233,7 +241,7 @@
 			var iReflection = 0;
 
 			var moments = [
-				{start:12,end:17,options:['CRUNCH!','LOL','BOOM!']},
+				{start:12,end:17,options:['DAMMIT!','LOL','THAT WAS ANNOYING.']},
 				{start:30,end:35,options:['KMART SUCKS!','RAGE!','$^#&%!']},
 				{start:42,end:47,options:['ANNOYED','*GROAN*','FRUSTRATED!']},
 			]
@@ -261,6 +269,8 @@
 					$('.overlay').empty();
 					$('.sticker-party').empty();
 
+					$("<h1>What's he thinking?</h1>").appendTo('.sticker-party');
+
 					for(var s in moments[iMoment].options){
 						var $s = $('<div class="sticker">').appendTo('.sticker-party').click(onSticker);
 
@@ -276,12 +286,18 @@
 
 				//loop
 				//if(vid.currentTime > moments[iMoment].end) vid.currentTime = moments[iMoment].start;
-				if(moments[iMoment] && vid.currentTime > moments[iMoment].end) forceSelection();
+				if(moments[iMoment] && vid.currentTime > moments[iMoment].end){
+					vid.playbackRate = 0;
+					//forceSelection();
+				}
+
 				if(reflections[iReflection] && vidReflection.currentTime > reflections[iReflection].at){
 					
 					var $s = $('<div class="sticker">').appendTo('.sticker-party').css({transform:'scale(1.5) rotate(-5deg)'})
 					if(reflections[iReflection].sticker == '.') $s.addClass('image').css({'background-image':'url('+reflections[iReflection].sticker+')'});
 					else $s.addClass('text').html(reflections[iReflection].sticker);
+
+					$s.click(onStopSticker);
 
 					iReflection++;
 				}
@@ -290,6 +306,35 @@
 			function forceSelection(){
 				$('.sticker').eq(0).trigger('click');
 			}
+
+			function onStopSticker(e){
+
+
+				var o = $(this).offset();
+
+				$('.sticker-party .sticker').each(function(){
+					var o2 = $(this).offset();
+					var dx = o2.left-o.left;
+					var dy = o2.top-o.top;
+					var d = Math.sqrt(dx*dx+dy*dy);
+
+					if(d == 0){
+						dx = dy = 50;
+					}
+
+
+
+					if(d<150) $(this).addClass('dying').animate({top:'+='+dy*5,left:'+='+dx*5},500,function(){
+						
+						$(this).css({opacity:0});
+						if($('.sticker:not(.dying)').length == 0){
+							$('.swipe-prompt').hide();
+							$('.remember').show();
+						}
+					});
+				})
+			}
+			
 
 			function onSticker(e){
 				$('.sticker-party').empty();
@@ -313,20 +358,24 @@
 
 			function onVideoEnd(){
 				var index = $('video').index(this);
-				if(index == 0) $('video').hide().eq(1).show()[0].play();
+				if(index == 0){
+					$('.sticker-party').empty();
+					$('video').hide().eq(1).show()[0].play();
+				}
 				if(index == 1) $('.stop').show();
 			}
 
 			$('.stop button').click(function(){
 				$('.stop').hide();
-				$('.remember').show();
+				$('.swipe-prompt').show();
+				//$('.remember').show();
 			});
 
-			$('.remember button').click(function(){
-				$('.sticker-party').empty();
+			
+			window.doFinishActivity = function(){
 				$('.remember').hide();
 				$('video').hide().eq(2).show()[0].play();
-			});
+			}
 
 			
 		})
@@ -344,17 +393,24 @@
 			<source src="./video-reflection-control.mp4" type="">
 		</video>
 		<div class='sticker-party'></div>
-		<div class='overlay'></div>
+		<div class='overlay'>
+			
+		</div>
+
 		<div class='timer'></div>
 		<div class='stop'>
 			<h1>STOP</h1>
 			<h2>Don't get caught up in the things you can't control.</h2>
 			<button>THERE'S A BETTER WAY ></button>
 		</div>
+		<div class='swipe-prompt'>
+			<h2>Swipe it all away.</h2>
+		</div>
 		<div class='remember'>
-			<h1>CONTROL THE CONTROLLABLES</h1>
+			<!--<h1>CONTROL THE CONTROLLABLES</h1>
 			<p>It’s easy to get lost in the things you can’t control. But this can only lead to frustration. By concentrating on the things we can control, we are more likely to have a positive impact on our experience.</p>
-			<button>OK, THANKS ></button>
+			<button>OK, THANKS ></button>-->
+			<iframe style='position: absolute;top:0px;left:0px;border:none;background:none;' src="./control-by-itself.html" width="100%" height="100%"></iframe>
 		</div>
 		<button class='play'>▶</button>
 	</div>

@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script type="text/javascript" src='./jquery-3.4.1.min.js'></script>
+	<script type="text/javascript">
+		$(function(){
+
+
+
+
+			var things = [
+				{
+					name:'the ref',
+					f:"No matter how much you kick & scream, the ref will never change their decision.<br><br>In fact, it's their job to ignore your plees. The ref is not within your control."},
+				{
+					name:'the opponents',
+					f:"Your opponents have their own game to play.<br><br>Your opponents are not within your control."},
+				{
+					name:'his teammates',
+					f:"You might have some influence on your teammates. But they will often suprise you.<br><br>Teammates are not within your control."},
+				{
+					name:'the weather',
+					f:"You can shake your fist at the clouds, but they will still rain.<br><br>The weather is not within your control."},
+				{
+					name:'his performance',
+					correct:true,
+					c2:false,
+					f2:"There are a lot of forces that can effect his performance. These are often beyond his control, or might require long-term work. Perhaps there is something he can work on more immediately.",
+					f:"There are a lot of things that can influence your performance. But it's mostly helped along by how much of your own energy you put in.<br><br>Your performance is within your control."},
+				{
+					name:'his language',
+					c2:true,
+					correct:true,
+					feedback:"It's easy to get carried away with our language when we are frustrated. But this can make things worse. Watching his language and how he speaks to those around him is something he can control.",
+					f2:"Watching his language is something he can immediately control."
+				},
+				{
+					name:'the coach', f:'The coach is trying to get the best out of you and your team. You might have some influence on them, but they are a free agent.<br><br>The coach is not within your control.'},
+				{
+					name:'his effort',
+					f:"It's easy to be distracted, lose interest, or feel low on energy. This can effect the amount of effort we put in. But how much effort we choose to put in is something we can control.",
+					f2:"It's easy to play lazy or sloppy when we are upset. But we can take control by re-focusing on our effort in the moment.",
+					c2:true,
+					correct:true},
+				{
+					name:'his fitness',
+					correct:true,
+					c2:false,
+					f:"Building fitness is a long process. It requires dedication and collaboration. It's definitely something he can control.",
+					f2:"Building fitness is a long process. Is there something else he can control right now?"},
+				{
+					name:'his reactions',
+					f:"It may not be easy sometimes, but he can definitely choose to react differently to the people around him. This is a great way to take control of the controllables.",
+					f2:"It may take practice, but changing how he reacts is something he can do immediately.",
+					c2:true,
+					correct:true},
+				{
+					name:'the pitch',
+					f:"The condition of the pitch has been determined by other people and the weather.<br><br>The pitch is not within your control."},
+				{
+					name:'the wind',
+					f:"The wind comes and goes. It ebbs and blows.<br><br>The wind is not within your control."}
+			]
+
+			var inFocusTask = false;
+
+			for(var i in things){
+				$('<div class="tile">').appendTo('.body').html(things[i].name).data(things[i]).click(onTile);
+			}
+
+			function onTile(){
+				var d = $(this).data();
+
+				//$(this).offset();
+
+				//disable scroll
+				//$(this).closest('.screen').overflow('hidden');
+
+				var oTile = $(this).offset();
+				var oBody = $('.body').offset();
+
+				var difX = oTile.left-oBody.left;
+				var difY = oTile.top-oBody.top;
+
+				
+				$('.body').css({left:-difX + 125,top:-difY + 200}).addClass('darkened');
+
+				
+				$(this).addClass('selected');
+
+				if( (inFocusTask && d.c2) || (!inFocusTask && d.correct) ){
+					$(this).addClass('correct');
+					doFeedback($(this).closest('.screen'),d);
+				} else {
+					$(this).addClass('incorrect');
+					doFeedback($(this).closest('.screen'),d);
+				}
+			}
+
+			function doFeedback($screen,d){
+				var $f = $('<div class="feedback">').appendTo($screen);
+				var $fi = $('<div class="feedback-inner">').appendTo($f).html('<p>'+(inFocusTask?d.f2:d.f)+'</p>');
+
+				var h = $fi.outerHeight();
+				$fi.css({bottom:-h}).animate({bottom:0});
+
+				$('<button>Well, damn!</button>').appendTo($fi).click(function(){
+					$f.remove();
+					$('.body').removeClass('darkened').css({left:0,top:0});
+					$('.tile').removeClass('selected');
+
+					if(!inFocusTask && $('.correct').length == 3) doFocusTask();
+					else if(inFocusTask &&  $('.correct').length == 1) doFinale($screen);
+				})
+			}
+
+			function filterAndShrink(){
+				$('.correct').each(function(){
+					$(this).data('offset',$(this).offset());
+				})
+				$('.tile:not(".correct")').hide();
+
+				$('.correct').each(function(){
+					$(this).offset($(this).data('offset')).animate({top:0,left:0});
+				})
+			}
+
+			function doFocusTask(e){
+
+				inFocusTask = true;
+				filterAndShrink();
+				
+
+				$('.controllables .instruction').html('Select the FIRST thing he can control').css({opacity:0}).delay(1000).animate({opacity:1});
+
+
+				setTimeout(function(){
+					$('.correct').removeClass('correct');
+				},1000);
+			}
+
+			function doFinale(){
+				$('.controllables .instruction').css({opacity:0}).html("This is a great place to start").delay(1000).animate({opacity:1});
+				filterAndShrink();
+
+				setTimeout(function(){
+					$('.correct').removeClass('correct');
+					$('<br><button>I better get on with it ></button>').appendTo('.body').click(next);
+				},1000);
+			}
+
+			$('.next').click(next);
+
+			function piePaint(p){
+
+				var r = -Math.PI/2 + Math.PI*2*p;
+				var x = 50+Math.cos(r)*50;
+				var y = 50+Math.sin(r)*50;
+
+				var s = 'polygon(50% 50%, 50% 0%, 100% 0%, '+((p>0.25)?'100% 100%, ':'')+((p>0.5)?'0% 100%, ':'')+((p>0.75)?'0% 0%, ':'')+x+'% '+y+'%)';
+
+				$('.breather .pie').css({'clip-path':s});
+			}
+
+
+
+			function next(a){
+
+				if(a.target) a = this;
+
+				console.log('here',a)
+
+				var $s = $(a).closest('.screen');
+				var iPage = $s.find('.page').index($(a).closest('.page'));
+				var $p = $s.find('.page').hide().eq(iPage+1).show();
+
+
+				$p.find('.swipe').delay(500).animate({opacity:1,left:100}).animate({opacity:0},100).animate({left:0}).animate({opacity:1}).animate({opacity:1,left:100}).animate({opacity:0},100)
+
+				console.log($p,$p.hasClass('cyt-quiz'));
+
+				if($p.hasClass('cyt-quiz')){
+					makeCYT($p);
+				}
+
+				if($p.find('.breather:not(.enabled)').length){
+
+					console.log('throb');
+					var $b = $p.find('.breather');
+					var $l = $b.find('.lung');
+
+					function throb(){
+						$l.animate({width:'70%',height:'70%'},{duration:2000})
+						.animate({width:'90%',height:'90%'},{duration:2000,complete:throb})
+					}
+
+					throb();
+				}
+
+				if($p.hasClass('cyt-quiz').length){
+					makeCYT($p);
+				}
+
+				if($p.find('.breather.enabled').length){
+
+					$p.find('button').hide();
+
+					var $b = $p.find('.breather');
+					var $l = $b.find('.lung');
+					var $h = $b.find('h2');
+					var reps = 3;
+
+					message('Get Ready...');
+
+					$l.animate({width:'70%',height:'70%'},{duration:2000})
+					.animate({width:'90%',height:'90%'},{duration:2000})
+					.animate({width:'10%',height:'10%'},{duration:3000,start:messageIntroOut})
+					.animate({width:'10%'},{duration:200,complete:doOneBreath});
+					
+
+
+					function doOneBreath(){
+						reps--;
+
+						var next = (reps>0)?doOneBreath:finalise;
+						var messageKickOff = messageIn;
+						if(reps==1) messageKickOff = messageAgain;
+						if(reps==0) messageKickOff = messageOneMoreTime;
+
+						$l.animate({width:'100%',height:'100%'},{duration:5000,start:messageKickOff})
+						.animate({width:'100%'},{duration:2000,start:messageHold})
+						.animate({width:'10%',height:'10%'},{duration:5000,start:messageOut})
+						.animate({width:'10%'},{duration:1500,start:messageBlank,complete:next});
+					}
+
+					function message(m){
+						$h.find('p').animate({opacity:0,top:-30},500,function(){ $(this).remove(); });
+						$('<p>').appendTo($h).css({opacity:0,top:30}).animate({opacity:1,top:0},500).html(m);
+					}
+
+					function messageIntroOut(){
+						message("Breathe out");
+					}
+
+					function messagePrepare(){
+						message("Bring attention<br>to your breath");
+					}
+
+					function messageIn(){
+						message("Breathe in<br>for 5 seconds");
+					}
+
+					function messageOut(){
+						message("Breathe out<br>for 5 seconds");
+					}
+
+					function messageHold(){
+						message("Hold<br>for 2 seconds");
+					}
+
+					function messageBlank(){
+						message("");
+					}
+
+					function messageAgain(){
+						message("Breath in again");
+					}
+
+					function messageOneMoreTime(){
+						message("One more time");
+					}
+
+					function finalise(){
+						message("That's it!");
+						$p.find('button').show();
+
+					}
+				}
+			}
+
+			$('.screen').eq(0).find('.page').eq(0).show();
+			$('.screen').eq(1).find('.page').eq(0).show();
+			$('.screen').eq(2).find('.page').eq(0).show();
+
+			function checkIfLast(t){
+
+				if( $(t).closest('.stickers').children('.sticker:not(.unstuck)').length == 0 ){
+					next(t);
+				}
+			}
+
+			var HANGUPS = [
+				{
+					front:"I really screwed up.<br>This is a disaster.",
+					options:[
+						"You're right. You're useless.",
+						"You'll get over it.",
+						"You made a mistake.<br>But it'll be okay."
+					],
+					back:"You made a mistake.<br>But it'll be okay.",
+					feedback:"<h1>BE POSITIVE</h1><p>Staying positive can help us move on from our mistakes, rather than making them seem worse than they are.</p>",
+				},
+				{
+					front:"It's hopeless.<br>I'm letting the team down.",
+					back:"You'll get there.<br>Just got to keep training.",
+					feedback:"<h1>BE INSTRUCTIONAL</h1><p>Thinking about what we CAN do will spawn us to take action, rather than getting bogged down in our mistakes.</p>",
+				},
+				{
+					front:"I should give up.<br>I'm useless.",
+					back:"Keep going mate.<br>You've got this.",
+					feedback:"<h1>BE MOTIVATIONAL</h1><p>Using motivational language can help you maintain confidence when we're down.</p>"
+				}
+			]
+
+			var iHangup = -1;
+			function doNextHangup(){
+				iHangup++;
+
+
+				$('.panel:not(.discarded) .panel-front h3').html(HANGUPS[iHangup].front);
+				$('.panel:not(.discarded) .panel-back h3').html(HANGUPS[iHangup].back);
+				$('.self-talk .copy').html(HANGUPS[iHangup].feedback).hide();
+
+				$('.panel:not(.discarded)').removeClass('flip').css({left:'-500px'}).delay(1500).animate({left:0},600);
+				$('.self-talk h2').css({height:'auto'});
+				//$('.self-talk h2').eq(0).delay(500).animate({opacity:1});
+				$('.self-talk h2').eq(1).delay(3000).animate({opacity:1});
+				$('.self-talk button').text('FLIP IT').css({opacity:0}).delay(5000).animate({opacity:1});
+			}
+
+			$('.self-talk h2').css({opacity:0})
+
+			function bringTheCardsBack(){
+
+				$('.flipit').off('click');
+
+				iHangup = -1;
+
+				
+				doNextRevision();
+				$('.flipit').click(doNextRevision);
+				//$('.self-talk .copy').show();
+			}
+
+			function doNextRevision(e){
+
+				if(HANGUPS[iHangup+1]){
+					doNextHangup();
+
+					$('.panel:not(.discarded)').show().stop().addClass('flip').animate({left:0});
+					$('.self-talk .copy').show().animate({opacity:1});
+					$('.self-talk h2').hide();
+					$('.self-talk button').stop().text('NEXT >');
+				} else {
+					next(e.target);
+				}
+			}
+
+			$('.flipit').click(function(e){
+
+				$('.panel.discarded').remove();
+
+				if( $('.panel').hasClass('flip') ){
+					var $discard = $('.panel').clone().css({position:'absolute'}).appendTo('.self-talk').width($('.panel').width()).offset($('.panel').offset()).addClass('discarded');
+					
+					if(HANGUPS[iHangup+1]) doNextHangup();
+					else{
+						$('.panel:not(.discarded)').hide();
+						$('.self-talk button').css({opacity:0});
+						$('.self-talk .copy').css({opacity:0});
+						
+						setTimeout(bringTheCardsBack,800);
+					}
+				
+				} else {
+					$('.panel').addClass('flip');
+					$('.self-talk h2').css({opacity:0});
+					//$('.self-talk .copy').show().css({opacity:0}).delay(1500).animate({opacity:1});
+					$('.self-talk button').text('NEXT >');
+				}
+			})
+			
+
+			$('.sticker').mousedown(function(){
+				var t = this;
+				var anim = {p:0};
+
+				var $stickers = $(this).closest('.stickers');
+
+				var $masker = $('<div class="sticker-masker">').appendTo($stickers);
+				$masker.offset($(this).offset()).width($(this).outerWidth()).height($(this).outerHeight());
+				
+				var $clone = $(this).clone().appendTo($masker).css({position:'absolute',top:0,left:'auto',margin:0,right:'0px'});
+
+				$(this).css({opacity:0});
+
+
+				var $back = $('<div class="sticker-back">').appendTo($stickers).offset($masker.offset()).height($masker.height());
+				$back.animate({left:'+='+($masker.width()-10),width:$masker.width()},1000).animate({top:'100vh'},500,function(){
+					$(t).addClass('unstuck');
+					checkIfLast(t);
+				})
+				$masker.animate({left:'+='+$masker.width(),width:0},1000);
+
+				//$back.offset($(this).offset()).width($(this).outerWidth()).height($(this).outerHeight());
+
+				//var p = $back.position();
+				/*var w = $(this).width();
+
+				$(anim).animate({p:1},{duration:1000,step:function(a){
+					//var clip = 'polygon('+a*100+'% 0%, '+(a*100+10)+'% 100%, 100% 100%, 100% 0%)';
+					//$(t).css({'clip-path':clip});
+
+					$back.css({left:a*w,width:w*a+'px'})
+
+				},complete:function(){$(t).css({opacity:0}).addClass('unstuck');checkIfLast(t);}})*/
+			})
+
+			function makeCYT($cyt){
+
+				var QS = '<li>Would you say this to a teammate?</li><li>How would you feel if someone said this to you?</li>';
+
+				var CYT = [
+					/*{
+						q:"What you would you say if this was your <b>teammate</b>?",
+						o:[
+							"Mate, you’ll never get over this.",
+							"You really let every down today.",
+							"You made a mistake. But it'll be okay."
+						],
+						f:[
+							"<img src='./icon-sad-chat.png'> I think he already feels bad.",
+							"<img src='./icon-sad-chat.png'> Wow. That's just mean.",
+							"<img src='./icon-positive.png'> Good choice. This is a great example of <b>positive talk</b>.",
+						],
+					},
+					{
+						q:"What you would you say if this was your <b>teammate</b>?",
+						o:[
+							"Give up and go play tennis, I reckon.",
+							"Were you born with two left feet?",
+							"You'll get there. Just got to keep training.",
+						],
+						f:[
+							"<img src='./icon-sad-chat.png'> Good one. But not very helpful.",
+							"<img src='./icon-sad-chat.png'> Rude, man. Just rude.",
+							"<img src='./icon-idea.png'> Good choice. This is a great example of <b>instructive talk</b>."
+						]
+					},
+					{
+						q:"What you would you say if this was your <b>teammate</b>?",
+						o:[
+							"Go home, ya dickhead.",
+							"We’d be better off without you.",
+							"Keep going mate. You've got this."
+						],
+						f:[
+							"<img src='./icon-sad-chat.png'> Ouch! This guy needs some love.",
+							"<img src='./icon-sad-chat.png'> You're a bully. Not cool.",
+							"<img src='./icon-fist.png'> Good choice. This is a great example of <b>motivational talk</b>."
+						]
+					},*/
+					{
+						
+						s:"I'm such a failure",
+						r:'<li>How would you feel if someone said this to you?</li><li>Would you say this to a teammate?</li>',
+						q:"What could you say instead?",
+						o:[
+							"I’ll never get over this.",
+							"I’ve let everyone down today.",
+							"I made a mistake. But it'll be okay.",
+						],
+						f:[
+							"<img src='./icon-sad-thought.png'> "+QS+"It's easy to think this way. But maybe you can turn it around.",
+							"<img src='./icon-sad-thought.png'> "+QS+"It's easy to think this way. But maybe you can turn it around.",
+							"<img src='./icon-positive.png'> Good Choice. Choosing <b>positive thoughts</b> can help us move on from our mistakes, rather than making them seem worse than they are.",
+						]
+					},
+					{
+						s:"I'm hopeless.",
+						r:'<li>How would you feel if someone said this to you?</li><li>Would you say this to a teammate?</li>',
+						q:"What could you say instead?",
+						o:[
+
+							"I should give up. I’ll never be great at this.",
+							"I’m just not built for Rugby.",
+							"I'll get there. Just got to keep training.",
+						],
+						f:[
+							"<img src='./icon-sad-thought.png'> "+QS+"That's not going to help. Maybe you can find a way to turn this around.",
+							"<img src='./icon-sad-thought.png'> "+QS+"You make it sound so hopeless. Maybe you can be a little more proactive.",
+							"<img src='./icon-idea.png'> Good choice. Choosing <b>instructive thoughts</b> will spawn us to take action, rather than getting bogged down in our mistakes.",
+						]
+					},
+					{
+						s:"I should quit!",
+						r:'<li>How would you feel if someone said this to you?</li><li>Would you say this to a teammate?</li>',
+						q:"What could you say instead?",
+						o:[
+							"I wish I could just go home.",
+							"This team would be better off without me.",
+							"I’ve got keep going. I’ve got this."
+						],
+						f:[
+							"<img src='./icon-sad-thought.png'> "+QS+"It's easy to think this way. But maybe you can try and motivate yourself.",
+							"<img src='./icon-sad-thought.png'> "+QS+"That's some low thoughts. Maybe you can try and motivate yourself.",
+							"<img src='./icon-fist.png'> Good choice. Choosing <b>motivational thoughts</b> can help you maintain confidence when we're down."
+						]
+
+					}
+				]
+
+				var $self = $cyt;
+				var $question = $self.find('h2');
+				var $sticker = $self.find('.sticker');
+				var $card = $self.find('.cyt-card');
+				var $li = $self.find('.cyt-options li');
+				var $feedback = $self.find('.cyt-feedback');
+				var $reflection = $self.find('.cyt-reflection');
+				var $button = $self.find('.cyt-next');
+				var $yesno = $self.find('.yesno');
+				var iQuestion = -1;
+				var isCorrect;
+				var q;
+
+				$li.click(doOption);
+
+				$button.click(doButton);
+				$yesno.eq(0).click(doYes);
+				$yesno.eq(1).click(doNo);
+
+				function doOption(){
+
+					var o = $(this).offset();
+
+					var i = $li.index(this);
+					$li.hide();
+					$(this).show().offset(o).animate({top:0});
+					$feedback.show().html(q.f[i]).css({opacity:0}).delay(500).animate({opacity:1});
+
+
+					isCorrect = (i==2);
+
+					$button.show().text(isCorrect?"NEXT >":"TRY AGAIN").css({opacity:0}).delay(2000).animate({opacity:1});
+				}
+
+				function doButton(e){
+
+					$button.hide();
+
+					if(isCorrect){
+
+						var $clone = $card.clone().css({position:'absolute'}).appendTo($self).offset($card.offset());
+						$clone.animate({left:500});
+
+
+
+						if(CYT[iQuestion+1]) nextQuestion();
+						else{
+							$card.hide();
+							$li.hide();
+							$button.hide();
+							$feedback.hide();
+							$question.hide();
+
+							setTimeout(function(){next(e.target);},1000);
+						}
+					} else{
+						$feedback.hide();
+						$li.show();
+					}
+				}
+
+				function doYes(){
+					$feedback.show().html("<img src='./icon-sad-chat.png'> This could be very discouraging. Maybe you should rethink your answer.")
+				}
+
+				function doNo(){
+
+					$feedback.hide();
+					$reflection.hide();
+					$yesno.hide();
+					$sticker.hide();
+
+					$question.show().html(q.q).css({opacity:0}).animate({opacity:1});
+
+
+					$li.show();
+
+					for(var i in q.o){
+						$li.eq(i).html(CYT[iQuestion].o[i]).css({opacity:0}).delay(2500+i*100).animate({opacity:1});
+					}
+
+				}
+
+				function nextQuestion(){
+
+					iQuestion++;
+
+					$li.hide();
+					$question.hide();
+					$feedback.hide();
+					$button.hide();
+
+					q = CYT[iQuestion];
+
+					
+					$sticker.show().html(q.s).css({opacity:0}).delay(800).animate({opacity:1});
+					$reflection.show().html(q.r).css({opacity:0}).delay(1500).animate({opacity:1});
+					$yesno.show().css({opacity:0}).delay(2500).animate({opacity:1});
+					$card.css({left:-500}).animate({left:0});
+				}
+
+				nextQuestion();
+
+
+
+			};
+
+			$('.finish-button').click(function(){
+				window.parent.doFinishActivity();
+			});
+
+		})
+	</script>
+	<style type="text/css">
+
+		button.yesno{
+			width: 30%;
+			font-size: 15px;
+			display: inline-block;
+			border-radius: 0px;
+		}
+
+		.cyt-reflection{
+			font-size: 20px;
+		}
+
+		.cyt-quiz h2{
+			width: 80%;
+			margin: auto;
+		}
+
+		.cyt-quiz ul{
+			padding: 0px;
+		}
+
+		.cyt-options li{
+			background: white;
+			border-radius: 5px;
+			list-style-type: none;
+			margin: 5px 50px;
+			color: blue;
+			border: 1px solid blue;
+			display: block;
+			padding: 10px;
+
+		}
+
+		.cyt-options li:before, .cyt-options li:after{
+			content: '"';
+		}
+
+		.cyt-card{
+			width: 300px;
+			height: 200px;
+			background-image: url('./self-talk-negative.jpg');
+			background-size: cover;
+			background-position: center;
+			margin: 10px auto;
+			position: relative;
+		}
+
+		.cyt-card .sticker{
+			margin-top:50px;
+			transform:scale(1.5) rotate(-5deg);
+
+		}
+
+		.cyt-quiz .copy img{
+			float: left;
+			margin-right: 10px;
+		}
+
+
+
+		@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
+
+		@font-face {
+			font-family: "BodyFont";
+			src: url("./Overpass-Light.ttf");
+		}
+
+		@font-face {
+		  font-family: BodyFont;
+		  src: url("./Overpass-Bold.ttf");
+		  font-weight: bold;
+		}	
+
+		body{
+			background: #333;
+			font-family: "BodyFont";
+			text-align: center;
+			margin: 0px;
+			background: none;
+		}
+
+		.sticker-masker{
+			display: block;
+
+			position: absolute;
+			overflow: hidden;
+			white-space: nowrap;
+			text-align: right;
+		}
+
+		.sticker-masker:after{
+			content: "";
+			position: absolute;
+			left: 0px;
+			top: 0px;
+			width: 100%;
+			height: 100%;
+			background: linear-gradient(to right, gray,transparent, transparent);
+		}
+
+		.sticker-back{
+			display: block;
+			background: gray;
+			transform-origin: top left;
+			transform: rotate(-15deg) translate(-30px,0px);
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			background: linear-gradient(to right, gray,white, white);
+		}
+
+		.feedback-inner{
+			position: absolute;
+			bottom: 0px;
+			left: 0px;
+			right: 0px;
+			border: 1px solid black;
+
+			box-shadow: 0px 1px 5px #999;
+			padding: 20px;
+			background: white;
+			
+			text-align: left;
+			color: black;
+			box-shadow: 0px -5px 20px rgba(0,0,0,0.5);
+		}
+
+		.feedback{
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			right: 0px;
+			bottom: 0px;
+			
+
+		}
+
+		h1.copy {
+			background: none;
+			padding: 0px;
+			color: white;
+			font-weight: normal;
+			font-size: 24px;
+		}
+
+		.feedback h1{
+			font-size: 20px;
+			padding: 0px;
+		}
+
+		.feedback h1:before{
+			content: "";
+			width: 30px;
+			height: 30px;
+			display: inline-block;
+			vertical-align: middle;
+			background-image: url('./cross.svg');
+			background-size: cover;
+			margin-right: 10px;
+		}
+
+		.screen{
+			width: 400px;
+			height: 700px;
+			border: 1px solid black;
+			margin: auto;
+			background: white;
+			text-align: center;
+			
+			position: relative;
+			display: inline-block;
+			vertical-align: top;
+			margin:0px;
+			
+			color: white;
+			background: black;
+			overflow: hidden;
+			border: none;
+
+			background: none;
+		}
+
+		.body{
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			height: 100%;
+			width: 100%;
+			transition: 0.5s all;
+			overflow: auto;
+			margin: 0px;
+			padding: 0px;
+		}
+
+		.body.darkened{
+
+		}
+
+		.body.darkened:after{
+			content: "";
+			top: -50vw;
+			left: -50vh;
+			background: #222626;
+			width: 200vw;
+			height: 500vh;
+			display: block;
+			position: absolute;
+			opacity: 0.7;
+		}
+
+		.tile{
+			display: inline-block;
+			width: 150px;
+			height: 150px;
+			
+			margin: 5px;
+			vertical-align: top;
+			cursor: pointer;
+			box-shadow: 0px 1px 5px black;
+			position: relative;
+			background: white;
+			color: black;
+			border-radius: 10px;
+		}
+
+		.tile:before{
+			content:"";
+			width: 80px;
+			height: 80px;
+			display: block;
+			margin: auto;
+			margin: 20px auto;
+
+
+			background-image: url('./team.svg');
+			background-size: cover;
+			position: relative;
+		}
+
+		.tile.correct{
+			background: blue;
+			color: white;
+		}
+
+		.tile.correct:after{
+			content: "";
+			position: absolute;
+			display: block;
+			right: -5px;
+			top: -5px;
+			width: 30px;
+			height: 30px;
+			background-image: url('./tick.svg');
+			background-size: cover;
+		}
+
+		.tile.selected{
+			z-index: 1;
+		}
+
+		.tile.incorrect{
+			/*opacity: 0.2;*/
+			background: orange;
+		}
+
+		.tile.incorrect:after{
+			content: "";
+			position: absolute;
+			display: block;
+			right: -5px;
+			top: -5px;
+			width: 30px;
+			height: 30px;
+			background-image: url('./alert.svg');
+			background-size: cover;
+		}
+
+		.tile-shadow{
+			content: "";
+			width: 1000px;
+			height: 1000px;
+			background: black;
+			left: -500px;
+			top: -500px;
+
+			position: absolute;
+		}
+
+
+		.feedback-positive{
+			position: absolute;
+			bottom: 10px;
+			left: 10px;
+			right: 10px;
+			background: green;
+			padding: 20px;
+			color: white;
+			display: none;
+		}
+
+		button{
+			font: inherit;
+			background: blue;
+			border: none;
+			color: white;
+			width: 80%;
+			margin: 20px 10%;
+			padding: 20px;
+		}
+
+		.page{
+			display: none;
+			position: absolute;
+			height: 100%;
+			width: 100%;
+		}
+
+		.page:first-of-type{
+			display: block;
+		}
+
+		.sticker{
+			padding: 5px 10px;
+			border: 2px solid orange;
+			color: orange;
+			border-width: 2px 4px 4px 4px;
+			display: inline-block;
+			margin: 15px;
+			background: white; 
+			position: relative;
+		}
+
+		p{
+			margin-bottom: 0px;
+			margin-top: 0px;
+		}
+
+		header{
+			position: absolute;
+			top: -50px;
+			width: 100%;
+			text-align: center;
+			color: white;
+		}
+
+		.stickers{
+			position: absolute;
+			bottom: 50px;
+			left: 0px;
+			width: 100%;
+		}
+
+		.sticker.blue{
+			/*transform: rotate(2deg);*/
+			color: blue;
+			border-color: blue;
+		}
+
+		.sticker.orange{
+			/*transform: rotate(-2deg);*/
+		}
+
+		.breather{
+			width: 200px;
+			height: 200px;
+			background: rgba(255,255,255,0.4);
+			margin: auto;
+			
+			
+			box-sizing: border-box;
+			border-radius: 100px;
+			position: relative;
+			text-align: center;
+			line-height: 200px;
+		}
+
+		.breather h2{
+			position: absolute;
+			top: 210px;
+			line-height: 25px;
+			text-align: center;
+			width: 100%;
+		}
+
+		.breather h2 p{
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			width: 100%;
+		}
+
+		.breather .lung{
+			width: 100%;
+			height: 100%;
+			display: inline-block;
+			background: white;
+			border-radius: 100px;
+			vertical-align: middle;
+			
+			background-size: 50%;
+			background-position: center;
+			background-repeat: no-repeat;
+		}
+
+		.breather.enabled .lung{
+			background-image: none;
+		}
+
+		.breather .pie{
+			content: "";
+			display: block;
+			width: 100%;
+			height: 100%;
+			position: absolute;	
+			top: 0px;
+			left: 0px;
+			border: 5px solid black;
+			box-sizing: border-box;
+			border-radius: 100px;
+  			clip-path: polygon(50% 50%);
+  			display: none;
+		}
+
+		.bg{
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			right: 0px;
+			bottom: 0px;
+			background-image: url('./breathing.png');
+			background-size: cover;
+			background-position: center;
+			filter: blur(10px);
+			overflow: hidden;
+			opacity: 0.5;
+		}
+
+		.bg.ref{
+
+			background-image: url('./ref.jpg');
+		}
+
+		h1{
+			background: white;
+			color: blue;
+			margin-top: 10px;
+			text-transform: uppercase;
+			padding: 20px;
+
+			font-family: 'Anton', sans-serif;
+			font-weight: normal;
+		}
+
+		h2{
+			font-weight: normal;
+			font-size: 20px;
+			color: white;
+		}
+
+		.note{
+			text-align: left;
+			padding-left: 20px;
+			border-left: 2px solid white;
+			margin-left: 20px;
+		}
+
+		
+
+		.swipe{
+			position: absolute;
+			background-image: url('./swipe.png');
+			width: 60px;
+			height: 60px;
+			background-size: cover;
+			top: 5px;
+			left: 5px;
+			z-index: 1;
+
+		}
+
+		.icon{
+			width: 200px;
+			height: 200px;
+			background: white;
+			border-radius: 100px;
+			display: inline-block;
+			margin-top: 60px;
+		}
+
+		.breather-prompt{
+			display: inline-block;
+			width: 100px;
+			font-size: 13px;
+		}
+
+		.bpi{
+			width: 100px;
+			height: 100px;
+			background: rgba(255,255,255,0.2);
+			border-radius: 50px;
+			margin-bottom: 10px;
+			position: relative;
+		}
+
+		.bpi:after,.bpi:before{
+			content: "";
+			width: 100px;
+			height: 100px;
+			background: white;
+			display: block;
+			border-radius: 50px;
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			right: 0px;
+			bottom: 0px;
+			margin: auto;
+			opacity: 0.5;
+		}
+
+		.bpi.in:before{
+			width: 60px;
+			height: 60px;
+		}
+
+		.bpi.in:after{
+			width: 70px;
+			height: 70px;
+		}
+
+		.bpi.out:before{
+			width: 20px;
+			height: 20px;
+		}
+
+		.bpi.out:after{
+			width: 30px;
+			height: 30px;
+		}
+
+
+
+		.panel{
+			margin: 10px;
+			
+			height: 200px;
+
+			color: black;
+			
+  			transform-style: preserve-3d;
+
+  			transform: rotateY(0deg);
+  			position: relative;
+  			line-height: 200px;
+  			box-sizing: border-box;
+		}
+
+		
+
+		.panel h2{
+			color: black;
+		}
+
+		.panel-front, .panel-back{
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			top: 0px;
+			left: 0px;
+			-webkit-backface-visibility: hidden; /* Safari */
+			backface-visibility: hidden;
+
+			background: white;
+			border: 2px solid white;
+			border-radius: 10px;
+			transform: rotate(0deg);
+			background-size: 110%;
+			background-position: center -50px;
+		}
+
+		.panel-back{
+			background-color: dodgerblue;
+		  	transform: rotateY(180deg);
+		}
+
+		.panel.flip{
+			transform: rotateY(180deg);
+			transition: all 0.8s;
+			
+		}
+
+		.panel.discarded{
+			transform: rotateY(180deg) translateX(-500px) rotateZ(-20deg);
+		}
+
+		.yesno{
+			width: 50px;
+			height: 50px;
+			border-radius:25px;
+			line-height: 50px;
+			display: inline-block;
+			font-size: 40px;
+			box-sizing: border-box;
+			padding: 0px;
+
+
+		}
+
+		.self-talk .copy{
+			margin: 20px auto;
+		}
+
+		.copy{
+			text-align: left;
+			width:80%;
+			margin:10px 10%;
+
+		}
+
+		.copy li{
+			text-align: left;
+		}
+
+		.copy h1{
+			background: none;
+			padding: 0px;
+			margin: 0px;
+			text-align: center;
+			color: white;
+		}
+
+		.panel-bg{
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			right: 0px;
+			bottom: 0px;
+		}
+		
+		.panel-content{
+			
+			
+			line-height: 1.5em;
+			display: inline-block;
+			
+		}
+
+
+		.panel-content h3{
+			font-family: serif;
+			font-style: italic;
+			font-size: 30px;
+
+			background: blue;
+			color: white;
+			padding: 5px;
+
+			display: inline-block;
+			line-height: 1.5em;
+		}
+
+		.panel-content h3:before, .panel-content h3:after{
+			content: '"';
+		}
+
+		h2 b{
+			background: blue;
+			display: inline-block;
+		}
+
+	</style>
+</head>
+<body>
+	<!--div class="screen myt">
+		<div class="bg" style="background-image:url(./bg-mud.jpg)"></div>
+		<div class='page'>
+			<div class='stickers'>
+				<div class='sticker orange'>I'm so pathetic</div>
+				<div class='sticker blue'>I've let the team down</div>
+				<div class='sticker orange'>I want to hide</div>
+			</div>
+			<button class='next'>WATCH YOUR SELF-TALK<hr>START DEMO</button>
+		</div>
+		<div class='page self-talk' style='perspective: 600px;'>
+			<h1>CHOOSE YOUR SELF-TALK</h1>
+
+			<h2>When <b>YOU</b> make a mistake,<br>you might think:</h2>
+			<div class='panel'>
+				<div class='panel-front' style='background-image:url(./self-talk-negative.jpg)'>
+					
+					<div class='panel-content'>
+						
+						<h3></h3>
+	
+						
+					</div>
+				</div>
+				<div class='panel-back' style='background-image:url(./self-talk-positive.png)'>
+					
+					<div class='panel-content'>
+						<h3></h3>
+					</div>
+				</div>
+				
+			</div>
+			<p class='copy'></p>
+			<h2>If this was your <b>teammate</b>,<br>what would you say?</h2>
+			<ul>
+				<li>A</li>
+				<li>B</li>
+				<li>C</li>
+			</ul>
+			<button class='flipit'>FLIP IT</button>
+			
+
+		</div>
+		<div class="page">
+			<h2>REMEMBER</h2>
+			<h1>WATCH YOUR SELF-TALK</h1>
+			<p class="copy">It's easy to talk down to yourself when you make mistakes. Stop, and question if you would speak to your teammate that way. Then, flip it!</p>
+			<h1 class="copy"><img src='./icon-positive.png'>  Be positive.</h1>
+			<p class="copy">Choose positive self-talk to help minimise mistakes. “Stay positive, it’ll be okay.”</p>
+			<h1 class="copy"><img src='./icon-idea.png'>  Be instructive.</h1>
+			<p class="copy"> Choose instructive self-talk to help promote action. “Keep your eye on the ball.”</p>
+
+			<h1 class="copy"><img src='./icon-fist.png'>  Be motivational.</h1>
+			<p class="copy">Choose motivational self-talk to maintain confidence. “Keep going, you can do this.”</p>
+
+			
+		</div>
+	</div-->
+	<!--div class="screen choose-your-thoughts">
+		<div class="bg" style="background-image:url(./bg-mud.jpg)"></div>
+		<div class="page">
+			<button class='next'>CHOOSE YOUR THOUGHTS<hr>START DEMO</button>
+			<div class='stickers'>
+				<div class='sticker blue'>I'm such a failure</div><br>
+				<div class='sticker orange'>I'm hopeless</div><br>
+				<div class='sticker blue'>I should quit</div>
+			</div>
+		</div>
+		<div class="page">
+			<h1>STOP</h1>
+			<h2>Don’t beat yourself up<br>with negative thoughts.</h2>
+			<div class='stickers'>
+				<div class='sticker blue'><div class='swipe'></div>I'm such a failure</div><br>
+				<div class='sticker orange'>I'm hopeless</div><br>
+				<div class='sticker blue'>I should quit</div>
+			</div>
+		</div>
+		<div class="page">
+			<h1>CHOOSE YOUR THOUGHTS</h1>
+			<div class='icon' style='background-size:70%;background-repeat:no-repeat;background-position:center;background-image:url(./icon-choose-your-thoughts.svg)'></div>
+			<button class='next'>START</button>
+		</div>
+		<div class='page cyt-quiz'>
+			<h1>CHOOSE YOUR THOUGHTS</h1>
+			<div class='cyt-card'><div class='sticker blue'></div></div>
+			<p class='copy cyt-reflection'></p>
+			<button class="yesno">I MIGHT</button><button class="yesno">PROBABLY NOT</button>
+
+			<h2>Question</h2>
+			<ul class='cyt-options'>
+				<li></li>
+				<li></li>
+				<li></li>
+			</ul>
+			<p class="copy cyt-feedback"></p>
+			<button class='cyt-next'>Try Again</button>
+		</div>
+		<div class='page'>
+			<h2>REMEMBER</h2>
+			<h1>CHOOSE YOUR THOUGHTS</h1>
+			<p class="copy">It’s easy to beat ourselves up when we make mistakes. Think about what you would say to a teammate in these moments. Choose thoughts that will help you bounce back.</p>
+			<h1 class="copy"><img src='./icon-positive.png'> positive thoughts</h1>
+			<p class="copy">“I made a mistake. But it'll be okay.”</p>
+			<h1 class="copy"><img src='./icon-idea.png'> instructive thoughts</h1>
+			<p class="copy">“I'll get there. Just got to keep training.”</p>
+			<h1 class="copy"><img src='./icon-fist.png'> motivational thoughts</h1>
+			<p class="copy">“I’ve got keep going. I’ve got this."</p>
+		</div>
+	</div>
+	<div class='screen'>
+		<div class='bg'></div>
+		<div class='page'>
+			<div class='stickers'>
+				<div class='sticker blue'>Gotta psych myself up for this!</div>
+				<div class='sticker orange'>What will everyone think of this!?</div>
+				<div class='sticker blue'>I'm such a dickhead.</div>
+			</div>
+			<button class='next'>KEEP YOUR COOL<hr>START DEMO</button>
+		</div>
+		
+		<div class='page'>
+			<h1>STOP</h1>
+			
+			<h2>Don’t let the pressure get to you.</h2>
+			
+			<div class='stickers'>
+				<div class='sticker blue'><div class='swipe'></div>Gotta psych myself up for this!</div>
+				<div class='sticker orange'>What will everyone think of this!?</div>
+				<div class='sticker blue'>I'm such a dickhead.</div>
+			</div>
+		</div>
+		<div class='page'>
+			<h1>KEEP YOUR COOL</h1>
+			<div class='icon' style='background-size:70%;background-repeat:no-repeat;background-position:center;background-image:url(./lungs.svg)'></div>
+			<button class='next'>START</button>
+		</div>
+		<div class='page'>
+			<h1>KEEP YOUR COOL</h1>
+			<div class="breather">
+				<div class='lung'></div>
+				<div class='pie'></div>
+			</div>
+			<h2>Pay attention to your breathing.</h2>
+			<p class='copy'>Controlled breathing is a quick hack to calm our body in tense moments. Find a quiet place and take a few moments to complete this exercise. It will take less than a minute.</p>
+			<button class='next'>OK, I'M READY.</button>
+		</div>
+		<div class='page'>
+			<h1>KEEP YOUR COOL</h1>
+
+			<div class="breather enabled">
+				<h2></h2>
+				<div class='lung'></div>
+				<div class='pie'></div>
+			</div>
+			<br><br>
+			<button>once more ↺</button>
+			<button class="next">CARRY ON</button>
+		</div>
+		
+		<div class="page">
+			<h2>REMEMBER</h2>
+			<h1>KEEP YOUR COOL</h1>
+			<p class="copy">It’s easy to get fired up, or anxious in high-pressure moments. But pausing for a moment to take a few breaths can help keep us cool, calm, and in control.</p>
+			<div class="breather-prompt"><div class='bpi in'></div><p>In for<br>5 seconds</p></div>
+			<div class="breather-prompt"><div class='bpi hold'></div><p>Hold for<br>2 seconds</p></div>
+			<div class="breather-prompt"><div class='bpi out'></div><p>Out for<br>5 seconds</p></div>
+			<h2>Repeat, whenever you need it.</h2>
+			<button>COOL, THANKS!</button>
+		</div>
+	</div-->
+	<div class='screen controllables'>
+		<!--<div class='bg ref'></div>
+		<div class='page intro'>
+			<div class='stickers'>
+				<div class='sticker orange'>Get your eyes tested, mate</div>
+				<div class='sticker blue'>Shit weather for rugby!</div>
+				<div class='sticker orange'>The coach is on my back</div>
+			</div>
+			<button class='next'>CONTROL THE CONTROLLABLES<hr>START DEMO</button>
+
+		</div>
+		<div class='page intro'>
+			<h1>STOP</h1>
+			<h2>Don't get hung up on things you can’t control.</h2>
+			
+			<div class='stickers'>
+				<div class='sticker orange'><div class='swipe'></div>Get your eyes tested, mate</div>
+				<div class='sticker blue'>Shit weather for rugby!</div>
+				<div class='sticker orange'>The coach is on my back</div>
+			</div>
+		</div>-->
+		<div class='page segue'>
+			<h1>CONTROL THE CONTROLLABLES</h1>
+			<div class='icon' style='background-image:url(./control.svg)'></div>
+			<button class='next'>GIVE IT A GO</button>
+		</div>
+		<div class='page reflect'>
+			<div class='body'>
+			<h1>Control the Controllables</h1>
+			<h2 class='instruction'>Select 3 things he CAN control.</h2>
+			</div>
+			<div class='feedback-positive'></div>
+		</div>
+		<div class='page outro'>
+			<h2>REMEMBER</h2>
+			<h1>CONTROL THE CONTROLLABLES</h1>
+			
+			<p class='copy'>It’s easy to get lost in the things you can’t control. But this can only lead to frustration. By concentrating on the things we can control, we are more likely to have a positive impact on our experience.</p>
+			<button class='finish-button'>GREAT, THANKS!</button>
+		</div>
+	</div>
+</body>
+</html>
