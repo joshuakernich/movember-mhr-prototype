@@ -463,13 +463,13 @@
 					},*/
 					{
 						
-						s:"I'm such a failure",
+						s:"You're such a failure",
 						r:'<li>How would you feel if someone said this to you?</li><li>Would you say this to a teammate?</li>',
-						q:"What could you say instead?",
+						q:"What would you say to <b>yourself</b> in this moment?",
 						o:[
-							"I’ll never get over this.",
-							"I’ve let everyone down today.",
-							"I made a mistake. But it'll be okay.",
+							"You’ll never get over this.",
+							"You’ve let everyone down today.",
+							"You made a mistake. But you'll be okay.",
 						],
 						f:[
 							"<img src='./icon-sad-thought.png'> "+QS+"It's easy to think this way. But maybe you can turn it around.",
@@ -478,14 +478,14 @@
 						]
 					},
 					{
-						s:"I'm hopeless.",
+						s:"You're hopeless.",
 						r:'<li>How would you feel if someone said this to you?</li><li>Would you say this to a teammate?</li>',
-						q:"What could you say instead?",
+						q:"What would you say to <b>yourself</b> in this moment?",
 						o:[
 
-							"I should give up. I’ll never be great at this.",
-							"I’m just not built for Rugby.",
-							"I'll get there. Just got to keep training.",
+							"You should give up. You’ll never be great at this.",
+							"You're just not built for Rugby.",
+							"You'll get there. Just got to keep training.",
 						],
 						f:[
 							"<img src='./icon-sad-thought.png'> "+QS+"That's not going to help. Maybe you can find a way to turn this around.",
@@ -494,13 +494,13 @@
 						]
 					},
 					{
-						s:"I should quit!",
+						s:"You should quit!",
 						r:'<li>How would you feel if someone said this to you?</li><li>Would you say this to a teammate?</li>',
-						q:"What could you say instead?",
+						q:"What would you say to <b>yourself</b> in this moment?",
 						o:[
-							"I wish I could just go home.",
-							"This team would be better off without me.",
-							"I’ve got keep going. I’ve got this."
+							"You should just go home.",
+							"This team would be better off without you.",
+							"You’ve got keep going. You’ve got this."
 						],
 						f:[
 							"<img src='./icon-sad-thought.png'> "+QS+"It's easy to think this way. But maybe you can try and motivate yourself.",
@@ -598,17 +598,26 @@
 
 					iQuestion++;
 
-					$li.hide();
-					$question.hide();
+					$li.show();
+					$yesno.hide();
+					
 					$feedback.hide();
 					$button.hide();
+
+
 
 					q = CYT[iQuestion];
 
 					
 					$sticker.show().html(q.s).css({opacity:0}).delay(800).animate({opacity:1});
-					$reflection.show().html(q.r).css({opacity:0}).delay(1500).animate({opacity:1});
-					$yesno.show().css({opacity:0}).delay(2500).animate({opacity:1});
+					$question.show().html(q.q).css({opacity:0}).delay(2000).animate({opacity:1});
+
+					for(var i in q.o){
+						$li.eq(i).html(CYT[iQuestion].o[i]).css({opacity:0}).delay(3500+i*100).animate({opacity:1});
+					}
+
+					//$reflection.show().html(q.r).css({opacity:0}).delay(1500).animate({opacity:1});
+					//$yesno.show().css({opacity:0}).delay(2500).animate({opacity:1});
 					$card.css({left:-500}).animate({left:0});
 				}
 
@@ -669,7 +678,11 @@
 		.cyt-card .sticker{
 			margin-top:50px;
 			transform:scale(1.5) rotate(-5deg);
+			border: none;
+		}
 
+		.cyt-card .sticker:before, .cyt-card .sticker:after{
+			content: '"';
 		}
 
 		.cyt-quiz .copy img{
