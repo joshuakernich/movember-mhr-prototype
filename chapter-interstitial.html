@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Interstitial</title>
+	<script type="text/javascript" src="./jquery-3.4.1.min.js"></script>
+	<style type="text/css">
+		body{
+			text-align: center;
+			background: #333;
+			font-family: Arial;
+		}
+
+		.phone{
+			width: 400px;
+			height: 700px;
+			background: white;
+			display: inline-block;
+			position: relative;
+			overflow: hidden;
+		}
+
+		.screen{
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			width: 100%;
+			height: 100%;
+			display: none;
+		}
+
+		.strategy{
+			color: blue;
+			padding: 20px;
+		}
+
+		.strategy img{
+			vertical-align: middle;
+			margin-right: 10px;
+		}
+	</style>
+	<script type="text/javascript">
+		$(function(){
+			var iScreen = -1;
+			$('.screen').hide();
+			function nextScreen(){
+				
+				var o = $('.screen').eq(iScreen).find('.strategy').offset();
+
+
+				iScreen++;
+				
+
+
+				$('.screen').hide().eq(iScreen).show().find('.strategy');
+
+
+				if(iScreen>0){
+
+					var o2 = $('.screen').eq(iScreen).find('.strategy').offset();
+					var $s = $('.screen').eq(iScreen).find('.strategy').clone().appendTo('.phone');
+					var p = $s.offset(o2).position();
+
+					$s.offset(o).animate({top:p.top,left:p.left},500,(iScreen==4)?doTransition:doNothing);
+
+					$('.screen').eq(iScreen).css({opacity:0}).delay(500).animate({opacity:1},1);
+				}
+
+
+			}
+
+			function doTransition(){
+				$(this).remove();
+				$('.screen').eq(iScreen+1).show().delay(1000).css({left:'100%'}).animate({left:0});
+				$('.screen').eq(iScreen).delay(1000).animate({left:'-100%'});
+			}
+
+			function doNothing(){
+				$(this).remove();
+			}
+
+			nextScreen();
+
+			$('.phone').click(nextScreen);
+		})
+	</script>
+</head>
+<body>
+	<div class="phone">
+
+		<div class='screen'>
+			<div class="strategy"><img src='./lungs.svg' width="30px">Keep you cool</div>
+			<p>Here we are, learning about a strategy.</p>
+			<button>Ok, I'm done learning.</button>
+		</div>
+		<div class='screen'>
+			
+			<h1>REMEMBER</h1>
+			<div class="strategy"><img src='./lungs.svg' width="30px">Keep you cool</div>
+			<p>Here we are, summarising the strategy.</p>
+			<button>Ok, I've got it.</button>
+		</div>
+		<div class='screen'>
+			<div class="strategy"><img src='./lungs.svg' width="30px">Keep you cool</div>
+			<p>Here we are, watching the resolution</p>
+			<button>Ok, I'm done watching this.</button>
+		</div>
+		<div class='screen'>
+			<div class="strategy"><img src='./lungs.svg' width="30px">Keep you cool</div>
+			<h1>Chapter Complete! Hooray!</h1>
+			<p>Here we are, at the end</p>
+			<button>Acknowledged!</button>
+		</div>
+		<div class='screen'>
+			<h1>CHAPTER 4</h1>
+			<p>Here we are, back on the dashboard.</p>
+			<br><br><br><br><br><br>
+			<br><br><br><br><br><br>
+			<br><br><br><br><br><br>
+			<br><br><br><br><br><br>
+			<div class="strategy"><img src='./lungs.svg' width="30px">Keep you cool</div>
+		</div>
+		<div class='screen'>
+			<h1>CHAPTER 5</h1>
+			<p>And on to the next chapter.</p>
+			<br><br><br><br><br><br>
+			<br><br><br><br><br><br>
+			<br><br><br><br><br><br>
+			<br><br><br><br><br><br>
+			<div class="strategy"><img src='./lungs.svg' width="30px">Do other thing</div>
+			<button>START</button>
+		</div>
+	</div>
+</body>
+</html>
