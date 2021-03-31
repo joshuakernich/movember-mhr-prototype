@@ -88,10 +88,8 @@
 					function onFirstSelecto(){
 
 						$(this).closest('.selecto').addClass('selected').find('li').hide();
-						
-	
+					
 						var o = $(this).show().offset();
-
 
 						if($(this).data('feedback')){
 							$(this).closest('.selecto').find('.feedback').html($(this).data('feedback')).css({opacity:0}).animate({opacity:1})
@@ -110,18 +108,29 @@
 
 					function onSecondSelecto(){
 						$(this).closest('.selecto').addClass('selected').find('li').hide();
-						$(this).show();
+					
+						var o = $(this).show().offset();
 
-						var o = $(this).offset();
+						if($(this).data('feedback')){
+							$(this).closest('.selecto').find('.feedback').html($(this).data('feedback')).css({opacity:0}).animate({opacity:1})
+							$(this).closest('.selecto').find('.retry').show();
+							$(this).offset(o).animate({top:0,left:0})
 
-						$('.page').eq(i).find('h2').eq(1).hide();
+						} else {
+							$('.page').eq(i).find('h2').eq(1).hide();
+							$(this).offset(o).animate({top:-70,left:0});
+							$('.page').eq(i).find('h2').eq(2).show().css({opacity:0}).delay(500).animate({opacity:1});
+							$('.page').eq(i).find('.copy').show().css({opacity:0}).delay(1000).animate({opacity:1});
+							$('.page').eq(i).find('.next').show().css({opacity:0}).delay(1500).animate({opacity:1});
+						}
+						
+						
 
-						$(this).offset(o).animate({top:-70,left:0});
 
-						$('.page').eq(i).find('h2').eq(2).show().css({opacity:0}).delay(500).animate({opacity:1});
-						$('.page').eq(i).find('.copy').show().css({opacity:0}).delay(1000).animate({opacity:1});
 
-						$('.page').eq(i).find('.next').show().css({opacity:0}).delay(1500).animate({opacity:1});
+						
+
+
 					}
 				}
 
@@ -373,7 +382,7 @@
 					<li>No big deal.</li>
 					<li data-feedback="Would you say this to a teammate?">What a shit-stain.</li>
 					<p class="feedback"></p>
-				<button class="retry">TRY AGAIN</button>
+					<button class="retry">TRY AGAIN</button>
 				</ul>
 				<h2>Now, choose something<br>INSTRUCTIVE!</h2>
 				<ul class='selecto'>
@@ -383,6 +392,7 @@
 					<li>You'll learn from this.</li>
 					<li data-feedback="Quitting is tempting. But not very satisfying.">You might as well quit.</li>
 					<p class="feedback"></p>
+					<button class="retry">TRY AGAIN</button>
 				</ul>
 				
 				<h2>Great choice.</h2>
@@ -395,7 +405,7 @@
 			<div class="overlay">
 				<h2>Select an OFF-FIELD moment that has caused NEGATIVE THOUGHTS.</h2>
 				<ul class='grid-selecto'>
-					<li>Struggling with school-work</li>
+					<li>Struggling withxschool-work</li>
 					<li>An embarrassing moment</li>
 					<li>Letting your friends down</li>
 					<li>Burning your toast</li>
@@ -415,7 +425,7 @@
 					<li data-feedback="Would you say this to a teammate?">You're bloody useless.</li>
 					<li>No big deal.</li>
 					<p class="feedback"></p>
-				<button class="retry">TRY AGAIN</button>
+					<button class="retry">TRY AGAIN</button>
 				</ul>
 				<h2>Now, choose something<br>INSTRUCTIVE!</h2>
 				<ul class='selecto'>
@@ -425,6 +435,7 @@
 					<li data-feedback="Running away is tempting. But not very helpful.">You can always run away.</li>
 					<li>You'll learn from this.</li>
 					<p class="feedback"></p>
+					<button class="retry">TRY AGAIN</button>
 				</ul>
 				
 				<h2>Great choice.</h2>
@@ -436,7 +447,7 @@
 		<div class="page">
 			<div class="overlay">
 				<h2>REMEMBER</h2>
-				<h2>Choose your Thoughts</h2>
+				<h1>Choose your Thoughts</h1>
 				<p class='copy'>Choosing words that are positive and give us clear instructions can help us bounce back and peform better.
 					<ul>
 				<li>You'll get through this. Just need to keep going.</li>
