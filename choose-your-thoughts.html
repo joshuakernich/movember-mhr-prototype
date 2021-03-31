@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html>
+<head>
+	  <meta name="viewport" content="width=500px, initial-scale=1.0">
+	<title>Choose Your Thoughts</title>
+	<script type="text/javascript" src="./jquery-3.4.1.min.js"></script>
+	<script type="text/javascript">
+		$(function(){
+
+			
+
+			$('.next').click(function(){
+				var i = $('.page').index($(this).closest('.page'));
+				
+				/*if(i==0){
+					$('.page').find('h1').html( $(this).text() );
+				}*/
+				//if(i==2) i = -1;
+				
+				doScreen(i+1);
+			})
+
+			doScreen(0);
+
+			function doScreen(i){
+				$('.page').hide().eq(i).show();
+				/*if(i==0){
+					$('.page').eq(i).find('.moment').css({left:'-100vw'}).animate({left:0});
+					$('.page').eq(i).find('h2').css({opacity:0}).delay(1000).animate({opacity:1});
+					$('.page').eq(i).find('button').each(function(index){
+						$(this).css({opacity:0}).delay(2000+index*100).animate({opacity:1});
+					});
+				} else if(i==1){
+					$('.page').eq(i).find('button').css({opacity:0}).delay(1000).animate({opacity:1});
+				} else if(i==4){
+					$('.page').eq(i).find('.moment').addClass('flip');
+				}*/
+				if($('.page').eq(i).hasClass('page-grid-selecto')){
+
+					$('.page').eq(i).find('.next').hide();
+					$('.page').eq(i).find('.copy').hide();
+
+					$('.page').eq(i).find('li').click(function(){
+						$('.page').eq(i).find('li').hide();
+						$(this).show().addClass('selected');
+						$('.page').eq(i).find('.copy').show().css({opacity:0}).delay(500).animate({opacity:1});
+						$('.page').eq(i).find('.next').show().css({opacity:0}).delay(1500).animate({opacity:1});
+
+					});
+
+
+				}
+
+				if($('.page').eq(i).hasClass('page-thought-selecto')){
+
+					$('.page').eq(i).find('.next').hide();
+
+					$('.page').eq(i).find('h2').eq(1).hide();
+					$('.page').eq(i).find('h2').eq(2).hide();
+					$('.page').eq(i).find('.copy').hide();
+					$('.page').eq(i).find('ul').eq(1).hide();
+
+					$('.page').eq(i).find('.selecto').eq(0).find('li').click(onFirstSelecto);
+					$('.page').eq(i).find('.selecto').eq(1).find('li').click(onSecondSelecto);
+
+					$('.page').eq(i).find('.selecto').eq(0).find('li').each(function(i){
+						$(this).css({opacity:0}).delay(500+i*200).animate({opacity:1});
+					})
+
+
+					$('.page').eq(i).find('.retry').hide().click(function(){
+						$(this).closest('.selecto').removeClass('selected').find('li').show();
+						$(this).closest('.selecto').find('.feedback').empty();
+						$(this).hide();
+					})
+
+
+					function onFirstSelecto(){
+
+						$(this).closest('.selecto').addClass('selected').find('li').hide();
+						
+	
+						var o = $(this).show().offset();
+
+
+						if($(this).data('feedback')){
+							$(this).closest('.selecto').find('.feedback').html($(this).data('feedback')).css({opacity:0}).animate({opacity:1})
+							$(this).closest('.selecto').find('.retry').show();
+
+						} else {
+							$('.page').eq(i).find('h2').eq(0).hide();
+							$('.page').eq(i).find('h2').eq(1).show();
+							$('.page').eq(i).find('h2').eq(1).show().css({opacity:0}).delay(1000).animate({opacity:1});
+							$('.page').eq(i).find('ul').eq(1).show().css({opacity:0}).delay(1000).animate({opacity:1});
+							
+						}
+						
+						$(this).offset(o).animate({top:0,left:0})
+					}
+
+					function onSecondSelecto(){
+						$(this).closest('.selecto').addClass('selected').find('li').hide();
+						$(this).show();
+
+						var o = $(this).offset();
+
+						$('.page').eq(i).find('h2').eq(1).hide();
+
+						$(this).offset(o).animate({top:-70,left:0});
+
+						$('.page').eq(i).find('h2').eq(2).show().css({opacity:0}).delay(500).animate({opacity:1});
+						$('.page').eq(i).find('.copy').show().css({opacity:0}).delay(1000).animate({opacity:1});
+
+						$('.page').eq(i).find('.next').show().css({opacity:0}).delay(1500).animate({opacity:1});
+					}
+				}
+
+			}
+
+			
+		})
+	</script>
+	<style type="text/css">
+
+		@font-face {
+			font-family: "BodyFont";
+			src: url("./Overpass-Light.ttf");
+		}
+
+		@font-face {
+		  font-family: BodyFont;
+		  src: url("./Overpass-Bold.ttf");
+		  font-weight: bold;
+		}	
+
+		body{
+			font-family: "BodyFont";
+			text-align: center;
+			background: black;
+			font-weight: 
+		}
+
+		button{
+			display: block;
+			width: 80%;
+			margin: 0px 10%;
+			font: inherit;
+			margin-bottom: 10px;
+			padding: 20px;
+			color: white;
+			background: blue;
+			font-size: 1.2em;
+			border: none;
+		}
+
+		button:first-of-type{
+			margin-top: 50px;
+		}
+
+		.screen{
+			width: 400px;
+			height: 700px;
+			background: #333;
+			margin: auto;
+			position: relative;
+			overflow: hidden;
+		}
+
+		.moment{
+			width: 300px;
+			height: 600px;
+			background: black;
+			margin: auto;
+			
+			display: inline-block;
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			right: 0px;
+			bottom: 0px;
+
+			background-image: url('./bg-mistake.jpg');
+			background-size: cover;
+			box-shadow: 0px 1px 25px black;
+		}
+
+		.overlay{
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			width: 100%;
+			height: 100%;
+		}
+
+		.overlay h2{
+			padding: 5px;
+			color: white;
+		}
+
+		h1{
+			background: blue;
+			color: white;
+			padding: 20px;
+			margin-top: 20px;
+		}
+
+		button.next{
+			position: absolute;
+			bottom: 20px;
+	
+		}
+
+		.bg{
+			top: 0px;
+			left: 0px;
+			width: 100%;
+			height: 100%;
+			background-image: url('./bg-mistake.jpg');
+			background-size: cover;
+			filter: blur(10px);
+			opacity: 0.5;
+		}
+
+		.moment.flip{
+			transition: transform 1s;
+			transform: rotateY(180deg);
+		}
+
+		ul{
+			color: white;
+			text-align: left;
+			padding: 20%;
+		}
+
+		.selecto{
+			padding: 2%;
+			text-align: left;
+			text-align: center;
+		}
+
+		.selecto li{
+			display: inline-block;
+			padding: 10px;
+			background: white;
+			color: black;
+			font-size: 20px;
+			margin: 15px 5px;
+			border: 1px solid blue;
+			color: blue;
+			border-radius: 10px;
+			text-align: left;
+			position: relative;
+		}
+
+		.selecto li:before, .selecto li:after{
+			content: "";
+			width: 10px;
+			height: 10px;
+			border: 1px solid blue;
+			background: white;
+			position: absolute;
+			left: 10px;
+			bottom: -15px;
+			border-radius: 20px;
+		}
+
+		.selecto li:after{
+			left: 5px;
+			bottom: -20px;
+			width: 5px;
+			height: 5px;
+		}
+
+		.selecto.selected li, .selecto.selected li:before, .selecto.selected li:after{
+			background: blue;
+			color: white;
+		}
+
+		p.copy, p.feedback{
+			color: white;
+			text-align: left;
+			padding: 0px 10%;
+			width: 80%;
+		}
+
+		.grid-selecto{
+
+			text-align: center;
+			padding: 0px;
+			margin: 0px;
+		}
+
+		.grid-selecto li{
+			list-style-type: none;
+			display: inline-block;
+			width: 120px;
+			height: 120px;
+			background: white;
+			border: 1px solid blue;
+			vertical-align: top;
+			margin: 5px;
+			color: blue;
+			font-size: 12px;
+		}
+
+	</style>
+</head>
+<body>
+	<div class='screen'>
+		<div class="bg"></div>
+		<div class="page">
+			<div class="overlay">
+				<h1>STOP</h1>
+				<p class="copy">Don't beat yourself up with negative thoughts.</p>
+				<button class="next">SHOW ME</button>
+			</div>
+		</div>
+		<div class="page">
+			<div class="overlay">
+				<h1>Choose your Thoughts</h1>
+				<img width=200 src='./icon-choose-your-thoughts.svg'>
+				<button class="next">SHOW ME</button>
+			</div>
+		</div>
+		<div class="page page-grid-selecto">
+			<div class="overlay">
+				<h2>Select a moment you've had NEGATIVE thoughts.</h2>
+				<ul class='grid-selecto'>
+					<li>Dropping the ball</li>
+					<li>Missing a kick</li>
+					<li>Missing a pass</li>
+					<li>Falling over</li>
+					<li>In an embarassing moment</li>
+					<li>Struggling with School</li>
+					<li>Add your own (+)</li>
+				</ul>
+				<p class='copy'>It's easy to beat ourselves up when we make mistakes, struggle, or do something embarrasing, but it won't help us bounce back.</p>
+				<button class="next">TRY SOME POSITIVE TALK ></button>
+			</div>
+		</div>
+		<div class="page page-thought-selecto">
+			<div class="overlay">
+				<h2>Choose something<br>POSITIVE!</h2>
+				<ul class='selecto'>
+					<li>You did alright.</li>
+					<li data-feedback="Try choosing something that's not so hard on yourself. Would you say this to a teammate?">Hopeless!</li>
+					<li>These things happen.</li>
+					<li>No big deal.</li>
+					<li data-feedback="Would you say this to a teammate?">What a shit-stain.</li>
+					<p class="feedback"></p>
+				<button class="retry">TRY AGAIN</button>
+				</ul>
+				<h2>Choose something<br>INSTRUCTIVE!</h2>
+				<ul class='selecto'>
+					<li>You just need to train some more.</li>
+					<li data-feedback="Instead of focusing on what NOT to do, try focusing on what you SHOULD do.">You should stop being so shit.</li>
+					<li>Just got to keep working hard.</li>
+					<li>You'll learn from this.</li>
+					<li data-feedback="Quitting is tempting. But not very satisfying.">You might as well quit.</li>
+					<p class="feedback"></p>
+				</ul>
+				
+				<h2>Great choice.</h2>
+				<p class='copy'>Choosing words that are positive and give us clear instructions can help us bounce back and peform better.</p>
+				<button class="next">TRY ANOTHER ONE ></button>
+			</div>
+
+		</div>
+		<div class="page page-thought-selecto">
+			<div class="overlay">
+				<h2>Choose something<br>POSITIVE!</h2>
+				<ul class='selecto'>
+					<li>You did alright.</li>
+					<li data-feedback="Try choosing something that's not so hard on yourself. Would you say this to a teammate?">Hopeless!</li>
+					<li>These things happen.</li>
+					<li>No big deal.</li>
+					<li data-feedback="Would you say this to a teammate?">What a shit-stain.</li>
+					<p class="feedback"></p>
+				<button class="retry">TRY AGAIN</button>
+				</ul>
+				<h2>Choose something<br>INSTRUCTIVE!</h2>
+				<ul class='selecto'>
+					<li>You just need to train some more.</li>
+					<li data-feedback="Instead of focusing on what NOT to do, try focusing on what you SHOULD do.">You should stop being so shit.</li>
+					<li>Just got to keep working hard.</li>
+					<li>You'll learn from this.</li>
+					<li data-feedback="Quitting is tempting. But not very satisfying.">You might as well quit.</li>
+					<p class="feedback"></p>
+				</ul>
+				
+				<h2>Great choice.</h2>
+				<p class='copy'>Choosing words that are positive and give us clear instructions can help us bounce back and peform better.</p>
+				<button class="next">COOL ></button>
+			</div>
+
+		</div>
+		<div class="page">
+			<div class="overlay">
+				<h2>REMEMBER</h2>
+				<h2>Choose your Thoughts</h2>
+				<p class='copy'>Choosing words that are positive and give us clear instructions can help us bounce back and peform better.
+					<ul>
+				<li>You'll get through this. Just need to keep going.</li>
+				<li>You've got this. Just need to train some more.</li>
+				<li>You're going fine. Keep up your training.</li>
+			</ul>
+				</p>
+				<button class="next">COOL</button>
+			</div>
+
+		</div>
+		
+	</body>
+</body>
+</html>
