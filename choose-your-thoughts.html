@@ -7,6 +7,15 @@
 	<script type="text/javascript">
 		$(function(){
 
+			var iScreen = 0;
+
+			$('.nav.left').click(function(){
+				doScreen(iScreen-1);
+			})
+
+			$('.nav.right').click(function(){
+				doScreen(iScreen+1);
+			})
 			
 
 			$('.next').click(function(){
@@ -23,6 +32,7 @@
 			doScreen(0);
 
 			function doScreen(i){
+				iScreen = i;
 				$('.page').hide().eq(i).show();
 				/*if(i==0){
 					$('.page').eq(i).find('.moment').css({left:'-100vw'}).animate({left:0});
@@ -153,17 +163,31 @@
 			border: none;
 		}
 
-		button:first-of-type{
-			margin-top: 50px;
-		}
+		
 
 		.screen{
 			width: 400px;
 			height: 700px;
 			background: #333;
-			margin: auto;
 			position: relative;
 			overflow: hidden;
+			display: inline-block;
+			vertical-align: top;
+			margin: 0px;
+		}
+
+		.nav{
+			display: inline-block;
+			height: 700px;
+			width: 100px;
+			vertical-align: top;
+			margin: 0px;
+			background: rgba(255,255,255,0.1);
+		}
+
+		.nav:hover{
+			background: rgba(255,255,255,0.2);
+			cursor: pointer;
 		}
 
 		.moment{
@@ -306,7 +330,9 @@
 	</style>
 </head>
 <body>
+	<button class="nav left">◀</button>
 	<div class='screen'>
+
 		<div class="bg"></div>
 		<div class="page">
 			<div class="overlay">
@@ -409,7 +435,8 @@
 			</div>
 
 		</div>
-		
+	</div>
+		<button class="nav right">►</button>
 	</body>
 </body>
 </html>
