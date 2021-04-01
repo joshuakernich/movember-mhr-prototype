@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>SWIPEY</title>
+	<script type="text/javascript" src='./jquery-3.4.1.min.js'></script>
+	<script type="text/javascript">
+		$(function(){
+			for(var i=0; i<20; i++){
+				$('<div class="sticker">').appendTo('.screen').css({left:Math.random()*400,top:Math.random()*700});
+			}
+
+			var mouseIsDown = false;
+
+			$(window).on('mousedown',function(e){
+				mouseIsDown = true;
+			})
+
+			$(window).on('mouseup',function(e){
+				mouseIsDown = false;
+			})
+
+			$(window).on('mousemove',function(e){
+				if(mouseIsDown){
+
+					var o = $('.screen').offset();
+
+					var x = e.pageX - o.left;
+					var y = e.pageY - o.top;
+					
+					$('.sticker:not(.dead)').each(function(){
+						var p = $(this).position();
+						var dx = p.left - x;
+						var dy = p.top - y;
+						var d = Math.sqrt(dx*dx+dy*dy);
+
+						if(d<50){
+							$(this).addClass('dead').data({dx:dx/10,dy:dy/5});
+						}
+					})
+				}
+			});
+
+			setInterval(function(){
+				$('.dead').each(function(){
+					var d = $(this).data();
+					var p = $(this).position();
+					d.dy += 1;
+					p.left += d.dx;
+					p.top += d.dy;
+					console.log(p);
+					$(this).css(p);
+				});
+			},20);
+		})
+	</script>
+	<style type="text/css">
+		body{
+			background: black;
+		}
+
+		.screen{
+			width: 400px;
+			height: 700px;
+			margin: auto;
+			background: gray;
+			position: relative;
+			overflow: hidden;
+		}
+
+		.sticker{
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			width: 100px;
+			height: 100px;
+		}
+
+		.sticker:after{
+			content: "";
+			width: 100%;
+			height: 100%;
+			left: -50%;
+			top: -50%;
+			border: 5px solid white;
+			box-shadow: 0px 1px 5px black;
+			background: blue;
+			position: absolute;
+			border-radius: 100px;
+		}
+	</style>
+</head>
+<body>
+	<div class="screen">
+		
+	</div>
+</body>
+</html>
