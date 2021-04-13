@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Workshop Demo</title>
+	<style type="text/css">
+		.screen{
+			width: 400px;
+			height: 700px;
+			margin: auto;
+			background: white;
+			text-align: center;
+			
+			position: relative;
+			display: inline-block;
+			vertical-align: top;
+			
+			color: white;
+			background: black;
+			overflow: hidden;
+			vertical-align: middle;
+		}
+
+		@font-face {
+			font-family: "HeaderFont";
+			src: url("./font-teko/Teko-Regular.ttf");
+		}
+
+		@font-face {
+			font-family: "BodyFont";
+			src: url("./Overpass-Light.ttf");
+		}
+
+		@font-face {
+		  font-family: BodyFont;
+		  src: url("./Overpass-Bold.ttf");
+		  font-weight: bold;
+		}	
+
+		body{
+			background: #333;
+			font-family: "BodyFont";
+			text-align: center;
+			margin: 0px;
+			padding: 0px;
+		}
+
+		@keyframes jiggle{
+			0%{
+				transform: rotate(1deg);
+			}
+			100%{
+				transform: rotate(-1deg);
+			}
+		}
+
+		.sticker{
+			display: inline-block;
+			margin: 15px;
+			position: relative;	
+
+			animation-name: jiggle;
+			animation-iteration-count: infinite;
+			animation-duration: 0.2s;
+			cursor: pointer;
+		}
+
+		.sticker.still{
+			animation: none;
+			cursor: default;
+		}
+
+		.sticker.image{
+			width: 200px;
+			height: 150px;
+			background-size: contain;
+			background-position: center;
+			background-repeat: no-repeat;
+		}
+
+		.sticker.text{
+			padding: 5px 10px 0px;
+			border: 3px solid white;
+			color: white;
+			font-weight: normal;
+		
+			transform: rotate(-5deg);
+			background: orange; 
+			text-transform: uppercase;
+			font-size: 40px;
+			box-shadow: 0px 1px 5px rgba(0,0,0,0.3);
+			font-family: "HeaderFont";
+			text-shadow: 0px 2px 0px #F25031;
+			white-space: nowrap;
+		}
+
+		.sticker.text.n0{ background: #F7B752; text-shadow: 0px 2px 0px red; }
+		.sticker.text.n1{ background: #99DB4D; text-shadow: 0px 2px 0px green; }
+		.sticker.text.n2{ background: #82C8F2; text-shadow: 0px 2px 0px blue; }
+		.sticker.text.n3{ background: #E66376; text-shadow: 0px 2px 0px red; }
+
+		video{
+			position: relative;
+			
+			transition: all 0.5s;
+		}
+
+		.timer{
+			position: absolute;
+			width: 100%;
+			left: 0px;
+			bottom: -10px;
+			height: 10px;
+			transition: 5s all;
+			transition: all 0.5s;
+			background: rgba(0,0,0,0.5);
+			line-height: 0px;
+			transition: all 2s;
+		}	
+
+		.timer .timer-ticker{
+			background: white;
+			height: 100%;
+			display: inline-block;
+			width: 50%;
+
+		}
+
+		.timer.active{
+			bottom: 100px;
+		}
+
+		.overlay{
+			position: absolute;
+			top:0px;
+			left: 0px;
+			width: 100%;
+			height: 100%;
+			padding-top: 100px;
+			box-sizing: border-box;
+		}
+
+		.overlay:after,.overlay:before{
+			content: "";
+			position: absolute;
+			bottom: -110px;
+			left: 0px;
+			height: 100px;
+			background: #111;
+			width: 100%;
+			text-align: center;
+			transition: all 0.5s;
+		}
+
+		.overlay:after{
+			top: -110px;
+			bottom: auto;
+		}
+
+		.overlay.active:before{
+			transition: all 2s;
+			bottom: 0px;
+		}
+
+		.overlay.active:after{
+			transition: all 2s;
+			top: 0px;
+		}
+
+		.sticker-party{
+			position: absolute;
+			top: 100px;
+			left: 0px;
+			text-align: center;
+			width: 100%;
+
+		}
+
+		video.zoom{
+			transform: scale(2);
+			transition: all 5s;
+		}
+
+		.options{
+			display: inline-block;
+			vertical-align: middle;
+			margin: 10px;
+			padding: 10px;
+			background: white;
+		}
+
+		input{
+			color: white;
+		}
+
+		.overlay{
+			pointer-events: none;
+		}
+
+		.play{
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			top:0px;
+			left:0px;
+			font-size: 100px;
+			color: white;
+			background: transparent;
+		}
+
+		.stop, .remember{
+			display: none;
+			position: absolute;
+			top:0px;
+			left: 0px;
+			width: 100%;
+			height: 100%;
+			padding-top: 100px;
+			box-sizing: border-box;
+			background: rgba(0,0,0,0.5);
+			color: white;
+		}
+
+
+		.remember{
+			background: rgba(255,255,255,0.8);
+		}
+
+		.remember p{
+			background: white;
+			color: black;
+			text-align: center;
+			padding: 40px;
+		}
+
+		.next{
+			display: block;
+			width: 80%;
+			margin: 0px 10%;
+			font: inherit;
+			margin-bottom: 10px;
+			padding: 5px 0px 0px;
+			color: white;
+			background: #1C44CE;
+			font-size: 1.2em;
+			border: none;
+			font-family: "HeaderFont";
+			text-transform: uppercase;
+			font-size: 1.8em;
+			font-weight: normal;
+		}
+
+		.swipe-prompt{
+			display: none;
+			position: absolute;
+			top:0px;
+			left:0px;
+			right: 0px;
+			bottom: 0px;
+			opacity: 1;
+			transition: 1s all;
+
+		}
+
+		.swipe-prompt.swiping{
+			opacity: 0;
+		}
+
+		.prompt{
+			font-family: "HeaderFont";
+			background: #1C44CE;
+			padding: 5px 10px 0px;
+			border-radius: 5px;
+			display: inline-block;
+			color: white;
+			text-transform: uppercase;
+			font-size: 35px;
+			position: relative;
+			text-align: center;
+			top: -30px;
+		}
+
+		.prompt:after{
+			content: "";
+			width: 0; 
+			height: 0; 
+			border-left: 20px solid transparent;
+			border-right: 20px solid transparent;
+			border-top: 20px solid #1C44CE;
+
+			display: block;
+			position: absolute;
+			bottom: -20px;
+			left: calc(50% - 20px);
+		}
+
+		.stop-banner{
+			background: #1C44CE;
+			padding: 20px;
+			text-align: center;
+		}
+
+		.stop-banner h1{
+			font-family: "HeaderFont";
+			padding: 0px;
+			margin:0px;
+			font-weight: normal;
+			font-size: 5em;
+		}
+
+		.stop-banner h2{
+			font-family: "BodyFont"
+			padding: 0px;
+			margin:0px;
+			font-weight: normal;
+			font-size: 1em;
+		}
+
+		.swipe-prompt{
+			background: rgba(0,0,0,0.4);
+		}
+
+		.finger{
+			position: absolute;
+			left:20%;
+			top:20%;
+			width: 0px;
+			height: 0px;
+
+			animation-name: swipe;
+			animation-iteration-count: infinite;
+			animation-duration: 1.5s;
+		}
+
+		.finger:after{
+			content: "";
+
+			width: 100px;
+			height: 100px;
+			background-image: url('./finger.png');
+			background-size: contain;
+			background-position: center;
+			background-repeat: no-repeat;
+			
+			position: absolute;
+			left: -50px;
+			top: 0px;
+			display: block;
+		}
+
+		@keyframes swipe{
+			0%{
+				opacity: 0;
+				left:20%;
+				top:20%;
+				transform: rotate(-15deg);
+			}
+			10%{
+				opacity: 1;
+				left:20%;
+				top:20%;
+				transform: rotate(-15deg);
+			}
+			30%{
+				left:70%;
+				top:30%;
+				transform: rotate(15deg);
+			}
+			60%{
+				left:30%;
+				top:40%;
+				transform: rotate(-15deg);
+			}
+			90%{
+				left:80%;
+				top:50%;
+				transform: rotate(25deg);
+				opacity: 1;
+			}
+			100%{
+				left:80%;
+				top:50%;
+				transform: rotate(25deg);
+				opacity: 0;
+			}
+		}
+
+
+	</style>
+	<script type="text/javascript" src='./jquery-3.4.1.min.js'></script>
+	<script type="text/javascript">
+		$(function(){
+
+			var MESS = 20;
+			var SCATTER = {cx:200,cy:350,rx:200,ry:350}
+			var iMoment = 0;
+			var iReflection = 0;
+
+			var moments = [
+				{start:32,end:40,options:['DISASTER!','./sticker/explosion.png','$^#&%!']},
+				{start:60,end:70,options:['SO EMBARASSING!','MASSIVE FAIL!','./sticker/facepalm.png']},
+				{start:90,end:100,options:['100% LOSER','DISAPPOINTED','SCREW-UP']},
+			]
+
+			/*var reflections = [
+				{at:12,sticker:'CRUNCH!'},
+				{at:15,sticker:'./sticker/explosion.png'},
+				{at:20,sticker:'FRUSTRATED!'},
+				{at:22,sticker:'FRUSTRATED!'},
+				{at:23,sticker:'KMART SUCKS!'},
+				{at:24,sticker:'FRUSTRATED!'},
+			]*/
+
+			
+			var vid = $('video')[0];
+			var vidReflection = $('video')[2];
+
+
+			setInterval(tick,100);
+
+			function tick(){
+
+				if(moments[iMoment] && !moments[iMoment].isShown && vid.currentTime > moments[iMoment].start){
+					moments[iMoment].isShown = true;
+
+					$('.overlay').empty();
+					$('.sticker-party').empty();
+
+					$("<div class='prompt'>What's he thinking?</div>").appendTo('.sticker-party');
+					$("<br>").appendTo('.sticker-party');
+
+					for(var s in moments[iMoment].options){
+						var $s = $('<div class="sticker n'+s+'">').appendTo('.sticker-party').click(onSticker);
+
+						if(moments[iMoment].options[s][0] == '.') $s.addClass('image').css({'background-image':'url('+moments[iMoment].options[s]+')'});
+						else $s.addClass('text').html(moments[iMoment].options[s]);
+
+						$("<br>").appendTo('.sticker-party');
+					}
+					$('.overlay').addClass('active');
+					//$('.timer').addClass('active');
+
+					//$('video').addClass('zoom');
+					//vid.playbackRate = 0.5;
+				}
+
+				//loop
+				//if(vid.currentTime > moments[iMoment].end) vid.currentTime = moments[iMoment].start;
+				if(moments[iMoment] && vid.currentTime > moments[iMoment].end){
+					vid.playbackRate = 0;
+					//forceSelection();
+				}
+
+				if(moments[iMoment] && vid.currentTime > moments[iMoment].start){
+					$('.timer').addClass('active');
+					var p = (vid.currentTime-moments[iMoment].start)/(moments[iMoment].end-moments[iMoment].start);
+					$('.timer-ticker').width(p*100+'%');
+				}
+
+				if(vidReflection.currentTime > (vidReflection.duration/MESS)*iReflection){
+
+					
+					var progress = iReflection/MESS;
+					var drain = 1 - progress*progress*progress;
+
+
+					var iRandom = Math.floor(Math.random()*stickerPack.length);
+					var $s = stickerPack[iRandom].clone().appendTo('.overlay');
+					$s.css({transform:'scale('+(0.5+Math.random()*1)+')'});
+					$s.css({transform:'scale(1)'});
+					
+
+					var r = (iReflection*137.5)*(Math.PI/180);
+					var x = SCATTER.cx + Math.cos(r)*SCATTER.rx*drain;
+					var y = SCATTER.cy + Math.sin(r)*SCATTER.ry*drain;
+
+					x = x-$s.outerWidth()/2;
+					y = y-$s.outerHeight()/2;
+
+					x = Math.max(0,Math.min(400-$s.outerWidth(),x));
+					y = Math.max(0,Math.min(700-$s.outerHeight(),y));
+
+					$s.css({position:'absolute',left:x,top:y});
+					
+					
+
+					iReflection++;
+				}
+			}
+
+			function forceSelection(){
+				$('.sticker').eq(0).trigger('click');
+			}
+
+			/*function onStopSticker(e){
+
+				var o = $(this).offset();
+
+				$('.sticker-party .sticker').each(function(){
+					var o2 = $(this).offset();
+					var dx = o2.left-o.left;
+					var dy = o2.top-o.top;
+					var d = Math.sqrt(dx*dx+dy*dy);
+
+					if(d == 0){
+						dx = dy = 50;
+					}
+
+					if(d<150) $(this).addClass('dying').animate({top:'+='+dy*5,left:'+='+dx*5},500,function(){
+						
+						$(this).css({opacity:0});
+						if($('.sticker:not(.dying)').length == 0){
+							$('.swipe-prompt').hide();
+							$('.remember').show();
+						}
+					});
+				})
+			}*/
+			
+			var stickerPack = [];
+
+			function onSticker(e){
+				$('.sticker-party').empty();
+				$(e.target).addClass('still').appendTo('.sticker-party').css({top:'150px',transform:'scale(2) rotate(-5deg)'}).delay(2000).animate({opacity:0});
+				$('.overlay').removeClass('active');
+				$('.timer').removeClass('active');
+				iMoment++;
+
+				stickerPack.push( $(e.target).clone() );
+
+				$('video').removeClass('zoom');
+				vid.playbackRate = 1;
+			}
+
+			$('.play').click(doVideo);
+
+			function doVideo(){
+				$('.play').hide();
+				$('video')[0].play();
+			}
+
+			$('video').on('ended',onVideoEnd);
+
+			function onVideoEnd(){
+				var index = $('video').index(this);
+				if(index == 0){
+					$('.sticker-party').empty();
+					$('video').hide().eq(1).show()[0].play();
+				} else if(index == 1){
+					$('video').hide().eq(2).show()[0].play();
+				} else if(index == 2){
+					$('.stop').show();
+				}
+			}
+
+			$('.stop button').click(function(){
+				$('.stop').hide();
+				$('.swipe-prompt').show();
+				//$('.remember').show();
+			});
+
+			var isMouseDown = false;
+
+			setInterval(function(){
+
+				
+
+				$('.dead').each(function(){
+					var d = $(this).data();
+					var p = $(this).position();
+					d.dy += 1;
+					p.left += d.dx;
+					p.top += d.dy;
+					$(this).css(p);
+
+					
+				});
+
+
+			},20);
+
+			$('.swipe-prompt').on('mousedown',function(e){
+				$(this).addClass('swiping');
+				isMouseDown = true;
+
+				var o = $('.screen').offset();
+
+				wasx = e.pageX - o.left;
+				wasy = e.pageY - o.top;
+			})
+
+			$(window).on('mouseup',function(){
+				isMouseDown = false;
+			})
+
+			var wasx = 0;
+			var wasy = 0;
+
+			$('.swipe-prompt').on('mousemove',function(e){
+				if(isMouseDown){
+
+					var o = $('.screen').offset();
+
+					var x = e.pageX - o.left;
+					var y = e.pageY - o.top;
+
+					
+					
+					$('.sticker:not(.dead)').each(function(){
+						var p = $(this).position();
+						var dx = p.left + $(this).outerWidth()/2 - x;
+						var dy = p.top + $(this).outerHeight()/2 - y;
+						//var d = Math.sqrt(dx*dx+dy*dy);
+
+						if(Math.abs(dx)<$(this).outerWidth()/2 && Math.abs(dy)<$(this).outerHeight()/2){
+							
+							
+							$(this).addClass('dead').data({dx:x-wasx,dy:y-wasy});
+						}
+					})
+
+					if( $('.sticker:not(.dead)').length == 0 ){
+						$('.swipe-prompt').hide();
+						$('.remember').show();
+					}
+
+					wasx = x;
+					wasy = y;
+
+
+				}
+			});
+
+			window.doFinishActivity = function(){
+				$('.remember').hide();
+				$('video').hide().eq(2).show()[0].play();
+			}
+		})
+	</script>
+</head>
+<body>
+	<div class='screen'>
+		<video controls width="100%" height="100%;">
+			<source src="./video/scene-1.mp4" type="">
+		</video>
+		<video preload style='display:none' controls width="100%" height="100%;">
+			<source src="./video/pickup-1.mp4" type="">
+		</video>
+		<video preload style='display:none' controls width="100%" height="100%;">
+			<source src="./video/reflection-1.mp4" type="">
+		</video>
+		<video preload style='display:none' controls width="100%" height="100%;">
+			<source src="./video/scene-2.mp4" type="">
+		</video>
+		<video preload style='display:none' controls width="100%" height="100%;">
+			<source src="./video/pickup-2.mp4" type="">
+		</video>
+		<video preload style='display:none' controls width="100%" height="100%;">
+			<source src="./video/reflection-2.mp4" type="">
+		</video>
+		
+		<div class='overlay'>
+
+			
+		</div>
+		<div class='sticker-party'></div>
+
+		<div class='timer'><div class='timer-ticker'></div></div>
+		<div class='stop'>
+			<div class='stop-banner'>
+				<h1>STOP</h1>
+				<h2>Don't get caught up in the things you can't control.</h2>
+			</div>
+			<br>
+			<button class='next'>THERE'S A BETTER WAY ></button>
+		</div>
+		<div class='swipe-prompt'>
+			<div class="finger"></div>
+		</div>
+		<div class='remember'>
+
+			<!--<h1>CONTROL THE CONTROLLABLES</h1>
+			<p>It’s easy to get lost in the things you can’t control. But this can only lead to frustration. By concentrating on the things we can control, we are more likely to have a positive impact on our experience.</p>
+			<button>OK, THANKS ></button>-->
+			<iframe style='position: absolute;top:0px;left:0px;border:none;background:none;' src="./choose-your-thoughts.html" width="100%" height="100%"></iframe>
+		</div>
+		<button class='play'>▶</button>
+	</div>
+	<button class="skip">SKIP</button>
+</body>
+</html>

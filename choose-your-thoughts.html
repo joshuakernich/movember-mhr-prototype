@@ -26,6 +26,7 @@
 				}*/
 				//if(i==2) i = -1;
 				
+				if($('.page').length<=(i+1)) window.parent.doFinishActivity();
 				doScreen(i+1);
 			})
 
@@ -142,6 +143,11 @@
 	<style type="text/css">
 
 		@font-face {
+			font-family: "HeaderFont";
+			src: url("./font-teko/Teko-Regular.ttf");
+		}
+
+		@font-face {
 			font-family: "BodyFont";
 			src: url("./Overpass-Light.ttf");
 		}
@@ -155,8 +161,9 @@
 		body{
 			font-family: "BodyFont";
 			text-align: center;
-			background: black;
-			font-weight: 
+			
+			padding: 0px;
+			margin: 0px;
 		}
 
 		button{
@@ -165,19 +172,24 @@
 			margin: 0px 10%;
 			font: inherit;
 			margin-bottom: 10px;
-			padding: 20px;
+			padding: 5px 0px 0px;
 			color: white;
-			background: blue;
+			background: #1C44CE;
 			font-size: 1.2em;
 			border: none;
+			font-family: "HeaderFont";
+			text-transform: uppercase;
+			font-size: 1.8em;
+			font-weight: normal;
 		}
+
 
 		
 
 		.screen{
 			width: 400px;
 			height: 700px;
-			background: #333;
+			
 			position: relative;
 			overflow: hidden;
 			display: inline-block;
@@ -227,19 +239,19 @@
 
 		.overlay h2{
 			padding: 5px;
-			color: white;
+			color: black;
+			font-weight: normal;
 		}
 
 		h1{
-			background: blue;
-			color: white;
+			background: #1C44CE;
+			color: black;
 			padding: 20px;
 			margin-top: 20px;
 		}
 
 		button.next{
-			position: absolute;
-			bottom: 20px;
+			
 	
 		}
 
@@ -251,7 +263,7 @@
 			background-image: url('./bg-mistake.jpg');
 			background-size: cover;
 			filter: blur(10px);
-			opacity: 0.5;
+			opacity: 0.2;
 		}
 
 		.moment.flip{
@@ -260,7 +272,7 @@
 		}
 
 		ul{
-			color: white;
+			color: black;
 			text-align: left;
 			padding: 20%;
 		}
@@ -278,8 +290,8 @@
 			color: black;
 			font-size: 20px;
 			margin: 15px 5px;
-			border: 1px solid blue;
-			color: blue;
+			border: 1px solid #1C44CE;
+			color: #1C44CE;
 			border-radius: 10px;
 			text-align: left;
 			position: relative;
@@ -289,7 +301,7 @@
 			content: "";
 			width: 10px;
 			height: 10px;
-			border: 1px solid blue;
+			border: 1px solid #1C44CE;
 			background: white;
 			position: absolute;
 			left: 10px;
@@ -305,12 +317,12 @@
 		}
 
 		.selecto.selected li, .selecto.selected li:before, .selecto.selected li:after{
-			background: blue;
+			background: #1C44CE;
 			color: white;
 		}
 
 		p.copy, p.feedback{
-			color: white;
+			color: black;
 			text-align: left;
 			padding: 0px 10%;
 			width: 80%;
@@ -326,36 +338,97 @@
 		.grid-selecto li{
 			list-style-type: none;
 			display: inline-block;
-			width: 120px;
-			height: 120px;
+			width: 150px;
+			height: 140px;
+			border-radius: 12%;
+			box-sizing: border-box;
+
 			background: white;
-			border: 1px solid blue;
+			border: none;
 			vertical-align: top;
 			margin: 5px;
-			color: blue;
+			color: #1C44CE;
 			font-size: 12px;
+			box-shadow: rgb(0 0 0 / 13%) 0px 2px 5px 0px;
+			
+    		font-size: 15px;
+    		font-style: italic;
+    		font-weight: bold;
+    		margin: 10px;
+		}
+
+		.grid-selecto li:before{
+			display: block;
+			margin:auto;
+			content: "";
+			width: 70px;
+			height: 70px;
+			margin: 10px auto 5px;
+			background-image: url('./hand-n-ball.svg');
+			background-position: center;
+			background-repeat: no-repeat;
+		}
+
+		.remember-header{
+			background: #1C44CE;
+			padding: 20px 0px;
+		}
+
+		.remember-header h2{
+			color: white;
+			font-family: "HeaderFont";
+			font-size:30px;
+
+		}
+
+		h1{
+			color: white;
+			font-family: "HeaderFont";
+			text-transform: uppercase;
+			padding: 0px;
+			margin: 0px;
+			font-size: 40px;
+		}
+
+		.page{
+			height: 700px;
+			overflow: auto;
+
+		}
+
+		h3{
+			font-family: "HeaderFont";
+			text-align: left;
+			margin: 0px 10%;
+			color: #1C44CE;
+			font-size: 2em;
 		}
 
 	</style>
 </head>
 <body>
-	<button class="nav left">◀</button>
 	<div class='screen'>
 
-		<div class="bg"></div>
+
 		<div class="page">
-			<div class="overlay">
-				<h1>STOP</h1>
-				<p class="copy">Don't beat yourself up with negative thoughts.</p>
+			<br><br><br><br><br><br>
+			<div class='remember-header'>
+				<h1 style='font-size: 100px'>STOP</h1>
+				<p class="copy" style='color:white;'>Don't beat yourself up with negative thoughts.</p>
+				</div>
+				<br><br>
 				<button class="next">SHOW ME</button>
-			</div>
+		
 		</div>
 		<div class="page">
-			<div class="overlay">
-				<h1>Choose your Thoughts</h1>
-				<img width=200 src='./icon-choose-your-thoughts.svg'>
+				<br><br><br><br><br><br>
+				<div class='remember-header'>
+					<img width=100 src='./cloud-icon-white.png'>
+					<h1>Choose your Thoughts</h1>
+				</div>
+				<br><br>
 				<button class="next">SHOW ME</button>
-			</div>
+
 		</div>
 		<div class="page page-grid-selecto">
 			<div class="overlay">
@@ -445,22 +518,28 @@
 
 		</div>
 		<div class="page">
-			<div class="overlay">
-				<h2>REMEMBER</h2>
-				<h1>Choose your Thoughts</h1>
-				<p class='copy'>Choose thoughts that are positive and give clear instructions about how to act.
-				<ul>
-				<li>You'll get through this. Just need to keep going.</li>
-				<li>You've got this. Just need to train some more.</li>
-				<li>You're going fine. You can learn from this.</li>
-			</ul>
-				</p>
+			
+				<div class='remember-header'>
+					<h2>REMEMBER</h2>
+					<img width=100 src='./cloud-icon-white.png'>
+					<h1>Choose your Thoughts</h1>
+				</div>
+				<p class='copy'>Don't beat yourself up with negative thoughts.</p>
+				<img width=250 src='./clouds.png'>
+				<p class='copy'>Choose thoughts that will help you bounce back.</p>
+				<h3>POSITIVE THOUGHTS</h3>
+			<p class='copy'>"You'll get through this."</p>
+			<h3>INSTRUCTIVE THOUGHTS</h3>
+				<p class='copy'>"Just need to train some more."</p>
+				<h3>MOTIVATIONAL THOUGHTS</h3>
+				<p class='copy'>"You're going fine."</p>
+
+				
 				<button class="next">COOL, THANKS!</button>
-			</div>
+
 
 		</div>
 	</div>
-		<button class="nav right">►</button>
 	</body>
 </body>
 </html>

@@ -185,8 +185,8 @@
 			vertical-align: top;
 			margin-top: 60px;
 			
-			color: white;
-			background: black;
+			color: black;
+			background: white;
 			overflow: hidden;
 		}
 
@@ -440,7 +440,7 @@
 			background-position: center;
 			filter: blur(10px);
 			overflow: hidden;
-			opacity: 0.5;
+			opacity: 0.2;
 		}
 
 		.bg.ref{
@@ -449,11 +449,10 @@
 		}
 
 		h1{
-			background: white;
-			color: blue;
-			margin-top: 10px;
+			color: white;
+			margin:0px;
 			text-transform: uppercase;
-			padding: 20px;
+			padding: 0px;
 
 			font-family: 'Anton', sans-serif;
 			font-weight: normal;
@@ -462,7 +461,8 @@
 		h2{
 			font-weight: normal;
 			font-size: 20px;
-			color: white;
+			margin-top: 0px;
+			
 		}
 
 		.note{
@@ -692,7 +692,9 @@
 		.plan{
 			font-size: 20px;
 			width: 80px;
-			transform: rotate(-2deg);
+			
+			box-shadow: inset 0px 1px 2px rgba(0,0,0,0.2);
+			background: rgba(0,0,0,0.1);
 		}
 
 		.plan b{
@@ -755,6 +757,12 @@
 			margin: 0px 5%;
 		}
 
+		.header{
+			background: blue;
+			padding: 20px 0px;
+			color: white;
+		}
+
 
 	</style>
 </head>
@@ -763,8 +771,11 @@
 	<div class="screen">
 		<div class="bg" style="background-image:url(./bg-mud.jpg)"></div>
 		<div class='page'>
-			<h2>REMEMBER</h2>
-			<h1><div class='hicon' style='background-image: url(./icon-choose-your-thoughts.svg);'></div>CHOOSE YOUR THOUGHTS</h1>
+			<div class="header">
+				<h2>REMEMBER</h2>
+				<div class='hicon' style='background-image: url(./icon-choose-your-thoughts.svg);'></div>
+				<h1>CHOOSE YOUR THOUGHTS</h1>
+			</div>
 			<p class="copy">Don't beat yourself up. Consider how you would speak to a teammate.</li></p>
 			<p class="copy"><img src='./icon-positive.png'><b>Choose positive thoughts</b></p>
 			<p class="copy">“I made a mistake. But it'll be okay.”</p>
@@ -780,9 +791,11 @@
 		<div class='bg ref'></div>
 		
 		<div class='page outro'>
-			<h2>REMEMBER</h2>
-			<h1><div class='hicon' style='background-image: url(./gameplan.svg);'></div>MAKE A PLAN</h1>
-			
+			<div class="header">
+				<h2>REMEMBER</h2>
+				<div class='hicon' style='background-image: url(./gameplan.svg);'></div>
+				<h1>MAKE A PLAN</h1>
+			</div>
 			<p class='copy'>Don't jump to conclusions. Solve problems with careful planning.<p>
 			<h2>Think about the options you have</h2>
 			<div class="plan">PLAN A</div>
@@ -801,9 +814,11 @@
 		<div class='bg ref'></div>
 		
 		<div class='page outro'>
+			<div class="header">
 			<h2>REMEMBER</h2>
-			<h1><div class='hicon' style='background-image: url(./icon-strength.png);'></div>PLAY TO YOUR STRENGTHS</h1>
-			
+			<div class='hicon' style='background-image: url(./icon-strength.png);'></div>
+			<h1>PLAY TO YOUR STRENGTHS</h1>
+			</div>
 			<p class='copy'>Don't get caught up in your weaknesses.</p>
 			<h2>Think about your strengths<br>ON and OFF the field.</h2>
 			<div class='strength'></div>
@@ -825,9 +840,11 @@
 		<div class='bg ref'></div>
 		
 		<div class='page outro'>
+			<div class="header">
 			<h2>REMEMBER</h2>
-			<h1><div class='hicon' style='background-image: url(./control.svg);'></div>CONTROL THE CONTROLLABLES</h1>
-			
+			<div class='hicon' style='background-image: url(./control.svg);'></div>
+			<h1>CONTROL THE CONTROLLABLES</h1>
+			</div>
 			<p class="copy">Don't get hung up on things you can’t control.</p>
 			<h2>Focus on the things you can control</h2>
 			<div class="controllable off">✗</div>
@@ -844,8 +861,11 @@
 
 	<div class="screen">
 		<div class="page">
+			<div class="header">
 			<h2>REMEMBER</h2>
-			<h1><div class='hicon' style='background-image: url(./lungs.svg);'></div>KEEP YOUR COOL</h1>
+			<div class='hicon' style='background-image: url(./lungs.svg);'></div>
+			<h1>KEEP YOUR COOL</h1>
+		</div>
 			<p class="copy">It’s easy to get fired up, or anxious in high-pressure moments. But pausing for a moment to take a few breaths can help keep us cool, calm, and in control.</p>
 			<div class="breather-prompt"><div class='bpi in'></div><p>In for<br>5 seconds</p></div>
 			<div class="breather-prompt"><div class='bpi hold'></div><p>Hold for<br>2 seconds</p></div>
