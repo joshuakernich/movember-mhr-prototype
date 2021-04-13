@@ -384,6 +384,49 @@
 			}
 		}
 
+		.nav button{
+			display: inline-block;
+			
+			height: 50px;
+			font-family: "BodyFont";
+			border: none;
+			position: relative;
+			background: white;
+
+			padding-left: 35px;
+			cursor: pointer;
+			outline: none;
+		}
+
+
+
+		.nav button:after {
+			content: "";
+			display: block;
+			position: absolute;
+			right: -25px;
+			top: 0px;
+		  width: 0; 
+		  height: 0; 
+		  border-top: 25px solid transparent;
+		  border-bottom: 25px solid transparent;
+		  
+		  border-left: 25px solid white;
+		  z-index: 1;
+		}
+
+		.nav button:nth-of-type(1){ background:#F7B752; padding-left: 15px; }
+		.nav button:nth-of-type(2){ background:#99DB4D; }
+		.nav button:nth-of-type(3){ background:#82C8F2; }
+		.nav button:nth-of-type(4){ background:#F7B752; }
+		.nav button:nth-of-type(5){ background:#99DB4D; }
+
+		.nav button:nth-of-type(1):after{ border-left-color:#F7B752; }
+		.nav button:nth-of-type(2):after{ border-left-color:#99DB4D; }
+		.nav button:nth-of-type(3):after{ border-left-color:#82C8F2; }
+		.nav button:nth-of-type(4):after{ border-left-color:#F7B752; }
+		.nav button:nth-of-type(5):after{ border-left-color:#99DB4D; }
+
 
 	</style>
 	<script type="text/javascript" src='./jquery-3.4.1.min.js'></script>
@@ -549,6 +592,10 @@
 					$('video').hide().eq(2).show()[0].play();
 				} else if(index == 2){
 					$('.stop').show();
+				} else if(index == 3){
+					$('video').hide().eq(4).show()[0].play();
+				} else if(index == 4){
+					$('video').hide().eq(5).show()[0].play();
 				}
 			}
 
@@ -632,8 +679,42 @@
 
 			window.doFinishActivity = function(){
 				$('.remember').hide();
-				$('video').hide().eq(2).show()[0].play();
+				$('video').hide().eq(3).show()[0].play();
 			}
+
+
+
+			$('.nav button').click(function(){
+				var index = $('.nav button').index(this);
+
+				$('video').each(function(){
+					$(this)[0].pause();
+					$(this)[0].currentTime = 0;
+				})
+
+				$('.play').hide();
+				$('.remember').hide();
+				$('.overlay').empty();
+
+				if(index==0){
+					$('.sticker-party').empty();
+					$('video').hide().eq(0).show()[0].play();
+				} else if(index==1){
+					while(stickerPack.length < moments.length){
+		
+						var $s =  $('<div class="sticker still text n0">').text(moments[stickerPack.length].options[0]);
+						stickerPack.push($s)
+					}
+					$('video').hide().eq(2).show()[0].play();
+				} else if(index==2){
+					$('video').hide();
+					$('.remember').show();
+				} else if(index==3){
+					$('video').hide().eq(3).show()[0].play();
+				} else if(index==4){
+					$('video').hide().eq(5).show()[0].play();
+				}
+			})
 		})
 	</script>
 </head>
@@ -685,6 +766,9 @@
 		</div>
 		<button class='play'>▶</button>
 	</div>
-	<button class="skip">SKIP</button>
+	<br><br>
+	<div class="nav">
+		<button>OPENING</button><button>REFLECTION & STOP</button><button>STRATEGY</button><button>CLOSING</button><button>REFLECTION</button>
+	</div>
 </body>
 </html>
