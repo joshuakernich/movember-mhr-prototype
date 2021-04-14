@@ -238,7 +238,7 @@
 			padding: 40px;
 		}
 
-		.next, .next-screen{
+		.next, .next-screen, .carry-on{
 			display: block;
 			width: 80%;
 			margin: 0px 10%;
@@ -255,7 +255,7 @@
 			font-weight: normal;
 		}
 
-		.next-screen{
+		.next-screen, .carry-on{
 			position: absolute;
 			bottom: 40px;
 		}
@@ -426,13 +426,23 @@
 		  z-index: 1;
 		}
 
-		.workshop-mask{
+		.workshop-handoff{
 			position: absolute;
 			top: 0px;
 			left: 0px;
 			right: 0px;
 			bottom: 0px;
 			background: rgba(50,50,50,0.8);
+			display: none;
+
+			box-sizing: border-box;
+			padding-top: 200px;
+			font-size: 25px;
+			font-family: "HeaderFont";
+			background-image: url('./eyes-to-the-screen.png');
+			background-position: center;
+			background-repeat: no-repeat;
+			background-size: 150px;
 		}
 
 		.nav button:nth-of-type(1){ background:#F7B752; padding-left: 15px; }
@@ -478,7 +488,7 @@
 
 			var isWorkshopMode = (window.location.href.indexOf('student')>-1);
 
-			console.log(isWorkshopMode);
+			
 
 			if(isWorkshopMode){
 				$('.screen').hide().eq(0).show();
@@ -650,7 +660,10 @@
 				} else if(index == 2){
 					$('.stop').show();
 				} else if(index == 3){
+
 					$('video').hide().eq(4).show()[0].play();
+					
+					
 				} else if(index == 4){
 					$('video').hide().eq(5).show()[0].play();
 				} else if(index == 5){
@@ -737,8 +750,23 @@
 			});
 
 			window.doFinishActivity = function(){
+				doPostReflection();
+			}
+
+			function doPostReflection(){
 				$('.remember').hide();
 				$('video').hide().eq(3).show()[0].play();
+
+
+				if(isWorkshopMode){
+					$('video').eq(3)[0].volume = 0;
+
+					$('.workshop-handoff').show().css({opacity:0}).animate({opacity:1},3000,function(){
+						$('video').eq(3)[0].pause();
+					});
+
+					$('.workshop-handoff button').show().css({opacity:0}).delay(5000).animate({opacity:1},1000);
+				}
 			}
 
 
@@ -765,7 +793,7 @@
 					$('video').hide();
 					$('.remember').show();
 				} else if(index==3){
-					$('video').hide().eq(3).show()[0].play();
+					doPostReflection();
 				} else if(index==4){
 					$('video').hide().eq(5).show()[0].play();
 				}
@@ -793,6 +821,11 @@
 					}
 				}
 				
+			})
+
+			$('.carry-on').click(function(){
+				$('.workshop-handoff').hide();
+				$('video').hide().eq(6).show()[0].play();
 			})
 		})
 	</script>
@@ -860,7 +893,10 @@
 				<iframe style='position: absolute;top:0px;left:0px;border:none;background:none;' src="./choose-your-thoughts.html" width="100%" height="100%"></iframe>
 			</div>
 			<button class='play'>▶</button>
-			<!--div class="workshop-mask"></div-->
+			<div class="workshop-handoff">
+				Eyes back to the front
+				<button class='carry-on'>carry on</button>
+			</div>
 		</div>
 		
 	</div>
