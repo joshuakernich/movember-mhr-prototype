@@ -3,7 +3,7 @@
 <head>
 	<title>Workshop Demo</title>
 	<style type="text/css">
-		.screen{
+		.screen, .screen-container{
 			width: 400px;
 			height: 700px;
 			margin: auto;
@@ -18,6 +18,12 @@
 			background: black;
 			overflow: hidden;
 			vertical-align: middle;
+		}
+
+		.screen{
+			position: absolute;
+			top: 0px;
+			left: 0px;
 		}
 
 		@font-face {
@@ -232,7 +238,7 @@
 			padding: 40px;
 		}
 
-		.next{
+		.next, .next-screen{
 			display: block;
 			width: 80%;
 			margin: 0px 10%;
@@ -247,6 +253,11 @@
 			text-transform: uppercase;
 			font-size: 1.8em;
 			font-weight: normal;
+		}
+
+		.next-screen{
+			position: absolute;
+			bottom: 40px;
 		}
 
 		.swipe-prompt{
@@ -415,6 +426,15 @@
 		  z-index: 1;
 		}
 
+		.workshop-mask{
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			right: 0px;
+			bottom: 0px;
+			background: rgba(50,50,50,0.8);
+		}
+
 		.nav button:nth-of-type(1){ background:#F7B752; padding-left: 15px; }
 		.nav button:nth-of-type(2){ background:#99DB4D; }
 		.nav button:nth-of-type(3){ background:#82C8F2; }
@@ -427,11 +447,44 @@
 		.nav button:nth-of-type(4):after{ border-left-color:#F7B752; }
 		.nav button:nth-of-type(5):after{ border-left-color:#99DB4D; }
 
+		
+
+		.static{
+			position: absolute;
+			top: 0px;
+			left:0px;
+			right: 0px;
+			bottom: 0px;
+			background-size: cover;
+			background-position: center;
+			background-repeat: no-repeat;
+		}
+
+		.popup{
+			transform: scale(0);
+			transition: all 0.5s;
+		}
+
+		.popup.reveal{
+			transform: scale(1);
+		}
 
 	</style>
 	<script type="text/javascript" src='./jquery-3.4.1.min.js'></script>
 	<script type="text/javascript">
 		$(function(){
+
+			
+
+			var isWorkshopMode = (window.location.href.indexOf('student')>-1);
+
+			console.log(isWorkshopMode);
+
+			if(isWorkshopMode){
+				$('.screen').hide().eq(0).show();
+			} else {
+				$('.screen').hide().eq(1).show();
+			}
 
 			var MESS = 20;
 			var SCATTER = {cx:200,cy:350,rx:200,ry:350}
@@ -462,7 +515,8 @@
 
 			function tick(){
 
-				if(moments[iMoment] && !moments[iMoment].isShown && vid.currentTime > moments[iMoment].start){
+
+				if(!isWorkshopMode && moments[iMoment] && !moments[iMoment].isShown && vid.currentTime > moments[iMoment].start){
 					moments[iMoment].isShown = true;
 
 					$('.overlay').empty();
@@ -488,12 +542,12 @@
 
 				//loop
 				//if(vid.currentTime > moments[iMoment].end) vid.currentTime = moments[iMoment].start;
-				if(moments[iMoment] && vid.currentTime > moments[iMoment].end){
+				if(!isWorkshopMode && moments[iMoment] && vid.currentTime > moments[iMoment].end){
 					vid.playbackRate = 0;
 					//forceSelection();
 				}
 
-				if(moments[iMoment] && vid.currentTime > moments[iMoment].start){
+				if(!isWorkshopMode && moments[iMoment] && vid.currentTime > moments[iMoment].start){
 					$('.timer').addClass('active');
 					var p = (vid.currentTime-moments[iMoment].start)/(moments[iMoment].end-moments[iMoment].start);
 					$('.timer-ticker').width(p*100+'%');
@@ -501,6 +555,10 @@
 
 				if(vidReflection.currentTime > (vidReflection.duration/MESS)*iReflection){
 
+					while(stickerPack.length < moments.length){
+						var $s =  $('<div class="sticker still text n0">').text(moments[stickerPack.length].options[stickerPack.length]);
+						stickerPack.push($s)
+					}
 					
 					var progress = iReflection/MESS;
 					var drain = 1 - progress*progress*progress;
@@ -525,7 +583,6 @@
 					$s.css({position:'absolute',left:x,top:y});
 					
 					
-
 					iReflection++;
 				}
 			}
@@ -596,6 +653,8 @@
 					$('video').hide().eq(4).show()[0].play();
 				} else if(index == 4){
 					$('video').hide().eq(5).show()[0].play();
+				} else if(index == 5){
+					$('video').hide().eq(6).show()[0].play();
 				}
 			}
 
@@ -645,7 +704,7 @@
 			$('.swipe-prompt').on('mousemove',function(e){
 				if(isMouseDown){
 
-					var o = $('.screen').offset();
+					var o = $('.screen-container').offset();
 
 					var x = e.pageX - o.left;
 					var y = e.pageY - o.top;
@@ -700,11 +759,7 @@
 					$('.sticker-party').empty();
 					$('video').hide().eq(0).show()[0].play();
 				} else if(index==1){
-					while(stickerPack.length < moments.length){
-		
-						var $s =  $('<div class="sticker still text n0">').text(moments[stickerPack.length].options[0]);
-						stickerPack.push($s)
-					}
+					
 					$('video').hide().eq(2).show()[0].play();
 				} else if(index==2){
 					$('video').hide();
@@ -715,60 +770,104 @@
 					$('video').hide().eq(5).show()[0].play();
 				}
 			})
+
+			$('.click-to-hide').click(function(){
+				$(this).hide();
+			})
+
+			$('.click-to-next-screen').click(function(){
+				var iScreen = $('.screen').index( $(this).closest('.screen') ) + 1;
+				$('.screen').hide().eq(iScreen).show().css({opacity:0}).animate({opacity:1},1000,function(){
+					if(iScreen==1) $('.popup').addClass('reveal');
+					
+				});
+
+				if(iScreen==2){
+					$('.play').hide();
+					
+					if(isWorkshopMode){
+						$('video').hide().eq(2).show()[0].currentTime = $('video').hide().eq(2).show()[0].duration-10;
+						$('video').hide().eq(2).show()[0].play();
+					} else {
+						$('video').eq(0)[0].play();
+					}
+				}
+				
+			})
 		})
 	</script>
 </head>
 <body>
-	<div class='screen'>
-		<video controls width="100%" height="100%;">
-			<source src="./video/scene-1.mp4" type="">
-		</video>
-		<video preload style='display:none' controls width="100%" height="100%;">
-			<source src="./video/pickup-1.mp4" type="">
-		</video>
-		<video preload style='display:none' controls width="100%" height="100%;">
-			<source src="./video/reflection-1.mp4" type="">
-		</video>
-		<video preload style='display:none' controls width="100%" height="100%;">
-			<source src="./video/scene-2.mp4" type="">
-		</video>
-		<video preload style='display:none' controls width="100%" height="100%;">
-			<source src="./video/pickup-2.mp4" type="">
-		</video>
-		<video preload style='display:none' controls width="100%" height="100%;">
-			<source src="./video/reflection-2.mp4" type="">
-		</video>
-		
-		<div class='overlay'>
-
-			
+	<div class="screen-container">
+		<div class="screen screen-signup">
+			<div class="static click-to-next-screen" style='background-image:url(./screen-signup.jpg)'></div>
+			<div class="static click-to-hide" style='background-image:url(./screen-team-code.jpg)'></div>
 		</div>
-		<div class='sticker-party'></div>
-
-		<div class='timer'><div class='timer-ticker'></div></div>
-		<div class='stop'>
-			<div class='stop-banner'>
-				<h1>STOP</h1>
-				<h2>Don't get caught up in the things you can't control.</h2>
+		<div class="screen screen-trailer">
+			<div class="static" style='background-image:url(./trailer.gif)'></div>
+			<div class="static" style='background-size:80%;background-image:url(./ahead-of-the-game-logo-white.png)'>
+				<button class='next-screen click-to-next-screen'>GET STARTED ></button>
 			</div>
-			<br>
-			<button class='next'>THERE'S A BETTER WAY ></button>
+			<div class="static click-to-hide popup" style='background-image:url(./popup-notification.jpg);background-size:80%;'></div>
 		</div>
-		<div class='swipe-prompt'>
-			<div class="finger"></div>
-		</div>
-		<div class='remember'>
+		<div class='screen screen-level'>
+			<video controls width="100%" height="100%;">
+				<source src="./video/scene-1.mp4" type="">
+			</video>
+			<video preload style='display:none' controls width="100%" height="100%;">
+				<source src="./video/pickup-1.mp4" type="">
+			</video>
+			<video preload style='display:none' controls width="100%" height="100%;">
+				<source src="./video/reflection-1.mp4" type="">
+			</video>
+			<video preload style='display:none' controls width="100%" height="100%;">
+				<source src="./video/scene-2.mp4" type="">
+			</video>
+			<video preload style='display:none' controls width="100%" height="100%;">
+				<source src="./video/pickup-2.mp4" type="">
+			</video>
+			<video preload style='display:none' controls width="100%" height="100%;">
+				<source src="./video/reflection-2.mp4" type="">
+			</video>
+			<video preload style='display:none' width="100%" height="100%;">
+				<source src="./video/transition.mp4" type="">
+			</video>
+			
+			<div class='overlay'>
 
-			<!--<h1>CONTROL THE CONTROLLABLES</h1>
-			<p>It’s easy to get lost in the things you can’t control. But this can only lead to frustration. By concentrating on the things we can control, we are more likely to have a positive impact on our experience.</p>
-			<button>OK, THANKS ></button>-->
-			<iframe style='position: absolute;top:0px;left:0px;border:none;background:none;' src="./choose-your-thoughts.html" width="100%" height="100%"></iframe>
+				
+			</div>
+			
+			<div class='sticker-party'></div>
+
+			<div class='timer'><div class='timer-ticker'></div></div>
+			<div class='stop'>
+				<div class='stop-banner'>
+					<h1>STOP</h1>
+					<h2>Don't get caught up in the things you can't control.</h2>
+				</div>
+				<br>
+				<button class='next'>THERE'S A BETTER WAY ></button>
+			</div>
+			<div class='swipe-prompt'>
+				<div class="finger"></div>
+			</div>
+			<div class='remember'>
+
+				<!--<h1>CONTROL THE CONTROLLABLES</h1>
+				<p>It’s easy to get lost in the things you can’t control. But this can only lead to frustration. By concentrating on the things we can control, we are more likely to have a positive impact on our experience.</p>
+				<button>OK, THANKS ></button>-->
+				<iframe style='position: absolute;top:0px;left:0px;border:none;background:none;' src="./choose-your-thoughts.html" width="100%" height="100%"></iframe>
+			</div>
+			<button class='play'>▶</button>
+			<!--div class="workshop-mask"></div-->
 		</div>
-		<button class='play'>▶</button>
+		
 	</div>
 	<br><br>
 	<div class="nav">
 		<button>OPENING</button><button>REFLECTION & STOP</button><button>STRATEGY</button><button>CLOSING</button><button>REFLECTION</button>
 	</div>
+
 </body>
 </html>
