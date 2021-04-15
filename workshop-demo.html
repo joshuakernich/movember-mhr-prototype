@@ -659,6 +659,9 @@
 					$('video').hide().eq(2).show()[0].play();
 				} else if(index == 2){
 					$('.stop').show();
+					$('.stop .static').hide();
+					if(!isWorkshopMode) $('.stop .static').show().css({opacity:0}).delay(4000).animate({opacity:1},1000);
+
 				} else if(index == 3){
 
 					$('video').hide().eq(4).show()[0].play();
@@ -674,6 +677,8 @@
 			$('.stop button').click(function(){
 				$('.stop').hide();
 				$('.swipe-prompt').show();
+
+
 				//$('.remember').show();
 			});
 
@@ -881,6 +886,12 @@
 				</div>
 				<br>
 				<button class='next'>THERE'S A BETTER WAY ></button>
+				<div class="static click-to-hide" style='background:rgba(255,255,255,0.9)'>
+					<br><br><br>
+
+					<h1 style='font-size:100px;font-family:"HeaderFont";color:#1C44CE;'>JUMP IN</h1>
+					<img src='./qr-code.png'>
+				</div>
 			</div>
 			<div class='swipe-prompt'>
 				<div class="finger"></div>
