@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html>
+<head>
+	  <meta name="viewport" content="width=500px, initial-scale=1.0">
+	<title>Choose Your Thoughts</title>
+	<script type="text/javascript" src="./jquery-3.4.1.min.js"></script>
+	<script type="text/javascript">
+		$(function(){
+
+			$('.page').hide().eq(0).show();
+			$('.next').click(function(){
+				next(this);
+			})
+
+
+			function next(scope){
+				var i = $('.page').index($(scope).closest('.page'));
+				var $p = $('.page').hide().eq(i+1).show();
+
+				if($p.hasClass('swipe-game')){
+					$p.find('.swipey').each(function(n){
+						$(this).css({left:'100vw',top:200}).delay(n*100).animate({left:25,top:55+n*3},1000);
+					});
+					$p.find('h1').css({top:-200}).delay($p.find('.swipey').length*100 + 500).animate({top:10},1000);
+				}
+			}
+
+
+			$('.swipey').each(function(n){
+				$('<button class="swipe-button swipe-no">✘</button>').appendTo(this).click(onNo);
+				$('<button class="swipe-button swipe-yes">✔</button>').appendTo(this).click(onYes);
+				
+			})
+
+			
+
+			function onYes(){
+				var $s = $(this).closest('.swipey');
+				if($s.hasClass('wrong')){
+					$s.animate({left:'+=10'},50).animate({left:'-=20'},50).animate({left:'+=20'},50).animate({left:'-=10'},50);
+					$s.append("<p class='feedback'>Would you say this to a teammate?</p>");
+				} else {
+					$s.addClass('yes').animate({left:'100vw'},1000,onSwiped);
+				}
+				
+			}
+
+			function onNo(){
+				var $s = $(this).closest('.swipey');
+				if(!$s.hasClass('wrong')){
+					$s.animate({left:'+=10'},50).animate({left:'-=20'},50).animate({left:'+=20'},50).animate({left:'-=10'},50);
+					$s.append("<p class='feedback'>This seems like a good option.</p>");
+				} else {
+					$s.addClass('no').delay(200).animate({left:'-100vw'},1000,onSwiped);
+					$('<div class="paper-ball">').appendTo('.screen').animate({opacity:1,left:100,top:300,width:200,height:200},200).animate({left:'-100vw'},1000);
+				}
+				
+			}
+
+			function onSwiped(){
+				console.log(this,$(this).hasClass('last'));
+				if($(this).hasClass('last')){
+					next(this);
+				}
+			}
+
+
+			
+		})
+	</script>
+	<style type="text/css">
+
+		.paper-ball{
+			width: 300px;
+			height: 300px;
+			background-image: url('./paper-ball.png');
+			background-position: center;
+			background-size: contain;
+			position: absolute;
+			top: 250px;
+			left: 50px;
+			opacity: 0;
+		}
+
+		.swipe-button{
+			width: 100px;
+			height: 100px;
+			border: 1px solid #1C44CE;
+			position: absolute;
+			bottom: 20px;
+			background: none;
+			border-radius: 50px;
+			font-size: 50px;
+			line-height: 100px;
+			color: #1C44CE;
+		}
+
+		.swipe-no{
+			left: 0px;
+		}
+
+		.swipe-yes{
+			right: 0px;
+		}
+
+		.swipey{
+			position: absolute;
+			
+			left: 25px;
+			bottom: 10px;
+			
+			width: 350px;
+			height: 600px;
+			box-shadow: 0px 0px 2px rgba(0,0,0,0.5);
+			background: white;
+			border-radius: 20px;
+			padding:100px 20px 0px;
+			font-size: 40px;
+			line-height: 45px;
+			color: #1C44CE;
+			box-sizing: border-box;
+
+			transition: transform 0.5s;
+
+		}
+
+		.swipey .feedback{
+			font-size: 1.5rem;
+			text-align: center;
+			line-height: 1.2em;
+		}
+
+		.swipey.yes{
+			transform: rotate(10deg);
+
+		}
+
+		.swipey.no{
+			transform: scale(0.2);
+		}
+
+		@font-face {
+			font-family: "HeaderFont";
+			src: url("./font-teko/Teko-Regular.ttf");
+		}
+
+		@font-face {
+			font-family: "BodyFont";
+			src: url("./Overpass-Light.ttf");
+		}
+
+		@font-face {
+		  font-family: BodyFont;
+		  src: url("./Overpass-Bold.ttf");
+		  font-weight: bold;
+		}	
+
+		body{
+			font-family: "BodyFont";
+			text-align: center;
+			
+			padding: 0px;
+			margin: 0px;
+		}
+
+		button{
+			display: block;
+			width: 80%;
+			margin: 0px 10%;
+			font: inherit;
+			margin-bottom: 10px;
+			padding: 5px 0px 0px;
+			color: white;
+			background: #1C44CE;
+			font-size: 1.2em;
+			border: none;
+			font-family: "HeaderFont";
+			text-transform: uppercase;
+			font-size: 1.5em;
+			font-weight: normal;
+		}
+
+
+		
+
+		.screen{
+			width: 400px;
+			height: 700px;
+			
+			position: relative;
+			overflow: hidden;
+			display: inline-block;
+			vertical-align: top;
+			margin: 0px;
+		}
+
+		.nav{
+			display: inline-block;
+			height: 700px;
+			width: 100px;
+			vertical-align: top;
+			margin: 0px;
+			background: rgba(255,255,255,0.1);
+		}
+
+		.nav:hover{
+			background: rgba(255,255,255,0.2);
+			cursor: pointer;
+		}
+
+		.moment{
+			width: 300px;
+			height: 600px;
+			background: black;
+			margin: auto;
+			
+			display: inline-block;
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			right: 0px;
+			bottom: 0px;
+
+			background-image: url('./bg-mistake.jpg');
+			background-size: cover;
+			box-shadow: 0px 1px 25px black;
+		}
+
+		.overlay{
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			width: 100%;
+			height: 100%;
+		}
+
+		.overlay h2{
+			padding: 5px;
+			color: black;
+			font-weight: normal;
+		}
+
+		h1{
+			background: #1C44CE;
+			color: black;
+			padding: 20px;
+			margin-top: 20px;
+		}
+
+		button.next{
+			
+	
+		}
+
+		.bg{
+			top: 0px;
+			left: 0px;
+			width: 100%;
+			height: 100%;
+			background-image: url('./bg-mistake.jpg');
+			background-size: cover;
+			filter: blur(10px);
+			opacity: 0.2;
+		}
+
+		.moment.flip{
+			transition: transform 1s;
+			transform: rotateY(180deg);
+		}
+
+		ul{
+			color: black;
+			text-align: left;
+			padding: 0px 10% 0px 20%;
+		}
+
+		.selecto{
+			padding: 2%;
+			text-align: left;
+			text-align: center;
+		}
+
+		.selecto li{
+			display: inline-block;
+			padding: 10px;
+			background: white;
+			color: black;
+			font-size: 20px;
+			margin: 15px 5px;
+			border: 1px solid #1C44CE;
+			color: #1C44CE;
+			border-radius: 10px;
+			text-align: left;
+			position: relative;
+		}
+
+		.selecto li:before, .selecto li:after{
+			content: "";
+			width: 10px;
+			height: 10px;
+			border: 1px solid #1C44CE;
+			background: white;
+			position: absolute;
+			left: 10px;
+			bottom: -15px;
+			border-radius: 20px;
+		}
+
+		.selecto li:after{
+			left: 5px;
+			bottom: -20px;
+			width: 5px;
+			height: 5px;
+		}
+
+		.selecto.selected li, .selecto.selected li:before, .selecto.selected li:after{
+			background: #1C44CE;
+			color: white;
+		}
+
+		p.copy, p.feedback{
+			color: black;
+			text-align: left;
+			padding: 0px 10%;
+			width: 80%;
+		}
+
+		.grid-selecto{
+
+			text-align: center;
+			padding: 0px;
+			margin: 0px;
+		}
+
+		.grid-selecto li{
+			list-style-type: none;
+			display: inline-block;
+			width: 150px;
+			height: 140px;
+			border-radius: 12%;
+			box-sizing: border-box;
+
+			background: white;
+			border: none;
+			vertical-align: top;
+			margin: 5px;
+			color: #1C44CE;
+			font-size: 12px;
+			box-shadow: rgb(0 0 0 / 13%) 0px 2px 5px 0px;
+			
+    		font-size: 15px;
+    		font-style: italic;
+    		font-weight: bold;
+    		margin: 10px;
+		}
+
+		.grid-selecto li:before{
+			display: block;
+			margin:auto;
+			content: "";
+			width: 70px;
+			height: 70px;
+			margin: 10px auto 5px;
+			background-image: url('./hand-n-ball.svg');
+			background-position: center;
+			background-repeat: no-repeat;
+		}
+
+		.remember-header{
+			background: #1C44CE;
+			padding: 20px 0px;
+		}
+
+		.remember-header h2{
+			color: white;
+			font-family: "HeaderFont";
+			font-size:30px;
+
+		}
+
+		h1{
+			color: white;
+			font-family: "HeaderFont";
+			text-transform: uppercase;
+			padding: 0px;
+			margin: 0px;
+			font-size: 30px;
+		}
+
+		.page{
+			height: 700px;
+			overflow: auto;
+
+		}
+
+		.page.blue{
+			background: #1C44CE;
+			color: white;
+		}
+
+		.page.blue button{
+			background: white;
+			color: #1C44CE;
+			bottom: 20px;
+			position: absolute;
+
+		}
+
+		.page.blue .copy{
+			color: white;
+		}
+
+		.page.blue h1{
+			font-size: 30px;
+			line-height: 35px;
+		}
+
+
+		h3{
+			font-family: "HeaderFont";
+			text-align: left;
+			margin: 0px 10%;
+			color: #1C44CE;
+			font-size: 2em;
+		}
+	</style>
+</head>
+<body>
+	<div class='screen'>
+		<div class="page">
+				<br><br><br><br><br><br>
+				<div class='remember-header'>
+					<img width=100 src='./cloud-icon-white.png'>
+					<h1>Choose your Thoughts</h1>
+				</div>
+				<br><br>
+				<button class="next">SHOW ME</button>
+		</div>
+		<div class="page blue">
+			<br><img src="./choose-positive.svg" width="200">
+			<h1>CHOOSE POSITIVE THOUGHTS</h1>
+			<p class="copy">Positive thoughts are what we would usually say to a teammate when they make a mistake.<br><br>Choosing words that make light of the situation and maintain our self-belief.</p>
+			<ul class="copy">
+				<li>No big deal!</li>
+				<li>All good.</li>
+				<li>I've got this.</li>
+			</ul>
+			<button class="next">TRY IT ></button>
+		</div>
+		<div class="page swipe-game">
+			<div class="swipey wrong last">You are pretty bad at life!</div>
+			<div class="swipey">You're great!</div>
+			<div class="swipey">No big deal!</div>
+			<div class="swipey wrong">I've seen stewed apricots with prettier faces than yours.</div>
+			<div class="swipey wrong">You suck!</div>
+			<div class="swipey">You're doing fine.</div>
+			<div class="swipey">You'll bounce back.</div>
+			<div class="swipey wrong">You're basically a sausage!</div>
+			<div class="swipey">You'll be alright.</div>
+			<div class="swipey wrong">You're a total loser!</div>
+			<div class="swipey">All good. No big deal.</div>
+			<h1 style='position: relative;'>Is this a POSITIVE thought?</h1>
+		</div>
+		<div class="page blue">
+			<br><img src="./choose-instructional.svg" width="200">
+			<h1>CHOOSE INSTRUCTIONAL THOUGHTS</h1>
+			<p class='copy'>Instructional thoughts spur us to action through specific ideas.</p>
+			<ul class="copy">
+				<li>Just got to keep training.</li>
+				<li>I can work at this.</li>
+			</ul>
+			<button class="next">TRY IT ></button>
+		</div>
+		<div class="page swipe-game">
+			<div class="swipey last">You've got a long way to go.</div>
+			<div class="swipey">You're great!</div>
+			<div class="swipey">Time for a sausage-roll break.</div>
+			<div class="swipey">I'll give this another go.</div>
+			<div class="swipey">You're a proper bollard!</div>
+			<div class="swipey">Give it another go.</div>
+			<div class="swipey">You suck!</div>
+			<div class="swipey">Keep working at it.</div>
+			<div class="swipey">Maybe try NOT sucking.</div>
+			<div class="swipey">You'll never get there.</div>
+			<div class="swipey">Gotta keep training!</div>
+			<h1 style='position: relative;'>Choose INSTRUCTIONAL thoughts.</h1>
+		</div>
+		<!--div class="page">
+			<h1>MOTIVATIONAL THOUGHTS</h1>
+			<p class="copy">Motivational thoughts help you maintain your self-esteem and self-belief.</p>
+			<ul class="copy">
+				<li>You've got this.</li>
+				<li>You'll get there!</li>
+			</ul>
+			<button class="next">CHOOSE SOME MOTIVATIONAL THOUGHTS ></button>
+		</div>
+		<div class="page swipe-game">
+			<div class="swipey last">Mate. Give it up, already.</div>
+			<div class="swipey">You'll get this.</div>
+			<div class="swipey">You smell like cabbage.</div>
+			<div class="swipey">You suck!</div>
+			<div class="swipey">You've got it, bro.</div>
+			<div class="swipey">You look like a ripe Avocado.</div>
+			<div class="swipey">You'll never get it.</div>
+			<div class="swipey">Keep on keeping on.</div>
+			<div class="swipey">Run away, mate.</div>
+			<div class="swipey">You've got it under control.</div>
+			<div class="swipey">You've got this!</div>
+			<h1 style='position: relative;'>Choose MOTIVATIONAL thoughts.</h1>
+		</div-->
+		<div class="page">
+				<div class='remember-header'>
+					<h2>REMEMBER</h2>
+					<img width=100 src='./cloud-icon-white.png'>
+					<h1>Choose your Thoughts</h1>
+				</div>
+				<p class='copy'>Don't beat yourself up with negative thoughts.</p>
+				<img width=250 src='./clouds.png'>
+				<p class='copy'>Choose thoughts that will help you bounce back.</p>
+				<h3>POSITIVE THOUGHTS</h3>
+			<p class='copy'>"No big deal."</p>
+			<p class='copy'>"You'll get through this."</p>
+			<p class='copy'>"You've got this."</p>
+			<h3>INSTRUCTIVE THOUGHTS</h3>
+				<p class='copy'>"Just need to train some more."</p>
+				<p class='copy'>"I need to work harder."</p>
+				<!--h3>MOTIVATIONAL THOUGHTS</h3>
+				<p class='copy'>"You're going fine."</p-->
+				<button class="next">COOL, THANKS!</button>
+
+
+		</div>
+	</div>
+	</body>
+</body>
+</html>

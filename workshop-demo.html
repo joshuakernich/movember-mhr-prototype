@@ -432,7 +432,7 @@
 			left: 0px;
 			right: 0px;
 			bottom: 0px;
-			background: rgba(50,50,50,0.8);
+			background: #1C44CE;
 			display: none;
 
 			box-sizing: border-box;
@@ -744,7 +744,14 @@
 
 					if( $('.sticker:not(.dead)').length == 0 ){
 						$('.swipe-prompt').hide();
+						
+						
 						$('.remember').show();
+
+						if(isWorkshopMode){
+							$('.workshop-handoff').show();
+							$('.workshop-handoff button').hide();
+						} 
 					}
 
 					wasx = x;
@@ -760,17 +767,20 @@
 
 			function doPostReflection(){
 				$('.remember').hide();
-				$('video').hide().eq(3).show()[0].play();
+				
 
 
 				if(isWorkshopMode){
-					$('video').eq(3)[0].volume = 0;
+					/*$('video').eq(3)[0].volume = 0;
 
 					$('.workshop-handoff').show().css({opacity:0}).animate({opacity:1},3000,function(){
 						$('video').eq(3)[0].pause();
-					});
-
+					});*/
+					$('video').hide();
+					$('.workshop-handoff').show();
 					$('.workshop-handoff button').show().css({opacity:0}).delay(5000).animate({opacity:1},1000);
+				} else {
+					$('video').hide().eq(3).show()[0].play();
 				}
 			}
 
@@ -904,7 +914,11 @@
 				<iframe style='position: absolute;top:0px;left:0px;border:none;background:none;' src="./choose-your-thoughts.html" width="100%" height="100%"></iframe>
 			</div>
 			<button class='play'>▶</button>
-			<div class="workshop-handoff">
+			<div class="workshop-handoff click-to-hide">
+				PHONES DOWN
+				<button class='carry-on'>carry on</button>
+			</div>
+			<div class="workshop-timer click-to-hide">
 				Eyes back to the front
 				<button class='carry-on'>carry on</button>
 			</div>
