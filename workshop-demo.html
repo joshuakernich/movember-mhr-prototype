@@ -445,6 +445,29 @@
 			background-size: 150px;
 		}
 
+		.workshop-timer{
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			right: 0px;
+			bottom: 0px;
+			background: #1C44CE;
+			display: block;
+
+			box-sizing: border-box;
+			padding-top: 50px;
+			font-size: 25px;
+			font-family: "HeaderFont";
+			background-position: center;
+			background-repeat: no-repeat;
+			background-size: 150px;
+
+		}
+
+		.workshop-timer button{
+			border: 1px solid white;
+		}
+
 		.nav button:nth-of-type(1){ background:#F7B752; padding-left: 15px; }
 		.nav button:nth-of-type(2){ background:#99DB4D; }
 		.nav button:nth-of-type(3){ background:#82C8F2; }
@@ -477,6 +500,68 @@
 
 		.popup.reveal{
 			transform: scale(1);
+		}
+
+		.stopwatch{
+			width: 200px;
+			height: 200px;
+			border: 10px solid white;
+			border-radius: 150px;
+			margin: auto;
+			box-sizing: border-box;
+			position: relative;
+		}
+
+		@keyframes tick{
+			0%{
+				transform: rotate(0deg);
+			}
+			100%{
+				transform: rotate(360deg);
+			}
+		}
+
+		.stopwatch:after,.stopwatch:before{
+			content: "";
+			width: 40px;
+			height: 10px;
+			background: white;
+			position: absolute;
+			top: -10px;
+			left: 10px;
+			transform: rotate(-30deg);
+		}
+
+		.stopwatch:after{
+			left: 130px;
+			transform: rotate(30deg);
+		}
+
+		.stopwatch-hand{
+			width: 2px;
+			height: 80px;
+			position: absolute;
+			left: 89px;
+			top: 15px;
+			background: white;
+			animation: tick;
+			animation-duration: 30s;
+			transform-origin: 1px 79px;
+			animation-iteration-count: infinite;
+			animation-timing-function: steps(240);
+		}
+
+		.stopwatch-hand:after{
+			content: "";
+			width: 10px;
+			height: 10px;
+			position: absolute;
+			border: 2px solid white;
+			position: absolute;
+			bottom: -5px;
+			left: -5px;
+			border-radius: 100px;
+			background: #1C44CE;
 		}
 
 	</style>
@@ -521,7 +606,7 @@
 			var vidReflection = $('video')[2];
 
 
-			setInterval(tick,100);
+			var iVideoTicker = setInterval(tick,100);
 
 			function tick(){
 
@@ -658,6 +743,7 @@
 				} else if(index == 1){
 					$('video').hide().eq(2).show()[0].play();
 				} else if(index == 2){
+					clearInterval(iVideoTicker);
 					$('.stop').show();
 					$('.stop .static').hide();
 					if(!isWorkshopMode) $('.stop .static').show().css({opacity:0}).delay(4000).animate({opacity:1},1000);
@@ -678,29 +764,34 @@
 				$('.stop').hide();
 				$('.swipe-prompt').show();
 
+				var iTickStick = setInterval(function(){
 
+					$('.dead').each(function(){
+						var d = $(this).data();
+						var p = $(this).position();
+						d.dy += 1;
+						p.left += d.dx;
+						p.top += d.dy;
+						$(this).css(p);
+
+						if(p.top>900) $(this).addClass('gone')
+					});
+
+
+					console.log($('.sticker').length,$('.gone').length);
+					if($('.sticker').length == $('.gone').length){
+						clearInterval(iTickStick);
+						$('.remember').show();
+						$('iframe')[0].contentWindow.postMessage('hello', '*');
+					}
+
+				},20);
 				//$('.remember').show();
 			});
 
 			var isMouseDown = false;
 
-			setInterval(function(){
-
-				
-
-				$('.dead').each(function(){
-					var d = $(this).data();
-					var p = $(this).position();
-					d.dy += 1;
-					p.left += d.dx;
-					p.top += d.dy;
-					$(this).css(p);
-
-					
-				});
-
-
-			},20);
+			
 
 			$('.swipe-prompt').on('mousedown',function(e){
 				$(this).addClass('swiping');
@@ -742,17 +833,21 @@
 						}
 					})
 
-					if( $('.sticker:not(.dead)').length == 0 ){
+					/*if( $('.sticker:not(.dead)').length == 0 ){
 						$('.swipe-prompt').hide();
 						
 						
 						$('.remember').show();
 
-						if(isWorkshopMode){
+						$('iframe')[0].contentWindow.postMessage('hello', '*');
+
+
+
+						/*if(isWorkshopMode){
 							$('.workshop-handoff').show();
 							$('.workshop-handoff button').hide();
-						} 
-					}
+						} */
+					//}
 
 					wasx = x;
 					wasy = y;
@@ -767,8 +862,6 @@
 
 			function doPostReflection(){
 				$('.remember').hide();
-				
-
 
 				if(isWorkshopMode){
 					/*$('video').eq(3)[0].volume = 0;
@@ -906,22 +999,34 @@
 			<div class='swipe-prompt'>
 				<div class="finger"></div>
 			</div>
+
 			<div class='remember'>
 
 				<!--<h1>CONTROL THE CONTROLLABLES</h1>
 				<p>It’s easy to get lost in the things you can’t control. But this can only lead to frustration. By concentrating on the things we can control, we are more likely to have a positive impact on our experience.</p>
 				<button>OK, THANKS ></button>-->
-				<iframe style='position: absolute;top:0px;left:0px;border:none;background:none;' src="./choose-your-thoughts.html" width="100%" height="100%"></iframe>
+				<iframe style='position: absolute;top:0px;left:0px;border:none;background:none;' src="./swipe-your-thoughts.html" width="100%" height="100%"></iframe>
 			</div>
 			<button class='play'>▶</button>
+			<!--div class="workshop-intro click-to-hide">
+				<br><br>
+				<img width=100 src='./cloud-icon-white.png'>
+				<br>
+				<h1>CHOOSE YOUR THOUGHTS</h1>
+				<button class='carry-on'>LET'S GO ></button>
+			</div-->
 			<div class="workshop-handoff click-to-hide">
-				PHONES DOWN
+				<br><br><br>
+				<h1>PHONES DOWN</h1>
 				<button class='carry-on'>carry on</button>
 			</div>
-			<div class="workshop-timer click-to-hide">
-				Eyes back to the front
+			<!--div class="workshop-timer click-to-hide">
+				<h1>CHOOSE YOUR THOUGHTS</h1>
+				<div class="stopwatch">
+					<div class="stopwatch-hand"></div>
+				</div>
 				<button class='carry-on'>carry on</button>
-			</div>
+			</div-->
 		</div>
 		
 	</div>

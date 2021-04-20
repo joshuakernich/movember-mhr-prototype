@@ -7,21 +7,51 @@
 	<script type="text/javascript">
 		$(function(){
 
-			$('.page').hide().eq(0).show();
+			
 			$('.next').click(function(){
 				next(this);
 			})
 
+			if(window.parent == window) next(undefined,0);
 
-			function next(scope){
-				var i = $('.page').index($(scope).closest('.page'));
-				var $p = $('.page').hide().eq(i+1).show();
+			window.onmessage = function(e){
+			    next(undefined,0);
+			};
+
+			function next(scope,iPage){
+
+				var i = iPage;
+				if(scope){
+					i = $('.page').index($(scope).closest('.page'))+1;
+				} 
+
+				var $p = $('.page').hide().eq(i).show();
+
+				
 
 				if($p.hasClass('swipe-game')){
 					$p.find('.swipey').each(function(n){
-						$(this).css({left:'100vw',top:200}).delay(n*100).animate({left:25,top:55+n*3},1000);
+						$(this).css({left:'100vw',top:300}).delay(n*100).animate({left:25,top:155+n*3},1000);
 					});
-					$p.find('h1').css({top:-200}).delay($p.find('.swipey').length*100 + 500).animate({top:10},1000);
+					
+
+					if($p.hasClass('swipe-game-intro')){
+						$p.find('h2').css({top:-200}).animate({top:20},1000);
+					} else {
+						
+						$p.find('h2').css({top:-200}).delay($p.find('.swipey').length*100 + 500).animate({top:20},1000);
+					}
+				}
+
+				if($p.hasClass('page-intro')){
+					console.log('here');
+					$p.find('.remember-header').css({top:'100vh'}).eq(0).animate({top:-10},1000).animate({top:0});
+					$p.find('.remember-header').css({top:'100vh'}).eq(1).delay(3000).animate({top:-10},1000).animate({top:0});
+					$p.find('button').css({opacity:0}).delay(8000).animate({opacity:1});
+				}
+
+				if($p.hasClass('phone-down')){
+					$p.find('button').css({opacity:0}).delay(8000).animate({opacity:1});
 				}
 			}
 
@@ -35,12 +65,19 @@
 			
 
 			function onYes(){
+				console.log('onYes');
 				var $s = $(this).closest('.swipey');
 				if($s.hasClass('wrong')){
 					$s.animate({left:'+=10'},50).animate({left:'-=20'},50).animate({left:'+=20'},50).animate({left:'-=10'},50);
-					$s.append("<p class='feedback'>Would you say this to a teammate?</p>");
+					if($s.data('feedback')){
+						$s.append("<p class='feedback'>"+$s.data('feedback')+"</p>");
+					} else {
+						$s.append("<p class='feedback'>Would you say this to a teammate?</p>");
+					}
 				} else {
 					$s.addClass('yes').animate({left:'100vw'},1000,onSwiped);
+
+					if( $s.hasClass('last')) $s.closest('.swipe-game').find('h2').animate({top:-200});
 				}
 				
 			}
@@ -51,14 +88,16 @@
 					$s.animate({left:'+=10'},50).animate({left:'-=20'},50).animate({left:'+=20'},50).animate({left:'-=10'},50);
 					$s.append("<p class='feedback'>This seems like a good option.</p>");
 				} else {
-					$s.addClass('no').delay(200).animate({left:'-100vw'},1000,onSwiped);
-					$('<div class="paper-ball">').appendTo('.screen').animate({opacity:1,left:100,top:300,width:200,height:200},200).animate({left:'-100vw'},1000);
+					$s.addClass('no').delay(200).animate({left:'-=100vw',top:"-=50vh"},1000,onSwiped);
+					$('<div class="paper-ball">').appendTo('.screen').animate({opacity:1,left:100,top:300,width:200,height:200},200).animate({left:'-=100vw',top:'-=50vh'},1000);
+
+					if( $s.hasClass('last')) $s.closest('.swipe-game').find('h2').delay(200).animate({top:-200});
 				}
 				
 			}
 
 			function onSwiped(){
-				console.log(this,$(this).hasClass('last'));
+
 				if($(this).hasClass('last')){
 					next(this);
 				}
@@ -71,14 +110,14 @@
 	<style type="text/css">
 
 		.paper-ball{
-			width: 300px;
-			height: 300px;
+			width: 400px;
+			height: 400px;
 			background-image: url('./paper-ball.png');
 			background-position: center;
 			background-size: contain;
 			position: absolute;
-			top: 250px;
-			left: 50px;
+			top: 150px;
+			left: 0px;
 			opacity: 0;
 		}
 
@@ -110,7 +149,7 @@
 			bottom: 10px;
 			
 			width: 350px;
-			height: 600px;
+			height: 500px;
 			box-shadow: 0px 0px 2px rgba(0,0,0,0.5);
 			background: white;
 			border-radius: 20px;
@@ -136,6 +175,7 @@
 		}
 
 		.swipey.no{
+			transition: transform 0.2s;
 			transform: scale(0.2);
 		}
 
@@ -176,12 +216,9 @@
 			border: none;
 			font-family: "HeaderFont";
 			text-transform: uppercase;
-			font-size: 1.5em;
+			font-size: 1.8em;
 			font-weight: normal;
 		}
-
-
-		
 
 		.screen{
 			width: 400px;
@@ -369,6 +406,11 @@
 		.remember-header{
 			background: #1C44CE;
 			padding: 20px 0px;
+			position: relative;
+		}
+
+		.remember-header h1{
+			font-size: 45px;
 		}
 
 		.remember-header h2{
@@ -384,7 +426,7 @@
 			text-transform: uppercase;
 			padding: 0px;
 			margin: 0px;
-			font-size: 30px;
+			font-size: 1.8em;
 		}
 
 		.page{
@@ -413,6 +455,9 @@
 		.page.blue h1{
 			font-size: 30px;
 			line-height: 35px;
+			font-size: 2.5rem;
+			line-height: 2.5rem;
+
 		}
 
 
@@ -423,29 +468,85 @@
 			color: #1C44CE;
 			font-size: 2em;
 		}
+
+		h2{
+			font-weight: normal;
+			color: #1C44CE;
+		}
+
+		.swipey.info{
+			font-size: 1.2rem;
+			line-height: 1.8rem;
+			text-align: left;
+			padding: 30px;
+		}
+
+		.swipey.info .swipe-no{
+			display: none;
+		}
+
 	</style>
 </head>
 <body>
 	<div class='screen'>
-		<div class="page">
-				<br><br><br><br><br><br>
+		<div class="page page-intro">
+				<br><br>
 				<div class='remember-header'>
 					<img width=100 src='./cloud-icon-white.png'>
 					<h1>Choose your Thoughts</h1>
 				</div>
-				<br><br>
-				<button class="next">SHOW ME</button>
+				<br>
+				<div class='remember-header' style='background:#883300'>
+					<img src="./choose-negative.svg" width="80">
+					<img src="./broken-arrow.svg" width="80">
+					<img src="./choose-positive.svg" width="80">
+					<img src="./choose-instructional.svg" width="80">
+					<p class="copy" style='color:white;'>It's easy to get caught up in negative thoughts. Let's practice POSITIVE and INSTRUCTIVE thoughts.</p>
+				</div>
+				<br>
+				<button class='next'>GET STARTED ></button>
 		</div>
-		<div class="page blue">
-			<br><img src="./choose-positive.svg" width="200">
-			<h1>CHOOSE POSITIVE THOUGHTS</h1>
-			<p class="copy">Positive thoughts are what we would usually say to a teammate when they make a mistake.<br><br>Choosing words that make light of the situation and maintain our self-belief.</p>
+		<!--div class="page blue phone-down">
+				<br><br><br><br><br><br>
+				<br><br><br>
+				<h1>PHONES DOWN</h1><br>
+					<img width=150 src='./phone-down.png'>
+					<br><br>
+					<h1>AWAIT INSTRUCTIONS</h1>
+				<button class='next'>OK GO ></button>
+		</div-->
+		<!--div class="page blue">
+			<br><img src="./choose-negative.svg" width="80">
+					<img src="./broken-arrow.svg" width="80">
+					<img src="./choose-positive.svg" width="80">
+			<h1>POSITIVE THOUGHTS</h1>
+			<p class="copy">When making a mistake, ask:</p>
+			<ul class="copy">
+				<li>What would I say to a teammate?</li>
+				<li>How can I keep myself motivated?</li>
+			</ul>
+			<p class="copy">POSITIVE thoughts might look like:</p>
 			<ul class="copy">
 				<li>No big deal!</li>
 				<li>All good.</li>
 				<li>I've got this.</li>
 			</ul>
 			<button class="next">TRY IT ></button>
+		</div-->
+		<div class="page swipe-game swipe-game-intro">
+			<div class="swipey info last">
+				<img src="./choose-positive.svg" width="120" style='width:120;display:block;margin:auto;'><br>
+				Positive thoughts are <b>motivational</b>.
+				<li>You've got this.</li>
+				<li>You can do it.</li>
+			</div>
+			<div class="swipey info">
+				<img src="./choose-positive.svg" width="120" style='width:120;display:block;margin:auto;'><br>
+				Positive thoughts are <b>optimistic</b>.
+				<li>It will be fine.</li>
+				<li>No problemo.</li>
+			</div>
+			<h2 style='position: relative;'>POSITIVE THOUGHTS</h2>
 		</div>
 		<div class="page swipe-game">
 			<div class="swipey wrong last">You are pretty bad at life!</div>
@@ -459,31 +560,48 @@
 			<div class="swipey">You'll be alright.</div>
 			<div class="swipey wrong">You're a total loser!</div>
 			<div class="swipey">All good. No big deal.</div>
-			<h1 style='position: relative;'>Is this a POSITIVE thought?</h1>
+			<h2 style='position: relative;'>Is this a<br>POSITIVE thought?</h2>
 		</div>
-		<div class="page blue">
+		<!--div class="page blue">
 			<br><img src="./choose-instructional.svg" width="200">
-			<h1>CHOOSE INSTRUCTIONAL THOUGHTS</h1>
+			<h1>INSTRUCTIVE THOUGHTS</h1>
 			<p class='copy'>Instructional thoughts spur us to action through specific ideas.</p>
 			<ul class="copy">
 				<li>Just got to keep training.</li>
 				<li>I can work at this.</li>
 			</ul>
 			<button class="next">TRY IT ></button>
+		</div-->
+		<div class="page swipe-game swipe-game-intro">
+			<div class="swipey info last">
+				<img src="./choose-instructional.svg" width="120" style='width:120;display:block;margin:auto;'><br>
+				Focus on what you <b>should</b> do. Not what you <b>shouldn't</b> do.
+				<li>I should work on my catching.</li>
+				<p>Instead of</p>
+				<li>Stop dropping the ball.</li>
+			</div>
+			<div class="swipey info">
+				<img src="./choose-instructional.svg" width="120" style='width:120;display:block;margin:auto;'><br>
+				Instructive thoughts are <b>actionable</b>.
+				<li>I just need to keep training.</li>
+				<li>I need to work harder.</li>
+				<li>I just need to try again.</li>
+			</div>
+			<h2 style='position: relative;'>INSTRUCTIVE THOUGHTS</h2>
 		</div>
 		<div class="page swipe-game">
-			<div class="swipey last">You've got a long way to go.</div>
+			<div class="swipey wrong last" data-feedback='Try being a little more positive.'>You've got a long way to go.</div>
 			<div class="swipey">You're great!</div>
-			<div class="swipey">Time for a sausage-roll break.</div>
+			<div class="swipey wrong" data-feedback='Good idea. But not very useful.'>Time for a sausage-roll break.</div>
 			<div class="swipey">I'll give this another go.</div>
-			<div class="swipey">You're a proper bollard!</div>
+			<div class="swipey wrong">You're a proper bollard!</div>
 			<div class="swipey">Give it another go.</div>
-			<div class="swipey">You suck!</div>
+			<div class="swipey wrong">You suck!</div>
 			<div class="swipey">Keep working at it.</div>
-			<div class="swipey">Maybe try NOT sucking.</div>
-			<div class="swipey">You'll never get there.</div>
+			<div class="swipey wrong"  data-feedback='Focus on what you SHOULD do.'>Maybe try NOT sucking.</div>
+			<div class="swipey wrong">You'll never get there.</div>
 			<div class="swipey">Gotta keep training!</div>
-			<h1 style='position: relative;'>Choose INSTRUCTIONAL thoughts.</h1>
+			<h2 style='position: relative;'>Is this an<br>INSTRUCTIVE thought?</h2>
 		</div>
 		<!--div class="page">
 			<h1>MOTIVATIONAL THOUGHTS</h1>
