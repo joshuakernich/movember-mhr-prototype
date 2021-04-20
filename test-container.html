@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script type="text/javascript" src='./jquery-3.4.1.min.js'></script>
+	<script type="text/javascript">
+		$(function(){
+			setTimeout(function(){
+				$('iframe')[0].contentWindow.postMessage('hello', '*');
+			},1000)
+			
+		})
+	</script>
+</head>
+<body>
+	<iframe src="./swipe-your-thoughts.html" width=400 height="700"></iframe>
+</body>
+</html>
