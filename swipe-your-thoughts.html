@@ -25,13 +25,15 @@
 					i = $('.page').index($(scope).closest('.page'))+1;
 				} 
 
+				if($('.page').length<=i && window.parent.doFinishActivity) window.parent.doFinishActivity();
+
 				var $p = $('.page').hide().eq(i).show();
 
 				
 
 				if($p.hasClass('swipe-game')){
 					$p.find('.swipey').each(function(n){
-						$(this).css({left:'100vw',top:300}).delay(n*100).animate({left:25,top:155+n*3},1000);
+						$(this).css({left:500,top:300}).delay(n*100).animate({left:25,top:155+n*3},500);
 					});
 					
 
@@ -44,9 +46,8 @@
 				}
 
 				if($p.hasClass('page-intro')){
-					console.log('here');
-					$p.find('.remember-header').css({top:'100vh'}).eq(0).animate({top:-10},1000).animate({top:0});
-					$p.find('.remember-header').css({top:'100vh'}).eq(1).delay(3000).animate({top:-10},1000).animate({top:0});
+					$p.find('.remember-header').css({top:700}).eq(0).animate({top:-10},1000).animate({top:0});
+					$p.find('.remember-header').css({top:700}).eq(1).delay(3000).animate({top:-10},1000).animate({top:0});
 					$p.find('button').css({opacity:0}).delay(8000).animate({opacity:1});
 				}
 
@@ -65,7 +66,6 @@
 			
 
 			function onYes(){
-				console.log('onYes');
 				var $s = $(this).closest('.swipey');
 				if($s.hasClass('wrong')){
 					$s.animate({left:'+=10'},50).animate({left:'-=20'},50).animate({left:'+=20'},50).animate({left:'-=10'},50);
@@ -75,7 +75,7 @@
 						$s.append("<p class='feedback'>Would you say this to a teammate?</p>");
 					}
 				} else {
-					$s.addClass('yes').animate({left:'100vw'},1000,onSwiped);
+					$s.addClass('yes').animate({left:500},500,onSwiped);
 
 					if( $s.hasClass('last')) $s.closest('.swipe-game').find('h2').animate({top:-200});
 				}
@@ -88,8 +88,8 @@
 					$s.animate({left:'+=10'},50).animate({left:'-=20'},50).animate({left:'+=20'},50).animate({left:'-=10'},50);
 					$s.append("<p class='feedback'>This seems like a good option.</p>");
 				} else {
-					$s.addClass('no').delay(200).animate({left:'-=100vw',top:"-=50vh"},1000,onSwiped);
-					$('<div class="paper-ball">').appendTo('.screen').animate({opacity:1,left:100,top:300,width:200,height:200},200).animate({left:'-=100vw',top:'-=50vh'},1000);
+					$s.addClass('no').delay(200).animate({left:'-=500',top:"-=350"},500,onSwiped);
+					$('<div class="paper-ball">').appendTo('.screen').animate({opacity:1,left:100,top:300,width:200,height:200},200).animate({left:'-=500',top:'-=350'},500);
 
 					if( $s.hasClass('last')) $s.closest('.swipe-game').find('h2').delay(200).animate({top:-200});
 				}
@@ -489,24 +489,26 @@
 </head>
 <body>
 	<div class='screen'>
-		<div class="page page-intro">
+		<div class="page">
 				<br><br>
 				<div class='remember-header'>
 					<img width=100 src='./cloud-icon-white.png'>
 					<h1>Choose your Thoughts</h1>
 				</div>
 				<br>
-				<div class='remember-header' style='background:#883300'>
-					<img src="./choose-negative.svg" width="80">
-					<img src="./broken-arrow.svg" width="80">
-					<img src="./choose-positive.svg" width="80">
-					<img src="./choose-instructional.svg" width="80">
-					<p class="copy" style='color:white;'>It's easy to get caught up in negative thoughts. Let's practice POSITIVE and INSTRUCTIVE thoughts.</p>
-				</div>
-				<br>
 				<button class='next'>GET STARTED ></button>
 		</div>
-		<!--div class="page blue phone-down">
+		<div class="page">
+			<br>
+			<h1>Choose your Thoughts</h1>
+			<br>
+			<img src="./choose-magnify.svg" width="120">
+			<br>
+			<h2>Pay attention to your thoughts</h2>
+			<p class="copy">Imagine you were faced with this situation. What would you be thinking? What would you say to yourself? What would you say to a teammate in this moment?</p>
+			<button class="next">CARRY ON ></button>
+		</div>
+		<div class="page blue phone-down">
 				<br><br><br><br><br><br>
 				<br><br><br>
 				<h1>PHONES DOWN</h1><br>
@@ -514,25 +516,7 @@
 					<br><br>
 					<h1>AWAIT INSTRUCTIONS</h1>
 				<button class='next'>OK GO ></button>
-		</div-->
-		<!--div class="page blue">
-			<br><img src="./choose-negative.svg" width="80">
-					<img src="./broken-arrow.svg" width="80">
-					<img src="./choose-positive.svg" width="80">
-			<h1>POSITIVE THOUGHTS</h1>
-			<p class="copy">When making a mistake, ask:</p>
-			<ul class="copy">
-				<li>What would I say to a teammate?</li>
-				<li>How can I keep myself motivated?</li>
-			</ul>
-			<p class="copy">POSITIVE thoughts might look like:</p>
-			<ul class="copy">
-				<li>No big deal!</li>
-				<li>All good.</li>
-				<li>I've got this.</li>
-			</ul>
-			<button class="next">TRY IT ></button>
-		</div-->
+		</div>
 		<div class="page swipe-game swipe-game-intro">
 			<div class="swipey info last">
 				<img src="./choose-positive.svg" width="120" style='width:120;display:block;margin:auto;'><br>
@@ -562,23 +546,12 @@
 			<div class="swipey">All good. No big deal.</div>
 			<h2 style='position: relative;'>Is this a<br>POSITIVE thought?</h2>
 		</div>
-		<!--div class="page blue">
-			<br><img src="./choose-instructional.svg" width="200">
-			<h1>INSTRUCTIVE THOUGHTS</h1>
-			<p class='copy'>Instructional thoughts spur us to action through specific ideas.</p>
-			<ul class="copy">
-				<li>Just got to keep training.</li>
-				<li>I can work at this.</li>
-			</ul>
-			<button class="next">TRY IT ></button>
-		</div-->
 		<div class="page swipe-game swipe-game-intro">
 			<div class="swipey info last">
 				<img src="./choose-instructional.svg" width="120" style='width:120;display:block;margin:auto;'><br>
-				Focus on what you <b>should</b> do. Not what you <b>shouldn't</b> do.
-				<li>I should work on my catching.</li>
-				<p>Instead of</p>
-				<li>Stop dropping the ball.</li>
+				Instructive thoughts focus on what you <b>should</b> do, not what you <b>shouldn't</b> do.
+				<p style="text-align: center;"><i>"I should work on my catching."</i><br>
+				instead of<br><i>"Stop dropping the ball."</i></p>
 			</div>
 			<div class="swipey info">
 				<img src="./choose-instructional.svg" width="120" style='width:120;display:block;margin:auto;'><br>
@@ -591,7 +564,7 @@
 		</div>
 		<div class="page swipe-game">
 			<div class="swipey wrong last" data-feedback='Try being a little more positive.'>You've got a long way to go.</div>
-			<div class="swipey">You're great!</div>
+			<div class="swipey wrong" data-feedback='This is positive, but not instructive.'>You're great!</div>
 			<div class="swipey wrong" data-feedback='Good idea. But not very useful.'>Time for a sausage-roll break.</div>
 			<div class="swipey">I'll give this another go.</div>
 			<div class="swipey wrong">You're a proper bollard!</div>
@@ -603,29 +576,6 @@
 			<div class="swipey">Gotta keep training!</div>
 			<h2 style='position: relative;'>Is this an<br>INSTRUCTIVE thought?</h2>
 		</div>
-		<!--div class="page">
-			<h1>MOTIVATIONAL THOUGHTS</h1>
-			<p class="copy">Motivational thoughts help you maintain your self-esteem and self-belief.</p>
-			<ul class="copy">
-				<li>You've got this.</li>
-				<li>You'll get there!</li>
-			</ul>
-			<button class="next">CHOOSE SOME MOTIVATIONAL THOUGHTS ></button>
-		</div>
-		<div class="page swipe-game">
-			<div class="swipey last">Mate. Give it up, already.</div>
-			<div class="swipey">You'll get this.</div>
-			<div class="swipey">You smell like cabbage.</div>
-			<div class="swipey">You suck!</div>
-			<div class="swipey">You've got it, bro.</div>
-			<div class="swipey">You look like a ripe Avocado.</div>
-			<div class="swipey">You'll never get it.</div>
-			<div class="swipey">Keep on keeping on.</div>
-			<div class="swipey">Run away, mate.</div>
-			<div class="swipey">You've got it under control.</div>
-			<div class="swipey">You've got this!</div>
-			<h1 style='position: relative;'>Choose MOTIVATIONAL thoughts.</h1>
-		</div-->
 		<div class="page">
 				<div class='remember-header'>
 					<h2>REMEMBER</h2>
@@ -633,15 +583,20 @@
 					<h1>Choose your Thoughts</h1>
 				</div>
 				<p class='copy'>Don't beat yourself up with negative thoughts.</p>
-				<img width=250 src='./clouds.png'>
-				<p class='copy'>Choose thoughts that will help you bounce back.</p>
-				<h3>POSITIVE THOUGHTS</h3>
-			<p class='copy'>"No big deal."</p>
-			<p class='copy'>"You'll get through this."</p>
-			<p class='copy'>"You've got this."</p>
-			<h3>INSTRUCTIVE THOUGHTS</h3>
-				<p class='copy'>"Just need to train some more."</p>
-				<p class='copy'>"I need to work harder."</p>
+				<img width=80 src='./choose-negative.svg'>
+				<p class='copy'>Choose thoughts that are <b>positive</b> and <b>motivational</b>.</p>
+				<img width=80 src='./choose-positive.svg'>
+				<ul class="copy">
+					<li>No big deal.</li>
+					<li>You'll get through this.</li>
+					<li>You've got this.</li>
+				</ul>
+				<p class='copy'>Choose thoughts that are <b>instructive</b>.</p>
+				<img width=80 src='./choose-instructional.svg'>
+				<ul class="copy">
+					<li>Just need to train some more.</li>
+					<li>I need to work harder.</li>
+				</ul>
 				<!--h3>MOTIVATIONAL THOUGHTS</h3>
 				<p class='copy'>"You're going fine."</p-->
 				<button class="next">COOL, THANKS!</button>
