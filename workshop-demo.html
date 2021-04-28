@@ -3,7 +3,7 @@
 <head>
 	<title>Workshop Demo</title>
 	<style type="text/css">
-		.screen, .screen-container{
+		.screen, .screen-container, .qr-prompt{
 			width: 400px;
 			height: 700px;
 			margin: auto;
@@ -19,6 +19,7 @@
 			overflow: hidden;
 			vertical-align: middle;
 		}
+
 
 		.screen{
 			position: absolute;
@@ -398,33 +399,21 @@
 		.nav button{
 			display: inline-block;
 			
-			height: 50px;
+			height: 30px;
+			width: 30px;
+			margin-right: 1px;
 			font-family: "BodyFont";
 			border: none;
 			position: relative;
 			background: white;
 
-			padding-left: 35px;
+			
 			cursor: pointer;
 			outline: none;
+
 		}
 
 
-
-		.nav button:after {
-			content: "";
-			display: block;
-			position: absolute;
-			right: -25px;
-			top: 0px;
-		  width: 0; 
-		  height: 0; 
-		  border-top: 25px solid transparent;
-		  border-bottom: 25px solid transparent;
-		  
-		  border-left: 25px solid white;
-		  z-index: 1;
-		}
 
 		.workshop-handoff{
 			position: absolute;
@@ -471,17 +460,7 @@
 			border: 1px solid white;
 		}
 
-		.nav button:nth-of-type(1){ background:#F7B752; padding-left: 15px; }
-		.nav button:nth-of-type(2){ background:#99DB4D; }
-		.nav button:nth-of-type(3){ background:#82C8F2; }
-		.nav button:nth-of-type(4){ background:#F7B752; }
-		.nav button:nth-of-type(5){ background:#99DB4D; }
 
-		.nav button:nth-of-type(1):after{ border-left-color:#F7B752; }
-		.nav button:nth-of-type(2):after{ border-left-color:#99DB4D; }
-		.nav button:nth-of-type(3):after{ border-left-color:#82C8F2; }
-		.nav button:nth-of-type(4):after{ border-left-color:#F7B752; }
-		.nav button:nth-of-type(5):after{ border-left-color:#99DB4D; }
 
 		
 
@@ -567,24 +546,65 @@
 			background: #1C44CE;
 		}
 
+		.qr-prompt{
+			color: blue;
+			display: none;
+		}
+
+		.qr-prompt img{
+			width: 200px;
+		}
+
+
+		.instruct{
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			width: 100%;
+			height: 100%;
+			background: rgba(255,255,255,0.8);
+			text-align: left;
+			padding: 30px;
+			box-sizing: border-box;
+			color: black;
+		}
+
+		.instruct h1{
+			font-family: "HeaderFont";
+			padding: 0px;
+			margin:0px;
+			font-weight: normal;
+			font-size: 2.5em;
+			color: rgba(28,68,206);
+			text-align: center;
+		}
+
+
 	</style>
 	<script type="text/javascript" src='./jquery-3.4.1.min.js'></script>
 	<script type="text/javascript">
 		$(function(){
 
-			
-
 			var isWorkshopMode = (window.location.href.indexOf('student')>-1);
 
-			
-
 			if(isWorkshopMode){
-				$('.screen').hide().eq(0).show();
+				toScreen(0);
 			} else {
-				$('.screen').hide().eq(1).show();
+				toScreen(1);
 			}
 
-			var MESS = 20;
+			function onNav(){
+				var idx = $('.nav button').index(this);
+				toScreen(idx);
+			}
+
+			$('.screen').each(function(i){
+				$('<button>'+(i+1)+'</button>').appendTo('.nav').click(onNav);
+			})
+
+			
+
+			var MESS = 15;
 			var SCATTER = {cx:200,cy:350,rx:200,ry:350}
 			var iMoment = 0;
 			var iReflection = 0;
@@ -594,27 +614,12 @@
 				{start:60,end:70,options:['SO EMBARASSING!','MASSIVE FAIL!','./sticker/facepalm.png']},
 				{start:90,end:100,options:['100% LOSER','DISAPPOINTED','SCREW-UP']},
 			]
-
-			/*var reflections = [
-				{at:12,sticker:'CRUNCH!'},
-				{at:15,sticker:'./sticker/explosion.png'},
-				{at:20,sticker:'FRUSTRATED!'},
-				{at:22,sticker:'FRUSTRATED!'},
-				{at:23,sticker:'KMART SUCKS!'},
-				{at:24,sticker:'FRUSTRATED!'},
-			]*/
-
 			
-			var vid = $('video')[0];
-			var vidReflection = $('video')[2];
+			var videoLive;
+			var iVideoTicker;
 
-
-			var iVideoTicker = setInterval(tick,100);
-
-			function tick(){
-
-
-				if(!isWorkshopMode && moments[iMoment] && !moments[iMoment].isShown && vid.currentTime > moments[iMoment].start){
+			function tickSticker(){
+				if(moments[iMoment] && !moments[iMoment].isShown && videoLive.currentTime > moments[iMoment].start){
 					moments[iMoment].isShown = true;
 
 					$('.overlay').empty();
@@ -632,26 +637,22 @@
 						$("<br>").appendTo('.sticker-party');
 					}
 					$('.overlay').addClass('active');
-					//$('.timer').addClass('active');
-
-					//$('video').addClass('zoom');
-					//vid.playbackRate = 0.5;
 				}
 
-				//loop
-				//if(vid.currentTime > moments[iMoment].end) vid.currentTime = moments[iMoment].start;
-				if(!isWorkshopMode && moments[iMoment] && vid.currentTime > moments[iMoment].end){
-					vid.playbackRate = 0;
-					//forceSelection();
+				if(moments[iMoment] && videoLive.currentTime > moments[iMoment].end){
+					videoLive.playbackRate = 0;
 				}
 
-				if(!isWorkshopMode && moments[iMoment] && vid.currentTime > moments[iMoment].start){
+				if(moments[iMoment] && videoLive.currentTime > moments[iMoment].start){
 					$('.timer').addClass('active');
-					var p = (vid.currentTime-moments[iMoment].start)/(moments[iMoment].end-moments[iMoment].start);
+					var p = (videoLive.currentTime-moments[iMoment].start)/(moments[iMoment].end-moments[iMoment].start);
 					$('.timer-ticker').width(p*100+'%');
 				}
+			}
 
-				if(vidReflection.currentTime > (vidReflection.duration/MESS)*iReflection){
+			function tickReflection(){
+
+				if(videoLive.currentTime > (videoLive.duration/2 + (videoLive.duration/2/MESS)*iReflection)){
 
 					while(stickerPack.length < moments.length){
 						var $s =  $('<div class="sticker still text n0">').text(moments[stickerPack.length].options[stickerPack.length]);
@@ -726,41 +727,26 @@
 				stickerPack.push( $(e.target).clone() );
 
 				$('video').removeClass('zoom');
-				vid.playbackRate = 1;
+				videoLive.playbackRate = 1;
 			}
 
-			$('.play').click(doVideo);
 
-			function doVideo(){
-				$('.play').hide();
-				$('video')[0].play();
-			}
+		
 
 			$('video').on('ended',onVideoEnd);
 
 			function onVideoEnd(){
-				var index = $('video').index(this);
-				if(index == 0){
-					$('.sticker-party').empty();
-					$('video').hide().eq(1).show()[0].play();
-				} else if(index == 1){
-					$('video').hide().eq(2).show()[0].play();
-				} else if(index == 2){
-					clearInterval(iVideoTicker);
+				if($(videoLive).closest('.screen-stop-swipe').length){
 					$('.stop').show();
-					$('.stop .static').hide();
-					if(!isWorkshopMode) $('.stop .static').show().css({opacity:0}).delay(4000).animate({opacity:1},1000);
-
-				} else if(index == 3){
-
-					$('video').hide().eq(4).show()[0].play();
-					
-					
-				} else if(index == 4){
-					$('video').hide().eq(5).show()[0].play();
-				} else if(index == 5){
-					$('video').hide().eq(6).show()[0].play();
+					setTimeout(function(){
+						var o = $('.screen-container').offset();
+						$('.qr-prompt').css({display:'inline-block',opacity:0,left:200}).animate({opacity:1,left:0},1000);
+						$('.screen-container').css({left:200}).animate({top:0,left:0},1000);
+					},1500);
 				}
+				else{
+					nextScreen(this);
+				} 
 			}
 
 			$('.stop button').click(function(){
@@ -781,15 +767,13 @@
 					});
 
 
-					console.log($('.sticker').length,$('.gone').length);
 					if($('.sticker').length == $('.gone').length){
 						clearInterval(iTickStick);
-						$('.remember').show();
-						$('iframe')[0].contentWindow.postMessage('hello', '*');
+						nextScreen(this);
+						
 					}
 
 				},20);
-				//$('.remember').show();
 			});
 
 			var isMouseDown = false;
@@ -836,22 +820,6 @@
 						}
 					})
 
-					/*if( $('.sticker:not(.dead)').length == 0 ){
-						$('.swipe-prompt').hide();
-						
-						
-						$('.remember').show();
-
-						$('iframe')[0].contentWindow.postMessage('hello', '*');
-
-
-
-						/*if(isWorkshopMode){
-							$('.workshop-handoff').show();
-							$('.workshop-handoff button').hide();
-						} */
-					//}
-
 					wasx = x;
 					wasy = y;
 
@@ -860,84 +828,56 @@
 			});
 
 			window.doFinishActivity = function(){
-				doPostReflection();
+				//doPostReflection();
+				nextScreen($('iframe')[0]);
 			}
 
-			function doPostReflection(){
-				$('.remember').hide();
-
-				if(isWorkshopMode){
-					/*$('video').eq(3)[0].volume = 0;
-
-					$('.workshop-handoff').show().css({opacity:0}).animate({opacity:1},3000,function(){
-						$('video').eq(3)[0].pause();
-					});*/
-					$('video').hide();
-					$('.workshop-handoff').show();
-					$('.workshop-handoff button').show().css({opacity:0}).delay(5000).animate({opacity:1},1000);
-				} else {
-					$('video').hide().eq(3).show()[0].play();
-				}
-			}
-
-
-
-			$('.nav button').click(function(){
-				var index = $('.nav button').index(this);
-
-				$('video').each(function(){
-					$(this)[0].pause();
-					$(this)[0].currentTime = 0;
-				})
-
-				$('.play').hide();
-				$('.remember').hide();
-				$('.overlay').empty();
-
-				if(index==0){
-					$('.sticker-party').empty();
-					$('video').hide().eq(0).show()[0].play();
-				} else if(index==1){
-					
-					$('video').hide().eq(2).show()[0].play();
-				} else if(index==2){
-					$('video').hide();
-					$('.remember').show();
-				} else if(index==3){
-					doPostReflection();
-				} else if(index==4){
-					$('video').hide().eq(5).show()[0].play();
-				}
-			})
-
+			
 			$('.click-to-hide').click(function(){
 				$(this).hide();
 			})
 
-			$('.click-to-next-screen').click(function(){
-				var iScreen = $('.screen').index( $(this).closest('.screen') ) + 1;
-				$('.screen').hide().eq(iScreen).show().css({opacity:0}).animate({opacity:1},1000,function(){
-					if(iScreen==1) $('.popup').addClass('reveal');
+			$('.click-to-next-screen').click(nextScreen);
+
+			function nextScreen(scope){
+
+				
+
+				if(scope.target) scope = scope.target;
+
+				var iScreen = $('.screen').index( $(scope).closest('.screen') ) + 1;
+				toScreen(iScreen);
+			}
+
+			function toScreen(iScreen){
+
+				clearInterval(iVideoTicker);
+				if(videoLive) videoLive.pause();
+
+				var $s = $('.screen').hide().eq(iScreen).show().css({opacity:0}).animate({opacity:1},1000,function(){
 					
+					if(isWorkshopMode) h$(this).find('.popup').addClass('reveal');
+
 				});
 
-				if(iScreen==2){
-					$('.play').hide();
-					
-					if(isWorkshopMode){
-						$('video').hide().eq(2).show()[0].currentTime = $('video').hide().eq(2).show()[0].duration-10;
-						$('video').hide().eq(2).show()[0].play();
-					} else {
-						$('video').eq(0)[0].play();
-					}
+				if($s.hasClass('screen-video')){
+					videoLive = $s.find('video')[0];
+					videoLive.play();
+				}
+
+				if($s.hasClass('screen-stickers')){
+					iVideoTicker = setInterval(tickSticker,100);
+				}
+
+				if($s.hasClass('screen-stop-swipe')){
+					iVideoTicker = setInterval(tickReflection,100);
+				}
+
+				if($s.hasClass('screen-strategy')){
+					$('iframe')[0].contentWindow.postMessage('hello', '*');
 				}
 				
-			})
-
-			$('.carry-on').click(function(){
-				$('.workshop-handoff').hide();
-				$('video').hide().eq(6).show()[0].play();
-			})
+			}
 		})
 	</script>
 </head>
@@ -954,37 +894,37 @@
 			</div>
 			<div class="static click-to-hide popup" style='background-image:url(./popup-notification.jpg);background-size:80%;'></div>
 		</div>
-		<div class='screen screen-level'>
+		<div class="screen">
+			<h1>Intro scene</h1>
+			<button class="click-to-next-screen">Continue ></button>
+		</div>
+		<div class="screen">
+			<h1>Will you bounce back?</h1>
+			<button class="click-to-next-screen">Continue ></button>
+		</div>
+		<div class='screen screen-video screen-stickers'>
 			<video controls width="100%" height="100%;">
 				<source src="./video/scene-1.mp4" type="">
 			</video>
-			<video preload style='display:none' controls width="100%" height="100%;">
+			<div class='overlay'></div>
+			<div class='sticker-party'></div>
+			<div class='timer'>
+				<div class='timer-ticker'></div>
+			</div>
+		</div>
+		<div class='screen screen-video'>
+			<video preload controls width="100%" height="100%;">
 				<source src="./video/pickup-1.mp4" type="">
 			</video>
-			<video preload style='display:none' controls width="100%" height="100%;">
+		</div>
+		<div class='screen screen-video screen-stop-swipe'>
+			<video preload controls width="100%" height="100%;">
 				<source src="./video/reflection-1.mp4" type="">
 			</video>
-			<video preload style='display:none' controls width="100%" height="100%;">
-				<source src="./video/scene-2.mp4" type="">
-			</video>
-			<video preload style='display:none' controls width="100%" height="100%;">
-				<source src="./video/pickup-2.mp4" type="">
-			</video>
-			<video preload style='display:none' controls width="100%" height="100%;">
-				<source src="./video/reflection-2.mp4" type="">
-			</video>
-			<video preload style='display:none' width="100%" height="100%;">
-				<source src="./video/transition.mp4" type="">
-			</video>
-			
-			<div class='overlay'>
-
-				
+			<div class='overlay'></div>
+			<div class='swipe-prompt'>
+				<div class="finger"></div>
 			</div>
-			
-			<div class='sticker-party'></div>
-
-			<div class='timer'><div class='timer-ticker'></div></div>
 			<div class='stop'>
 				<div class='stop-banner'>
 					<h1>STOP</h1>
@@ -992,53 +932,74 @@
 				</div>
 				<br>
 				<button class='next'>THERE'S A BETTER WAY ></button>
-				<div class="static click-to-hide" style='background:rgba(255,255,255,0.9)'>
-					<br><br><br>
-
-					<h1 style='font-size:100px;font-family:"HeaderFont";color:#1C44CE;'>JUMP IN</h1>
-					<img src='./qr-code.png'>
-				</div>
+				
 			</div>
-			<div class='swipe-prompt'>
-				<div class="finger"></div>
-			</div>
-
-			<div class='remember'>
-
-				<!--<h1>CONTROL THE CONTROLLABLES</h1>
-				<p>It’s easy to get lost in the things you can’t control. But this can only lead to frustration. By concentrating on the things we can control, we are more likely to have a positive impact on our experience.</p>
-				<button>OK, THANKS ></button>-->
-				<iframe style='position: absolute;top:0px;left:0px;border:none;background:none;' src="./swipe-your-thoughts.html" width="400px" height="700px"></iframe>
-			</div>
-			<button class='play'>▶</button>
-			<!--div class="workshop-intro click-to-hide">
-				<br><br>
-				<img width=100 src='./cloud-icon-white.png'>
-				<br>
-				<h1>CHOOSE YOUR THOUGHTS</h1>
-				<button class='carry-on'>LET'S GO ></button>
-			</div-->
-			<div class="workshop-handoff click-to-hide">
-				<br><br>
-				<h1>PHONES DOWN</h1><br>
-					<img width=150 src='./phone-down.png'>
-					<br><br>
-					<h1>AWAIT INSTRUCTIONS</h1>
-				<button class='carry-on'>carry on</button>
-			</div>
-			<!--div class="workshop-timer click-to-hide">
-				<h1>CHOOSE YOUR THOUGHTS</h1>
-				<div class="stopwatch">
-					<div class="stopwatch-hand"></div>
-				</div>
-				<button class='carry-on'>carry on</button>
-			</div-->
 		</div>
-		
+
+		<div class='screen' style="background-image: url(./josh-face.png);background-size: 100%;">
+			<div class="instruct">
+				<h1>POSITIVE THOUGHTS</h1>
+				<img src="./choose-positive.svg" width="120" style='width:120;display:block;margin:auto;'><br>
+					<b>Positive thoughts</b> are optimistic and motivational.
+					<li>It will be fine.</li>
+					<li>No problemo.</li>
+					<li>You've got this.</li>
+					<li>You can do it.</li>
+					<br>
+				<button class="next click-to-next-screen">GOT IT ></button>
+			</div>
+
+		</div>
+		<div class='screen' style="background-image: url(./josh-face.png);background-size: 100%;">
+			<div class="instruct">
+			<h1>INSTRUCTIVE THOUGHTS</h1>
+				<img src="./choose-instructional.svg" width="120" style='width:120;display:block;margin:auto;'><br>
+					<p><b>Instructive thoughts</b> are actionable.</p>
+					<li>I just need to keep training.</li>
+					<li>I need to work harder.</li>
+					<li>I just need to try again.</li>
+					<p><b>Instructive thoughts</b> focus on what you should do, not what you shouldn't do.</p>
+					<p style="text-align: center;"><i>"I should work on my catching."</i><br>
+					instead of<br><i>"Stop dropping the ball."</i></p>
+				<button class="next click-to-next-screen">GOT IT ></button>
+			</div>
+		</div>
+		<div class="screen screen-strategy" style="background-image: url(./josh-face.png);background-size: 100%;">
+			<iframe style='position: absolute;top:0px;left:0px;border:none;background:rgba(255,255,255,0.8);' src="./swipe-your-thoughts.html" width="400px" height="700px"></iframe>
+		</div>
+		<div class="screen screen-video">
+			<video preload controls width="100%" height="100%;">
+				<source src="./video/scene-2.mp4" type="">
+			</video>
+		</div>
+		<div class="screen screen-video">
+			<video preload controls width="100%" height="100%;">
+				<source src="./video/pickup-2.mp4" type="">
+			</video>
+		</div>
+		<div class="screen screen-video">
+			<video preload controls width="100%" height="100%;">
+				<source src="./video/reflection-2.mp4" type="">
+			</video>
+		</div>
+		<div class="screen screen-video">
+			<video preload width="100%" height="100%;">
+				<source src="./video/transition.mp4" type="">
+			</video>
+		</div>
+	</div>
+	<div class="qr-prompt click-to-hide" style='background:rgba(255,255,255,0.9)'>
+		<h2>Jump on the WIFI</h2>
+		<img src='./qr-code.png'>
+		<p>TeamLadsWIFI | PrettyFlyForAWifi</p>
+		<h2>Download the app</h2>
+		<img src='./qr-code.png'>
+		<p>aotg.app.com</p>
+		<div style="width:50px;height:50px;text-align:center;font-size:40px;position: absolute;top:0px;right:0px;">×</div>
 	</div>
 	<br><br>
 	<div class="nav">
-		<button>OPENING</button><button>REFLECTION & STOP</button><button>STRATEGY</button><button>CLOSING</button><button>REFLECTION</button>
+		
 	</div>
 
 </body>
