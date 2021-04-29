@@ -27,6 +27,43 @@
 			left: 0px;
 		}
 
+		.remember{
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			width: 100%;
+			height: 100%;
+			background: rgba(255,255,255,0.8);
+			overflow-y: auto;
+			text-align: left;
+			color: black;
+		}
+
+		.remember-header{
+			background: #1C44CE;
+			padding: 10px 0px 0px;
+			position: relative;
+			text-align: center;
+		}
+
+		.remember-content{
+			padding: 0px 10%;
+		}
+
+		.remember-header h1{
+			font-size: 45px;
+			color: white;
+			font-family: "HeaderFont";
+			text-transform: uppercase;
+		}
+
+		.remember-header h2{
+			color: white;
+			font-family: "HeaderFont";
+			font-size:30px;
+
+		}
+
 		@font-face {
 			font-family: "HeaderFont";
 			src: url("./font-teko/Teko-Regular.ttf");
@@ -136,7 +173,7 @@
 			bottom: 100px;
 		}
 
-		.overlay{
+		.overlay,.reflection-overlay{
 			position: absolute;
 			top:0px;
 			left: 0px;
@@ -144,6 +181,7 @@
 			height: 100%;
 			padding-top: 100px;
 			box-sizing: border-box;
+			pointer-events: none;
 		}
 
 		.overlay:after,.overlay:before{
@@ -214,7 +252,7 @@
 			background: transparent;
 		}
 
-		.stop, .remember{
+		.stop{
 			display: none;
 			position: absolute;
 			top:0px;
@@ -228,17 +266,7 @@
 		}
 
 
-		.remember{
-			background: rgba(255,255,255,0.8);
-		}
-
-		.remember p{
-			background: white;
-			color: black;
-			text-align: center;
-			padding: 40px;
-		}
-
+		
 		.next, .next-screen, .carry-on{
 			display: block;
 			width: 80%;
@@ -396,21 +424,58 @@
 			}
 		}
 
+
+		.nav{
+			background: #1C44CE;
+			box-shadow: inset 0px 25px 0px rgba(255,0,0,0.3);
+			display: inline-block;
+			position: relative;
+		}	
+
+		.nav:before{
+			content:'faciltator';
+			color: white;
+			padding: 0px 10px;
+		}
+
+		.nav:after{
+			content:'student';
+			color: white;
+			position: absolute;
+			left: 0px;
+			bottom: 0px;
+			padding: 0px 10px;
+		}
+
 		.nav button{
 			display: inline-block;
 			
-			height: 30px;
+			height: 48px;
 			width: 30px;
-			margin-right: 1px;
+			margin: 1px;
 			font-family: "BodyFont";
 			border: none;
 			position: relative;
-			background: white;
+			background: rgba(255,255,255,0.5);
 
 			
 			cursor: pointer;
 			outline: none;
+			vertical-align: top;
 
+		}
+
+		.nav button.is-for-facilitator{
+			height: 22px;
+		}
+
+		.nav button.is-for-student{
+			height: 22px;
+			vertical-align: bottom;
+		}
+
+		.nav button.active{
+			background: yellow;
 		}
 
 
@@ -567,6 +632,7 @@
 			padding: 30px;
 			box-sizing: border-box;
 			color: black;
+			overflow-y: auto;
 		}
 
 		.instruct h1{
@@ -585,13 +651,7 @@
 	<script type="text/javascript">
 		$(function(){
 
-			var isWorkshopMode = (window.location.href.indexOf('student')>-1);
-
-			if(isWorkshopMode){
-				toScreen(0);
-			} else {
-				toScreen(1);
-			}
+			
 
 			function onNav(){
 				var idx = $('.nav button').index(this);
@@ -599,9 +659,19 @@
 			}
 
 			$('.screen').each(function(i){
-				$('<button>'+(i+1)+'</button>').appendTo('.nav').click(onNav);
+				var $b = $('<button>'+(i+1)+'</button>').appendTo('.nav').click(onNav);
+
+				if($(this).hasClass('is-for-facilitator')) $b.addClass('is-for-facilitator');
+				if($(this).hasClass('is-for-student')) $b.addClass('is-for-student');
 			})
 
+			var isWorkshopMode = (window.location.href.indexOf('student')>-1);
+
+			if(isWorkshopMode){
+				toScreen(0);
+			} else {
+				toScreen(1);
+			}
 			
 
 			var MESS = 15;
@@ -654,6 +724,8 @@
 
 				if(videoLive.currentTime > (videoLive.duration/2 + (videoLive.duration/2/MESS)*iReflection)){
 
+					var $overlay = $('.reflection-overlay');
+
 					while(stickerPack.length < moments.length){
 						var $s =  $('<div class="sticker still text n0">').text(moments[stickerPack.length].options[stickerPack.length]);
 						stickerPack.push($s)
@@ -664,8 +736,8 @@
 
 
 					var iRandom = Math.floor(Math.random()*stickerPack.length);
-					var $s = stickerPack[iRandom].clone().appendTo('.overlay');
-					$s.css({transform:'scale('+(0.5+Math.random()*1)+')'});
+					var $s = stickerPack[iRandom].clone().appendTo($overlay);
+					//$s.css({transform:'scale('+(0.5+Math.random()*1)+')'});
 					$s.css({transform:'scale(1)'});
 					
 
@@ -673,13 +745,15 @@
 					var x = SCATTER.cx + Math.cos(r)*SCATTER.rx*drain;
 					var y = SCATTER.cy + Math.sin(r)*SCATTER.ry*drain;
 
-					x = x-$s.outerWidth()/2;
-					y = y-$s.outerHeight()/2;
+					//x = x-$s.outerWidth()/2;
+					//y = y-$s.outerHeight()/2;
 
-					x = Math.max(0,Math.min(400-$s.outerWidth(),x));
-					y = Math.max(0,Math.min(700-$s.outerHeight(),y));
+					x = Math.max(0,Math.min(400-200,x));
+					y = Math.max(0,Math.min(700-100,y));
 
-					$s.css({position:'absolute',left:x,top:y});
+					console.log($s.outerWidth(),$s.width());
+
+					$s.css({position:'absolute',left:x,top:y,margin:0});
 					
 					
 					iReflection++;
@@ -718,31 +792,35 @@
 			var stickerPack = [];
 
 			function onSticker(e){
-				$('.sticker-party').empty();
-				$(e.target).addClass('still').appendTo('.sticker-party').css({top:'150px',transform:'scale(2) rotate(-5deg)'}).delay(2000).animate({opacity:0});
-				$('.overlay').removeClass('active');
-				$('.timer').removeClass('active');
+
+				var $screen = $(e.target).closest('.screen');
+				var $party = $screen.find('.sticker-party');
+
+				$party.empty();
+				$(e.target).addClass('still').appendTo($party).css({top:'150px',transform:'scale(2) rotate(-5deg)'}).delay(2000).animate({opacity:0});
+				$screen.find('.overlay').removeClass('active');
+				$screen.find('.timer').removeClass('active');
 				iMoment++;
 
 				stickerPack.push( $(e.target).clone() );
 
-				$('video').removeClass('zoom');
 				videoLive.playbackRate = 1;
 			}
-
-
-		
 
 			$('video').on('ended',onVideoEnd);
 
 			function onVideoEnd(){
 				if($(videoLive).closest('.screen-stop-swipe').length){
 					$('.stop').show();
-					setTimeout(function(){
-						var o = $('.screen-container').offset();
-						$('.qr-prompt').css({display:'inline-block',opacity:0,left:200}).animate({opacity:1,left:0},1000);
-						$('.screen-container').css({left:200}).animate({top:0,left:0},1000);
-					},1500);
+
+					if(!isWorkshopMode){
+						setTimeout(function(){
+							var o = $('.screen-container').offset();
+							$('.qr-prompt').css({display:'inline-block',opacity:0,left:200}).animate({opacity:1,left:0},1000);
+							$('.screen-container').css({left:200}).animate({top:0,left:0},1000);
+						},1500);
+					}
+					
 				}
 				else{
 					nextScreen(this);
@@ -769,7 +847,7 @@
 
 					if($('.sticker').length == $('.gone').length){
 						clearInterval(iTickStick);
-						nextScreen(this);
+						nextScreen($('.stop'));
 						
 					}
 
@@ -806,7 +884,6 @@
 					var y = e.pageY - o.top;
 
 					
-					
 					$('.sticker:not(.dead)').each(function(){
 						var p = $(this).position();
 						var dx = p.left + $(this).outerWidth()/2 - x;
@@ -814,8 +891,6 @@
 						//var d = Math.sqrt(dx*dx+dy*dy);
 
 						if(Math.abs(dx)<$(this).outerWidth()/2 && Math.abs(dy)<$(this).outerHeight()/2){
-							
-							
 							$(this).addClass('dead').data({dx:x-wasx,dy:y-wasy});
 						}
 					})
@@ -841,12 +916,14 @@
 
 			function nextScreen(scope){
 
-				
-
 				if(scope.target) scope = scope.target;
 
 				var iScreen = $('.screen').index( $(scope).closest('.screen') ) + 1;
-				toScreen(iScreen);
+
+				while(isWorkshopMode && $('.screen').eq(iScreen).hasClass('is-for-facilitator')) iScreen++;
+				while(!isWorkshopMode && $('.screen').eq(iScreen).hasClass('is-for-student')) iScreen++;
+
+				if( iScreen < $('.screen').length-1 ) toScreen(iScreen);
 			}
 
 			function toScreen(iScreen){
@@ -854,9 +931,11 @@
 				clearInterval(iVideoTicker);
 				if(videoLive) videoLive.pause();
 
+				$('.nav button').removeClass('active').eq(iScreen).addClass('active')
+
 				var $s = $('.screen').hide().eq(iScreen).show().css({opacity:0}).animate({opacity:1},1000,function(){
 					
-					if(isWorkshopMode) h$(this).find('.popup').addClass('reveal');
+					if(isWorkshopMode) $(this).find('.popup').addClass('reveal');
 
 				});
 
@@ -871,6 +950,7 @@
 
 				if($s.hasClass('screen-stop-swipe')){
 					iVideoTicker = setInterval(tickReflection,100);
+					if(isWorkshopMode) videoLive.currentTime = videoLive.duration-10;
 				}
 
 				if($s.hasClass('screen-strategy')){
@@ -883,7 +963,7 @@
 </head>
 <body>
 	<div class="screen-container">
-		<div class="screen screen-signup">
+		<div class="screen is-for-student screen-signup">
 			<div class="static click-to-next-screen" style='background-image:url(./screen-signup.jpg)'></div>
 			<div class="static click-to-hide" style='background-image:url(./screen-team-code.jpg)'></div>
 		</div>
@@ -894,16 +974,16 @@
 			</div>
 			<div class="static click-to-hide popup" style='background-image:url(./popup-notification.jpg);background-size:80%;'></div>
 		</div>
-		<div class="screen">
+		<div class="screen is-for-facilitator">
 			<h1>Intro scene</h1>
 			<button class="click-to-next-screen">Continue ></button>
 		</div>
-		<div class="screen">
+		<div class="screen is-for-facilitator">
 			<h1>Will you bounce back?</h1>
 			<button class="click-to-next-screen">Continue ></button>
 		</div>
-		<div class='screen screen-video screen-stickers'>
-			<video controls width="100%" height="100%;">
+		<div class='screen screen-video screen-stickers is-for-facilitator'>
+			<video preload controls width="100%" height="100%;">
 				<source src="./video/scene-1.mp4" type="">
 			</video>
 			<div class='overlay'></div>
@@ -912,7 +992,7 @@
 				<div class='timer-ticker'></div>
 			</div>
 		</div>
-		<div class='screen screen-video'>
+		<div class='screen screen-video is-for-facilitator'>
 			<video preload controls width="100%" height="100%;">
 				<source src="./video/pickup-1.mp4" type="">
 			</video>
@@ -921,7 +1001,7 @@
 			<video preload controls width="100%" height="100%;">
 				<source src="./video/reflection-1.mp4" type="">
 			</video>
-			<div class='overlay'></div>
+			<div class='reflection-overlay'></div>
 			<div class='swipe-prompt'>
 				<div class="finger"></div>
 			</div>
@@ -936,11 +1016,11 @@
 			</div>
 		</div>
 
-		<div class='screen' style="background-image: url(./josh-face.png);background-size: 100%;">
+		<div class='screen is-for-facilitator' style="background-image: url(./josh-face.png);background-size: 100%;">
 			<div class="instruct">
 				<h1>POSITIVE THOUGHTS</h1>
-				<img src="./choose-positive.svg" width="120" style='width:120;display:block;margin:auto;'><br>
-					<b>Positive thoughts</b> are optimistic and motivational.
+				<img src="./choose-positive.svg" width="120" style='width:120;display:block;margin:auto;'>
+					<p><b>Positive thoughts</b> are optimistic and motivational.</p>
 					<li>It will be fine.</li>
 					<li>No problemo.</li>
 					<li>You've got this.</li>
@@ -950,10 +1030,10 @@
 			</div>
 
 		</div>
-		<div class='screen' style="background-image: url(./josh-face.png);background-size: 100%;">
+		<div class='screen is-for-facilitator' style="background-image: url(./josh-face.png);background-size: 100%;">
 			<div class="instruct">
 			<h1>INSTRUCTIVE THOUGHTS</h1>
-				<img src="./choose-instructional.svg" width="120" style='width:120;display:block;margin:auto;'><br>
+				<img src="./choose-instructional.svg" width="120" style='width:120;display:block;margin:auto;'>
 					<p><b>Instructive thoughts</b> are actionable.</p>
 					<li>I just need to keep training.</li>
 					<li>I need to work harder.</li>
@@ -964,26 +1044,58 @@
 				<button class="next click-to-next-screen">GOT IT ></button>
 			</div>
 		</div>
-		<div class="screen screen-strategy" style="background-image: url(./josh-face.png);background-size: 100%;">
+		<div class='screen is-for-facilitator' style="background-image: url(./josh-face.png);background-size: 100%;">
+			<div class="instruct">
+				<h1>3, 2, 1, GO!</h1>
+			</div>
+		</div>
+		<div class="screen screen-strategy is-for-student" style="background-image: url(./josh-face.png);background-size: 100%;">
 			<iframe style='position: absolute;top:0px;left:0px;border:none;background:rgba(255,255,255,0.8);' src="./swipe-your-thoughts.html" width="400px" height="700px"></iframe>
 		</div>
-		<div class="screen screen-video">
+		<div class='screen is-for-facilitator' style="background-image: url(./josh-face.png);background-size: 100%;">
+			<div class="remember">
+			<div class='remember-header'>
+				<h2>REMEMBER</h2>
+				<img width=100 src='./cloud-icon-white.png'>
+				<h1>Choose your Thoughts</h1>
+			</div>
+			<div class="remember-content">
+
+				<img src="./choose-positive.svg" width="120" style='width:120;display:block;margin:auto;'>
+						<p>Choose <b>Positive thoughts</b> that are optimistic and motivational.</p>
+						<li>It will be fine.</li>
+						<li>No problemo.</li>
+						<li>You've got this.</li>
+						<li>You can do it.</li>
+						<br>
+					<img src="./choose-instructional.svg" width="120" style='width:120;display:block;margin:auto;'>
+						<p>Choose <b>instructive thoughts</b> that are actionable and focus on what you should do.</p>
+						<li>I need to keep training.</li>
+						<li>I need to work harder.</li>
+						<li>I should work on my catching.</li>
+						<br>
+					
+				</div>
+				<button class="next click-to-next-screen">GOT IT ></button>
+			</div>
+		</div>
+		<div class="screen screen-video is-for-facilitator">
 			<video preload controls width="100%" height="100%;">
 				<source src="./video/scene-2.mp4" type="">
 			</video>
 		</div>
-		<div class="screen screen-video">
+		<div class="screen screen-video is-for-facilitator">
 			<video preload controls width="100%" height="100%;">
 				<source src="./video/pickup-2.mp4" type="">
 			</video>
 		</div>
-		<div class="screen screen-video">
+		<div class="screen screen-video is-for-facilitator">
 			<video preload controls width="100%" height="100%;">
 				<source src="./video/reflection-2.mp4" type="">
 			</video>
 		</div>
 		<div class="screen screen-video">
-			<video preload width="100%" height="100%;">
+			<video preload controls width="100%" height="100%;">
 				<source src="./video/transition.mp4" type="">
 			</video>
 		</div>
