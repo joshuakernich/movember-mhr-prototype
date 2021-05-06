@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<style type="text/css">
+		@font-face {
+			font-family: "HeaderFont";
+			src: url("./font-teko/Teko-Regular.ttf");
+		}
+
+		@font-face {
+			font-family: "BodyFont";
+			src: url("./Overpass-Light.ttf");
+		}
+
+		@font-face {
+		  font-family: BodyFont;
+		  src: url("./Overpass-Bold.ttf");
+		  font-weight: bold;
+		}	
+
+		body{
+			background: #333;
+			font-family: "BodyFont";
+			text-align: center;
+			margin: 0px;
+			padding: 0px;
+		}
+
+		.screen, .screen-container{
+			width: 400px;
+			height: 700px;
+			margin: auto;
+			background: white;
+			text-align: center;
+			
+			position: relative;
+			display: inline-block;
+			vertical-align: top;
+			
+			color: white;
+			background: black;
+			overflow: hidden;
+			vertical-align: middle;
+			box-sizing: border-box;
+			margin: 10px;
+		}
+
+		.facilitator-screen{
+
+		}
+
+
+		h2{
+			font-weight: normal;
+			text-align: center;
+		}
+
+		.screen{
+			
+			background: #eee;
+			text-align: left;
+			padding: 10px 30px;
+			color: black;
+			overflow-y: auto;
+		}
+
+		li{
+			padding-left: 40px;
+			list-style-type: none;
+			position: relative;
+			min-height: 30px;
+			margin-bottom: 10px;
+		}
+
+		li:before{
+			content: "";
+			display: inline-block;
+			width: 25px;
+			height: 25px;
+			border-radius: 5px;
+			border: 1px solid blue;
+
+			position: absolute;
+			left: 0px;
+			top: 0px;
+		}
+
+		h1{
+			font-family: "HeaderFont";
+			font-size: 2.5rem;
+			text-align: center;
+			padding: 30px 0px;
+			font-weight: normal;
+			border-top: 1px solid black;
+			border-bottom: 1px solid black;
+		}
+
+		ul{
+			margin: 0px;
+			padding: 0px;
+		}
+
+		button{
+			width: 100%;
+			padding: 5px 0px;
+			background: blue;
+			font-family: "HeaderFont";
+			color: white;
+			font-size: 2.5rem;
+			border: none;
+		}
+
+		.finale li{
+
+			padding-left: 0px;
+			min-height: 0px;
+			margin-bottom: 5px;
+		}
+
+		.finale li:before{
+			content: "•";
+			border: none;
+			
+			position: relative;
+		}
+
+
+
+		.icon{
+			width: 40px;
+			height: 40px;
+			background-size: 60%;
+			background-repeat: no-repeat;
+			background-position: center;
+			position: relative;
+			
+			fill:blue;
+			display: inline-block;
+			vertical-align: middle;
+			margin-right: 10px;
+			background-color: blue;
+			border-radius: 10px;
+		}
+
+		.finale h2{
+
+			text-align: left;
+			color: blue;
+		}
+
+	</style>
+</head>
+<body>
+		<div class="screen finale">
+			<h1>YOUR CHALLENGE</h1>
+			<h2><div class='icon' style='background-image:url("./icon/Choose your thoughts.svg")'></div>Choose your thoughts</h2>
+			<ul>
+				<li>When I make mistakes during a game</li>
+				<li>After losing a match</li>
+				<li>When I'm struggling at school</li>
+			</ul>
+			<h2><div class='icon' style='background-image:url("./icon/Solve problems.svg")'></div>Solve problems</h2>
+			<ul>
+				<li>When I injure myself</li>
+				<li>In juggling school and sport</li>
+			</ul>
+			<h2><div class='icon' style='background-image:url("./icon/Play to your strengths.svg")'></div>Play to my strengths</h2>
+			<ul>
+				<li>In training</li>
+				<li>In leading the team</li>
+			</ul>
+			<h2><div class='icon' style='background-image:url("./icon/Control the Controllables.svg")'></div>Control the controllables</h2>
+			<ul>
+				<li>When I think the umpire is making bad calls</li>
+				<li>When I am failing at school</li>
+			</ul>
+			<h2><div class='icon' style='background-image:url("./icon/Control the Controllables.svg")'></div>Keep your cool</h2>
+			<ul>
+				<li>In high pressure during the game</li>
+				<li>When I get injured</li>
+			</ul>
+			<br><br>
+			<button>CHALLENGE ACCEPTED</button>
+			
+		</div>
+		<div class="screen">
+			<h1>CHALLENGE YOURSELF</h1>
+			<h2>When can YOU<br><b>choose your thoughts</b>?</h2>
+			<ul>
+				<li>When I make mistakes during a game</li>
+				<li>After losing a match</li>
+				<li>When I tie my laces</li>
+				<li>When I'm struggling at school</li>
+				<li>When I'm embarrassed</li>
+				<li>Add your own</li>
+			</ul>
+			<br><br>
+			<button>CHALLENGE ACCEPTED</button>
+			
+		</div>
+		<div class="screen">
+			<h1>CHALLENGE YOURSELF</h1>
+			<h2>When can YOU<br><b>solve problems</b>?</h2>
+			<ul>
+				<li>When I make mistakes during a game</li>
+				<li>After losing a match</li>
+				<li>When I tie my laces</li>
+				<li>When I'm struggling at school</li>
+				<li>When I'm embarrassed</li>
+				<li>Add your own</li>
+			</ul>
+			<br><br>
+			<button>CHALLENGE ACCEPTED</button>
+			
+		</div>
+		<div class="screen">
+			<h1>CHALLENGE YOURSELF</h1>
+			<h2>When can YOU<br><b>play to your strengths</b>?</h2>
+			<ul>
+				<li>When I make mistakes during a game</li>
+				<li>After losing a match</li>
+				<li>When I tie my laces</li>
+				<li>When I'm struggling at school</li>
+				<li>When I'm embarrassed</li>
+				<li>Add your own</li>
+			</ul>
+			<br><br>
+			<button>CHALLENGE ACCEPTED</button>
+			
+		</div>
+		<div class="screen">
+			<h1>CHALLENGE YOURSELF</h1>
+			<h2>When can YOU<br><b>control the controllables</b>?</h2>
+			<ul>
+				<li>When I make mistakes during a game</li>
+				<li>After losing a match</li>
+				<li>When I tie my laces</li>
+				<li>When I'm struggling at school</li>
+				<li>When I'm embarrassed</li>
+				<li>Add your own</li>
+			</ul>
+			<br><br>
+			<button>CHALLENGE ACCEPTED</button>
+			
+		</div>
+		<div class="screen">
+			<h1>CHALLENGE YOURSELF</h1>
+			<h2>When can YOU<br><b>keep your cool</b>?</h2>
+			<ul>
+				<li>When I make mistakes during a game</li>
+				<li>After losing a match</li>
+				<li>When I tie my laces</li>
+				<li>When I'm struggling at school</li>
+				<li>When I'm embarrassed</li>
+				<li>Add your own</li>
+			</ul>
+			<br><br>
+			<button>CHALLENGE ACCEPTED</button>
+			
+		</div>
+		
+	
+</body>
+</html>
