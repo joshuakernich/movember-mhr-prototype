@@ -768,8 +768,10 @@
 			background-size: cover;
 		}
 
-		.screen-timer{
-			font-family: monospace !important;
+		.screen-timer span{
+			width: 20px;
+			display: inline-block;
+			text-align: center;
 		}
 
 		.screen-trailer h1{
@@ -1169,7 +1171,6 @@
 				if($s.find('.screen-timer').length){
 					timerDuration = $s.find('.screen-timer').data('time') * 1000;
 					timerStart = new Date().getTime();
-
 					iTimerTick = setInterval(onTimerTick,60);
 				}
 
@@ -1199,7 +1200,10 @@
 				if(seconds<10) seconds = '0'+seconds;
 				if(jiffy<10) jiffy = '0'+jiffy;
 
-				$sCurrent.find('.screen-timer').text(seconds+':'+jiffy);
+				var str = seconds+':'+jiffy;
+				str = '<span>' + str.split('').join('</span><span>') + '</span>';
+
+				$sCurrent.find('.screen-timer').html(str);
 			}
 		})
 	</script>
