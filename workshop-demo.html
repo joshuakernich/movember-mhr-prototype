@@ -68,6 +68,14 @@
 
 		}
 
+		.screen-trailer h1{
+			font-size: 2.5rem;
+			color: white;
+			font-family: "HeaderFont";
+			text-transform: uppercase;
+			font-weight: normal;
+		}
+
 		@font-face {
 			font-family: "HeaderFont";
 			src: url("./font-teko/Teko-Regular.ttf");
@@ -642,7 +650,7 @@
 			left: 0px;
 			width: 100%;
 			height: 100%;
-			background: rgba(255,255,255,0.8);
+			
 			text-align: left;
 			padding: 30px;
 			box-sizing: border-box;
@@ -660,28 +668,69 @@
 			text-align: center;
 		}
 
+		.faux-phone{
+			width: 120px;
+			height: 200px;
+			display: block;
+			margin: auto;
+			border: 5px solid white;
+			position: relative;
+			border-radius: 20px;
+			overflow: hidden;
+			background: #555;
+		}
+
+		.faux-phone:before{
+			content: "";
+			width: 50%;
+			position: absolute;
+			top: 0px;
+			left: 25%;
+			height: 5%;
+			background: white;
+			display: block;
+			border-radius: 0px 0px 10px 10px;
+		}
+
+		.faux-phone:after{
+			content: "";
+			width: 60%;
+			height: 100%;
+			position: absolute;
+			top: 0px;
+			left: 30%;
+			background: white;
+			display: block;
+			opacity: 0.4;
+			transform: skewX(20deg);
+			background: linear-gradient( to top, white, transparent);
+		}
+
 		.card-deck-instruct{
 			position: absolute;
-			top: 250px;
-			left: 100px;
-			width: 200px;
-			height: 300px;
+			top: 30px;
+			left: 10px;
+			right: 10px;
+			bottom: 30px;
 		}
 
 		.card{
 			width: 100%;
 			height: 100%;
-			background: white;
-			box-shadow: 0px 1px 5px black;
+			
+			background: #777;
+			border: 1px solid rgba(255,255,255,0.3);
 			position: absolute;
 			top: 0px;
 			left: 0px;
 			border-radius: 20px;
 
 			
-			background-size: 50%;
+			background-size: 80%;
 			background-position: center;
 			background-repeat: no-repeat;
+
+
 		}
 
 		.card-happy{
@@ -690,6 +739,49 @@
 
 		.card-sad{
 			background-image: url('./choose-negative.svg');
+		}
+
+		.black-screen{
+			background: url(./blurry-black-bg.jpeg);
+			background-size: cover;
+		}
+
+		.white-screen{
+			background: url(./blurry-white-bg.jpeg);
+			background-size: cover;
+		}
+
+		.screen-timer{
+			font-family: monospace !important;
+		}
+
+		.screen-trailer h1{
+			opacity: 0;
+			animation: throb;
+			animation-duration: 14s;
+			animation-iteration-count: infinite;
+		}
+
+		.screen-trailer h1:nth-of-type(2){
+			animation-delay: 7s;
+		}
+
+		@keyframes throb{
+			60%{
+				opacity: 0;
+			}
+
+			70%{
+				opacity: 1;
+			}
+
+			90%{
+				opacity: 1;
+			}
+
+			100%{
+				opacity: 0;
+			}
 		}
 
 
@@ -714,7 +806,7 @@
 			var isWorkshopMode = (window.location.href.indexOf('student')>-1);
 
 			if(isWorkshopMode){
-				toScreen(1);
+				toScreen(2);
 			} else {
 				toScreen(0);
 			}
@@ -748,6 +840,10 @@
 			
 			var videoLive;
 			var iVideoTicker;
+			var iTimerTick;
+			var timerStart;
+			var timerDuration;
+			var $sCurrent;
 
 			function tickSticker(){
 				if(moments[iMoment] && !moments[iMoment].isShown && videoLive.currentTime > moments[iMoment].start){
@@ -1000,6 +1096,8 @@
 			function toScreen(iScreen){
 
 				clearInterval(iVideoTicker);
+				clearInterval(iTimerTick);
+
 				if(videoLive) videoLive.pause();
 
 				$('.nav button').removeClass('active').eq(iScreen).addClass('active')
@@ -1009,6 +1107,8 @@
 					if(isWorkshopMode) $(this).find('.popup').addClass('reveal');
 
 				});
+
+				$sCurrent = $s;
 
 				if($s.hasClass('screen-video')){
 					videoLive = $s.find('video')[0];
@@ -1028,23 +1128,54 @@
 					$('iframe')[0].contentWindow.postMessage('hello', '*');
 				}
 
-				if($s.hasClass('screen-instruct')){
+				if($s.is('.phone-down')){
+					$s.find('.next').css({opacity:0}).delay(8000).animate({opacity:1});
+				}
+
+				if($s.find('.card-deck-instruct').length){
 					
 
 					function flickLeft(){
-						$s.find('.card-front').removeClass('card-sad').addClass('card-happy').css({left:0}).animate({left:500},500,flickRight);
+						$s.find('.card-front').removeClass('card-sad').addClass('card-happy').css({left:0}).animate({left:'100%'},500,flickRight);
 						$s.find('.card-back').removeClass('card-happy').addClass('card-sad');
 					}
 
 					function flickRight(){
-						$s.find('.card-front').removeClass('card-happy').addClass('card-sad').css({left:0}).animate({left:-500},500,flickLeft);
+						$s.find('.card-front').removeClass('card-happy').addClass('card-sad').css({left:0}).animate({left:'-100%'},500,flickLeft);
 						$s.find('.card-back').removeClass('card-sad').addClass('card-happy');
 					}
 
 
 					flickLeft();
 				}
+
+				if($s.find('.screen-timer').length){
+					timerDuration = $s.find('.screen-timer').data('time') * 1000;
+					timerStart = new Date().getTime();
+
+					iTimerTick = setInterval(onTimerTick,60);
+				}
+
+
 				
+			}
+
+			function onTimerTick(){
+				var timerNow = new Date().getTime();
+				var timerElapsed = timerNow-timerStart;
+				var timerRemaining = timerDuration-timerElapsed;
+
+				if(timerRemaining < 0) timerRemaining = 0;
+
+				var seconds = Math.floor(timerRemaining/1000);
+				var jiffy = Math.floor(timerRemaining/10)%100;
+
+				
+
+				if(seconds<10) seconds = '0'+seconds;
+				if(jiffy<10) jiffy = '0'+jiffy;
+
+				$sCurrent.find('.screen-timer').text(seconds+':'+jiffy);
 			}
 		})
 	</script>
@@ -1053,44 +1184,72 @@
 	<div class="screen-container">
 		<div class="screen screen-trailer is-for-facilitator">
 			<div class="static" style='background-image:url(./trailer.gif)'></div>
-			<div class="static" style='background-size:80%;background-image:url(./the-challenge-black.png)'>
+			<div class="static black-screen" style='opacity: 0.5'></div>
+			<div class="static" style=''>
+				<br><br>
+				<img src="./the-challenge-white.png" width=300>
+				<br><br><br>
+				<h1>WHAT'S BEEN YOUR<br>GREATEST CHALLENGE?</h1>
+				<br>
+				<h1>WILL YOU<br>BOUNCE BACK?</h1>
 				<button class='next-screen click-to-next-screen'>GET STARTED ></button>
 			</div>
 			<div class="static click-to-hide popup" style='background-image:url(./popup-notification.jpg);background-size:80%;'></div>
 		</div>
-		<div class="screen is-for-facilitator">
-			<div class="static" style='background-image:url(./trailer.gif)'></div>
-			<div class="qr-prompt" style='background:rgba(255,255,255,0.9)'>
-			<h2>Jump on the WIFI</h2>
-			<img src='./qr-code.png'>
-			<p>TeamLadsWIFI | PrettyFlyForAWifi</p>
-			<h2>Download the app</h2>
-			<img src='./qr-code.png'>
-			<p>aotg.app.com</p>
+		<div class="screen is-for-facilitator black-screen phone-down">
+			<br><br><img src="./the-challenge-white.png" width=300>
+				<br>
+			<br><br><br>
+			<img width=150 src='./qr-code.png' style="vertical-align: middle;">
+			<div style='width: 200px;display: inline-block;vertical-align: middle;'>
+				<h1 style="font-size: 2rem;">JUMP ON THE WIFI</h1>
+				TeamLadsWIFI<br>
+				PrettyFlyForAWifi
+			</div>
+			<br><br><br>
+			<div style='width: 200px;display: inline-block;vertical-align: middle;'>
+				<h1 style="font-size: 2rem;">DOWNLOAD THE APP</h1>
+				aotg.app.com
+			</div>
+			
+			<img width=150 src='./qr-code.png' style="vertical-align: middle;">
+			
 			<button class='next-screen click-to-next-screen'>READY TO GO ></button>
 		</div>
+		<div class="screen is-for-student screen-signup">
+			<div class="static click-to-next-screen" style='background-image:url(./screen-team-code.jpg)'></div>
 		</div>
 		<div class="screen is-for-student screen-signup">
 			<div class="static click-to-next-screen" style='background-image:url(./screen-signup.jpg)'></div>
 		</div>
-		<div class="screen is-for-student phone-down">
+		<div class="screen is-for-student phone-down black-screen">
 			<br><br>
 				<img width=300 src='the-challenge-white.png'>
-				<br><br><br>
-				<h1>PHONE DOWN</h1><br>
+				<br><br><br><br><br>
+				
+					<h1>PHONE DOWN</h1>
 					<img width=150 src='./phone-down.png'>
-					<br><br>
+					
+					
 					<h1>AWAIT INSTRUCTIONS</h1>
 				<br><br><br><br><br>
-				<button class='next'>OK GO ></button>
+				<button class='next click-to-next-screen'>OK GO ></button>
 		</div>
-		<div class="screen is-for-facilitator">
+
+		<div class="screen is-for-facilitator ">
 			<h1>Intro scene</h1>
-			<button class="click-to-next-screen">Continue ></button>
+			<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+			<button class="next click-to-next-screen">Continue ></button>
 		</div>
-		<div class="screen is-for-facilitator">
-			<h1>Will you bounce back?</h1>
-			<button class="click-to-next-screen">Continue ></button>
+		<div class="screen is-for-facilitator phone-down black-screen">
+			<br><br>
+				<img width=300 src='the-challenge-white.png'>
+				<br><br><br><br>
+			<h1>WHAT'S BEEN<br>ONE OF YOUR MOST<br>CHALLENGING MOMENTS?</h1>
+			<br><br>
+			<h2 style="font-weight: normal;">...ON or OFF the field?</h2>
+			<br><br><br>
+			<button class="next click-to-next-screen">Continue ></button>
 		</div>
 		<div class='screen screen-video screen-stickers is-for-facilitator'>
 			<video preload controls width="100%" height="100%;">
@@ -1107,7 +1266,7 @@
 				<source src="./video/pickup-1.mp4" type="">
 			</video>
 		</div>
-		<div class='screen screen-video screen-stop-swipe'>
+		<div class='screen is-for-facilitator screen-video screen-stop-swipe'>
 			<video preload controls width="100%" height="100%;">
 				<source src="./video/reflection-1.mp4" type="">
 			</video>
@@ -1125,10 +1284,19 @@
 				
 			</div>
 		</div>
-		<div class="screen is-for-student screen-signup">
-			<div class="static click-to-next-screen" style='background-image:url(./screen-team-code.jpg)'></div>
+		<div class='screen is-for-facilitator white-screen'>
+
+			<br><br><br><br>
+			<div class="stop-banner">
+				<img src="./icon/Choose your Thoughts.svg" width="120" style='width:100;display:block;margin:auto;'>
+				<h1 style='font-size: 2.5rem;'>POSITIVE THOUGHTS</h1>
+				
+			</div><br><br><br><br><br><br><br><br><br><br><br><br>
+				<button class="next click-to-next-screen">CARRY ON ></button>
+
+
 		</div>
-		<div class='screen is-for-facilitator' style="background-image: url(./josh-face.png);background-size: 100%;">
+		<div class='screen is-for-facilitator white-screen'>
 			<div class="instruct">
 				<h1>POSITIVE THOUGHTS</h1>
 				<img src="./choose-positive.svg" width="120" style='width:120;display:block;margin:auto;'>
@@ -1137,12 +1305,12 @@
 					<li>No problemo.</li>
 					<li>You've got this.</li>
 					<li>You can do it.</li>
-					<br>
+					<br><br><br><br><br><br><br><br><br>
 				<button class="next click-to-next-screen">GOT IT ></button>
 			</div>
 
 		</div>
-		<div class='screen is-for-facilitator' style="background-image: url(./josh-face.png);background-size: 100%;">
+		<div class='screen is-for-facilitator white-screen'>
 			<div class="instruct">
 			<h1>INSTRUCTIVE THOUGHTS</h1>
 				<img src="./choose-instructional.svg" width="120" style='width:120;display:block;margin:auto;'>
@@ -1152,22 +1320,61 @@
 					<li>I just need to try again.</li>
 					<p><b>Instructive thoughts</b> focus on what you should do, not what you shouldn't do.</p>
 					<p style="text-align: center;"><i>"I should work on my catching."</i><br>
-					instead of<br><i>"Stop dropping the ball."</i></p>
+					instead of<br><i>"Stop dropping the ball."</i></p><br><br><br><br>
 				<button class="next click-to-next-screen">GOT IT ></button>
 			</div>
 		</div>
-		<div class='screen screen-instruct is-for-facilitator' style="background-image: url(./josh-face.png);background-size: 100%;">
-			<div class="instruct">
+		<div class='screen phone-down is-for-facilitator black-screen'>
+			<br><br>
+				<img width=300 src='the-challenge-white.png'>
+				<br><br><br><br>
+				
+					<h1>GET READY...</h1>
+
+					
+				<br><br><br><br><br><br><br><br><br><br><br><br><br>
+				<button class='next click-to-next-screen'>GO ></button>
+		</div>
+		<div class='screen phone-down is-for-facilitator black-screen'>
+			<!--div class="instruct">
 				<h1>OK GO!</h1>
 				<div class="card-deck-instruct">
 					<div class="card card-back"></div>
 					<div class="card card-front"></div>
 				</div>
 				<h1>YOUR TEAM CODE IS "CHAMPS26"</h1>
-			</div>
+			</div-->
+			<br><br>
+				<img width=300 src='the-challenge-white.png'>
+				<br><br><br><br>
+				
+					<h1>PHONE'S UP</h1>
+					<div class="faux-phone">
+						<div class="card-deck-instruct">
+							<div class="card card-back"></div>
+							<div class="card card-front"></div>
+						</div>
+					</div>
+					<br><br>
+					<h1 class="screen-timer" data-time='60'></h1>
+				<br><br>
+				<button class='next click-to-next-screen'>NEXT ></button>
 		</div>
-		<div class="screen screen-strategy is-for-student" style="background-image: url(./josh-face.png);background-size: 100%;">
-			<iframe style='position: absolute;top:0px;left:0px;border:none;background:rgba(255,255,255,0.8);' src="./swipe-your-thoughts.html" width="400px" height="700px"></iframe>
+		<div class="screen screen-strategy is-for-student white-screen">
+			<iframe style='position: absolute;top:0px;left:0px;border:none;' src="./swipe-game.html" width="400px" height="700px"></iframe>
+		</div>
+		<div class="screen is-for-student phone-down black-screen">
+			<br><br>
+				<img width=300 src='the-challenge-white.png'>
+				<br><br><br><br><br>
+				
+					<h1>PHONE DOWN</h1>
+					<img width=150 src='./phone-down.png'>
+					
+					
+					<h1>AWAIT INSTRUCTIONS</h1>
+				<br><br><br><br><br>
+				<button class='next click-to-next-screen'>OK GO ></button>
 		</div>
 		<div class='screen is-for-facilitator' style="background-image: url(./josh-face.png);background-size: 100%;">
 			<div class="remember">

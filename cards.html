@@ -6,105 +6,263 @@
 	<script type="text/javascript">
 		$(function(){
 
-			var iScreen = -1;
-			var iQuestion = -1;
-			nextScreen();
 
-			function nextScreen(){
-				iScreen++;
+			
+
+			$('.activity').each(function(){
+				new Activity(this);
+			})
+
+			function Activity(me){
+
+				var iScreen = -1;
+				var iQuestion = -1;
+				var screenMode = 'last-man-standing';
+				var $s;
+				var lastSelected;
+
+				var $f = $('<div class="feedback">').appendTo($(me)).click(function(){
+						$(this).removeClass('active');
+					})
+
+				//$(me).find('.good').append('This is good');
+				//$(me).find('.bad').append('This is bad');
+
+				$('<button class="yesno no">').appendTo($(me).find('.card')).click(doNo).text('✘');
+				$('<button class="yesno yes">').appendTo($(me).find('.card')).click(doYes).text('✔');
+
+				$('<br>').appendTo($(me).find('.card-q'));
+				$('<button class="q-yesno q-no">').appendTo($(me).find('.card-q')).click(doNoQuestion).text('NAH');
+				$('<button class="q-yesno q-yes">').appendTo($(me).find('.card-q')).click(doYesQuestion).text('YEAH');
 				
-				var $s = $('.screen').hide().eq(iScreen).show();
 
-				console.log($s.find('.deck-of-exploration').length);
 
-				if($s.find('.scatter-deck').length>0){
+				nextScreen();
 
-					$s.find('.card').each(function(n){
-						$(this).css({left:500,top:0}).delay(50+n*50).animate({left:0,top:0});
-					});
-
-				} else if($s.find('.deck-of-exploration').length>0){
+				function nextScreen(){
 
 					
-					iQuestion = -1;
-					$s.find('.card-q').hide();
-					nextQuestion($s);
+					iScreen++;
+					console.log('nextScreen',iScreen);
+					
+					$s = $(me).find('.screen').hide().eq(iScreen).show();
+
+					$s.find('.previous-card').text(lastSelected);
+
+					if($s.find('.scatter-deck').length>0){
+
+						$s.find('.card').each(function(n){
+							$(this).css({left:-500,top:0}).delay(50+n*50).animate({left:0,top:0});
+						});
+
+						
+						if($s.is('.screen-of-selection')) screenMode = 'select-one';
+						if($s.is('.screen-of-death')) screenMode = 'kill-all-bad';
+
+					} else if($s.is('.screen-of-exploration')){
+
+						screenMode = 'exploration';
+						iQuestion = -1;
+						$s.find('.card-q').hide();
+						nextQuestion($s);
+
+						$s.find('.card').each(function(n){
+							$(this).css({left:-500,top:-50}).delay(50+n*50).animate({left:0,top:-n*3});
+						});
 
 
-				} else {
-					$s.find('.card').each(function(n){
-						$(this).css({left:500,top:-50}).delay(50+n*50).animate({left:0,top:-n*3});
-					});
+					} else {
+						screenMode = 'last-man-standing';
+						if($s.is('.screen-of-feature')) screenMode = 'feature-exploration';
+						$s.find('.card').each(function(n){
+							$(this).css({left:-500,top:-50}).delay(50+n*50).animate({left:0,top:-n*3});
+						});
+					}
+
+					if($s.find('.question')) $s.find('.question').css({top:-100}).delay(500+$s.find('.card').length*50).animate({top:0});
 				}
 
-				if($s.find('.question')) $s.find('.question').css({top:-100}).delay(500+$s.find('.card').length*50).animate({top:0});
-			}
-
-			$('<button class="yesno no">').appendTo('.card').click(doNo).text('✘');
-			$('<button class="yesno yes">').appendTo('.card').click(doYes).text('✔');
-
-
-			$('<button class="q-yesno q-yes">').appendTo('.card-q').click(doYesQuestion).text('✔');
-			$('<button class="q-yesno q-no">').appendTo('.card-q').click(doNoQuestion).text('✘');
-
-			function nextQuestion(scope){
 				
-			
-				iQuestion++;
+
+				function nextQuestion(scope){
+					
 				
-				$(scope).closest('.screen').find('.card-q').eq(iQuestion).show();
+					iQuestion++;
+					
+					$(scope).closest('.screen').find('.card-q').eq(iQuestion).show();
 
-				console.log(iQuestion,$(scope).find('.card-q').length);
+					console.log(iQuestion,$(scope).find('.card-q').length);
 
-				if(iQuestion>=$(scope).closest('.card').find('.card-q').length){
-					console.log($(scope).closest('.card'));
-					$(scope).closest('.card').delay(500).animate({left:500},500,onSwipe);
+					if(iQuestion>=$(scope).closest('.card').find('.card-q').length){
+						console.log($(scope).closest('.card'));
+						$(scope).closest('.card').delay(500).animate({left:500},500,onSwipe);
+					}
 				}
+
+
+				function doFeedback(){
+					$f.addClass('active');
+				}
+
+				function doNoQuestion(){
+					$(this).addClass('selected');
+					nextQuestion(this);
+				}
+
+				function doYesQuestion(){
+					$(this).addClass('selected');
+					nextQuestion(this);
+				}
+
+				function doNo(){
+					if($(this).closest('.card').hasClass('good')){
+						$(this).closest('.card').animate({left:-10},50).animate({left:10},100).animate({left:-10},50).animate({left:0},50);
+						doFeedback();
+					}
+					else{
+						$(this).closest('.card').addClass('swiped no').animate({left:-500},500,onSwipe);
+						console.log('doingNo');
+						preswipe($(this).closest('.card'));
+					}
+				}
+
+				function doYes(){
+					if($(this).closest('.card').hasClass('bad')){
+						$(this).closest('.card').animate({left:10},50).animate({left:-10},100).animate({left:10},50).animate({left:0},50);
+						doFeedback();
+					}
+					else{
+
+						$(this).closest('.card').addClass('swiped yes').animate({left:500},500,onSwipe);
+						console.log('doingYes');
+						preswipe($(this).closest('.card'));
+					}
+				}
+
+				function preswipe(scope){
+					console.log('preswipe');
+					var i = $(scope).closest('.screen').find('.card').index(scope);
+					var $s = $(scope).closest('.screen');
+
+					if(screenMode == 'feature-exploration' && i == 1){
+						$s.find('.feature-card').animate({left:500},500,nextScreen);
+					} else if(screenMode == 'last-man-standing' && i == 0){
+						if($s.find('.question').length) $s.find('.question').animate({top:-100},500,nextScreen);
+						else setTimeout( nextScreen, 500);
+					} else if(screenMode == 'select-one'){
+
+						if($s.find('.question').length) $s.find('.question').animate({top:-100},500,nextScreen);
+						else setTimeout( nextScreen, 500);
+
+						$s.find('.card:not(.swiped)').animate({left:-500,top:50},500);
+
+
+						var $clone = $(scope).closest('.card').clone();
+						$clone.find('button').remove();
+
+						lastSelected = $clone.text();
+						console.log('lastSelected',lastSelected);
+
+					} else if(screenMode == 'kill-all-bad' && $(this).closest('.screen').find('.bad:not(.swiped)').length==0){
+						
+						if($s.find('.question').length) $s.find('.question').animate({top:-100},500,nextScreen);
+						else setTimeout( nextScreen, 500);
+
+						$s.find('.card:not(.swiped)').animate({left:500,top:50},500);
+					}
+				}
+
+				function onSwipe(){
+
+					/*var i = $(this).closest('.screen').find('.card').index(this);
+
+					if(screenMode == 'exploration' || ((screenMode == 'feature-exploration' || screenMode == 'last-man-standing') && i == 0)){
+						
+						if($s.find('.question').length) $s.find('.question').animate({top:-100},500,nextScreen);
+						else nextScreen();
+					}
+					else if(screenMode == 'select-one'){
+
+						if($s.find('.question').length) $s.find('.question').animate({top:-100},500,nextScreen);
+						else nextScreen();
+
+						$s.find('.card:not(.swiped)').animate({left:-500,top:50},500);
+
+
+						var $clone = $(this).closest('.card').clone();
+						$clone.find('button').remove();
+
+						lastSelected = $clone.text();
+
+						///nextScreen();
+					}
+					else if(screenMode == 'kill-all-bad' && $(this).closest('.screen').find('.bad:not(.swiped)').length==0){
+						
+						if($s.find('.question').length) $s.find('.question').animate({top:-100},500,nextScreen);
+						else nextScreen();
+
+						$s.find('.card:not(.swiped)').animate({left:500,top:50},500);
+					}*/
+				}
+
+				
 			}
-
-
-			function doNoQuestion(){
-				$(this).addClass('selected');
-				nextQuestion(this);
-			}
-
-			function doYesQuestion(){
-				$(this).addClass('selected');
-				nextQuestion(this);
-			}
-
-			function doNo(){
-				if($(this).closest('.card').hasClass('good')) $(this).closest('.card').animate({left:-10},50).animate({left:10},100).animate({left:-10},50).animate({left:0},50);
-				else $(this).closest('.card').addClass('swiped').animate({left:-500},500,onSwipe);
-			}
-
-			function doYes(){
-				if($(this).closest('.card').hasClass('bad')) $(this).closest('.card').animate({left:10},50).animate({left:-10},100).animate({left:10},50).animate({left:0},50);
-				else $(this).closest('.card').addClass('swiped').animate({left:500},500,onSwipe);
-			}
-
-			function onSwipe(){
-
-				var i = $(this).closest('.screen').find('.card').index(this);
-
-				if(i == 0) nextScreen();
-			}
-
-			$('.good').append('good');
-			$('.bad').append('bad');
 		})
 	</script>
 	<style type="text/css">
+		@font-face {
+			font-family: "HeaderFont";
+			src: url("./font-teko/Teko-Regular.ttf");
+		}
+
+		@font-face {
+			font-family: "BodyFont";
+			src: url("./Overpass-Light.ttf");
+		}
+
+		@font-face {
+		  font-family: BodyFont;
+		  src: url("./Overpass-Bold.ttf");
+		  font-weight: bold;
+		}	
+
 		body{
+			font-family: "BodyFont";
 			background: #333;
+			text-align: center;
+			white-space: nowrap;
+
+			--blue: #1c44ce;
+		}
+
+		h1{
+			font-family: "HeaderFont";
+			text-align: center;
+			color: var(--blue);
+
+		}
+
+		h2{
+			font-weight: normal;
+		}
+
+		.activity{
+			background: #eee;
+			width: 400px;
+			height: 700px;
+			position: relative;
+			margin: 5px;
+			text-align: left;
+			display: inline-block;
+			white-space: normal;
+			background: url('./blurry-white-bg.jpeg');
+			background-size: cover;
 		}
 
 		.screen{
-			width: 400px;
-			height: 700px;
-			background: #eee;
+			width: 100%;
+			height: 100%;
 			position: relative;
-			margin: auto;
 			overflow-x: hidden;
 			overflow-y: auto;
 		}
@@ -169,138 +327,400 @@
 
 		.scatter-deck .card{
 			width: 160px;
-			height: 250px;
+			height: 200px;
 			position: relative;
 			display: inline-block;
 			margin: 5px;
 			border-radius: 20px;
+			text-align: center;
+			vertical-align: top;
 		}
 
-		.card-q:before{
-			content: "Answer yes or no?"
+		.card-q{
+			width: 100%;
+
+			position: relative;
 		}
 
 		.q-yesno{
-			padding: 10px;
-			margin: 5px;
+			
+			width: 45%;
 		}
 
 		.q-yesno.selected{
 			background: yellow;
 		}
 
-		.deck-of-exploration .yes, .deck-of-exploration .no{
+		.screen-of-exploration .yes, .screen-of-exploration .no{
 			display: none;
 		}
 
-		.deck-of-death .yes{
+		.screen-of-death .yes{
 			display: none;
 		}
 
-		.deck-of-selection .no{
+		.screen-of-selection .no{
 			display: none;
 		}
+
+		.card.swiped{
+			z-index: 1;
+			transition: transform 0.5s;
+			
+		}
+
+		.screen-of-selection .swiped{
+			background: var(--blue);
+
+			color: white;
+		}
+
+		.card.swiped.yes{
+			transform: rotate(20deg);
+		}
+
+		.card.swiped.no{
+			transform: rotate(-20deg);
+		}
+
+		.card.feature-card{
+			text-align: center;
+			background: var(--blue);
+
+			color: white;
+			font-size: 1.5em;
+			transform: translateY(-50px);
+			font-family: "HeaderFont";
+			text-transform: uppercase;
+		}
+
+		.screen-of-feature .card:not(.feature-card){
+			transform: translateY(20px) scale(0.95);
+		}
+
+		.icon{
+			width: 200px;
+			height: 200px;
+			background-color: var(--blue);
+
+			background-position: center;
+			background-size: 60%;
+			background-repeat: no-repeat;
+			display: inline-block;
+			border-radius: 10px;
+		}
+
+		.feedback{
+			position: absolute;
+			left: 0px;
+			right: 0px;
+			bottom: -500px;
+			padding: 30px;
+			background: #333;
+			color: white;
+			transition: bottom 0.5s;
+		}
+
+		.feedback.active{
+			bottom: 0px;
+		}
+
+		.feedback:before{
+			content: "HEY! This is wrong for a reason!";
+		}
+
+		.feedback:after{
+			content: "Okay, fair enough.";
+			display: block;
+			padding: 10px;
+			border: 1px solid white;
+			margin-top: 20px;
+			text-align: center;
+		}
+
+		.screen-of-sorting .card{
+			font-size: 1.5rem;
+			padding-top: 50px;
+			text-align: center;
+		}
+
+		.card.herald{
+			text-align: center;
+			background: var(--blue);
+
+			color: white;
+		}
+
+		.card.herald h1{
+			color: white;
+		}
+
 
 	</style>
 </head>
 <body>
-	<div class="screen">
-		<h2 class="question">Swipe away anything<br>he CAN'T control.</h2>
-		<div class="deck scatter-deck deck-of-death">
-			<div class="card bad"></div>
-			<div class="card good"></div>
-			<div class="card bad"></div>
-			<div class="card bad"></div>
-			<div class="card good"></div>
-			<div class="card good"></div>
+	<div class="activity">
+		<div class="screen">
+			<div class="deck">
+				<div class="card instructive herald">
+					<h1>CHOOSE YOUR THOUGHTS</h1>
+					<div class="icon" style="background-image:url('./icon/Choose your Thoughts.svg')"></div>
+				</div>
+			</div>
 		</div>
-	</div>
-	<div class="screen">
-		<h2 class="question">Choose One.</h2>
-		<div class="deck scatter-deck deck-of-selection">
-			<div class="card"></div>
-			<div class="card"></div>
-			<div class="card"></div>
-			<div class="card"></div>
-			<div class="card"></div>
-			<div class="card"></div>
+		<div class="screen">
+			<h2 class="question">An introduction to<br><b>positive thoughts</b>.</h2>
+			<div class="deck">
+				
+				<div class="card instructive">
+					<img src="./choose-positive.svg" width="120" style='width:120;display:block;margin:auto;'>
+						<p><b>Positive thoughts</b> are optimistic and motivational.</p>
+						<li>It will be fine.</li>
+						<li>No problemo.</li>
+						<li>You've got this.</li>
+						<li>You can do it.</li>
+				</div>
+			</div>
 		</div>
-	</div>
-	<div class="screen">
-		<h2 class="question">Let's explore this card.</h2>
-		<div class="deck deck-of-exploration">
-			<div class="card">
-				<div class="card-q"></div>
-				<div class="card-q"></div>
-				<div class="card-q"></div>
-				<div class="card-q"></div>
+		
+		<div class="screen screen-of-sorting">
+			<h2 class="question">Is this a <b>positive thought</b>?</h2>
+			<div class="deck">
+				<div class="card bad">You Suck!</div>
+				<div class="card good">You've got this!</div>
+				<div class="card good">It's fine.</div>
+				<div class="card bad">You're amazing!</div>
+				<div class="card good">No problemo.</div>
+				<div class="card bad">You are the worst thing to happen since unsliced bread.</div>
+			</div>
+		</div>
+		<div class="screen">
+			<h2 class="question">An introduction to<br><b>instructive thoughts</b>.</h2>
+			<div class="deck">
+				
+				<div class="card instructive">
+					<img src="./choose-positive.svg" width="120" style='width:120;display:block;margin:auto;'>
+						<p><b>Positive thoughts</b> are optimistic and motivational.</p>
+						<li>It will be fine.</li>
+						<li>No problemo.</li>
+						<li>You've got this.</li>
+						<li>You can do it.</li>
+				</div>
+			</div>
+		</div>
+		<div class="screen screen-of-sorting">
+			<h2 class="question">Is this an <b>instructive thought</b>?</h2>
+			<div class="deck">
+				<div class="card"></div>
+				<div class="card"></div>
+				<div class="card"></div>
+				<div class="card"></div>
+				<div class="card"></div>
+				<div class="card"></div>
+			</div>
+		</div>
+		
+		<div class="screen">
+			<h2 class="question">When can you use<br>INSTRUCTIVE or POSITIVE thoughts?</h2>
+			<div class="deck">
+				<div class="card"></div>
+				<div class="card"></div>
+				<div class="card"></div>
+				<div class="card"></div>
+				<div class="card"></div>
+				<div class="card"></div>
 			</div>
 		</div>
 	</div>
-	<div class="screen">
-		<div class="deck">
-			<div class="card instructive">
-				<h1>POSITIVE THOUGHTS</h1>
-				<img src="./choose-positive.svg" width="120" style='width:120;display:block;margin:auto;'>
-					<p><b>Positive thoughts</b> are optimistic and motivational.</p>
-					<li>It will be fine.</li>
-					<li>No problemo.</li>
-					<li>You've got this.</li>
-					<li>You can do it.</li>
+	<div class="activity">
+		<div class="screen">
+			<div class="deck">
+				<div class="card instructive herald">
+					<h1>SOLVE PROBLEMS</h1>
+					<div class="icon" style="background-image:url('./icon/Solve Problems.svg')"></div>
+				</div>
+			</div>
+		</div>
+		<div class="screen screen-of-selection">
+			<h2 class="question">Choose a Plan</h2>
+			<div class="deck scatter-deck">
+				<div class="card">Take a few weeks off</div>
+				<div class="card">Help with coaching the team</div>
+				<div class="card">Continue with light training</div>
+				<div class="card">Keep playing</div>
+			</div>
+		</div>
+		<div class="screen screen-of-feature">
+			<h2 class="question">Let's explore this plan.</h2>
+			<div class="deck">
+					<div class="card feature-card"><span class="previous-card"></span></div>
+					<div class="card bad">Will this help him stay connected to his team?</div>
+					<div class="card good">Will this help him maintain his fitness?</div>
+					<div class="card good">Will this keep him safe from further injury?</div>
+					<div class="card bad">Could this lead to additional skills?</div>
+					<div class="card good">Will this help him return to competition sooner?</div>
+			</div>
+		</div>
+		<div class="screen screen-of-selection">
+			<h2 class="question">Choose another Plan</h2>
+			<div class="deck scatter-deck">
+				<div class="card">Take a few weeks off</div>
+				<div class="card">Help with coaching the team</div>
+				<div class="card">Continue with light training</div>
+				<div class="card">Keep playing</div>
+			</div>
+		</div>
+		<div class="screen screen-of-feature">
+			<h2 class="question">Let's explore this plan.</h2>
+			<div class="deck">
+				<div class="card feature-card"><span class="previous-card"></span></div>
+				<div class="card">Will this help him stay connected to his team?</div>
+				<div class="card">Will this help him maintain his fitness?</div>
+				<div class="card">Will this keep him safe from further injury?</div>
+				<div class="card">Could this lead to additional skills?</div>
+				<div class="card">Will this help him return to competition sooner?</div>
+			
+			</div>
+		</div>
+		<div class="screen screen-of-selection">
+			<h2 class="question">Which plan should he try?</h2>
+			<div class="deck scatter-deck">
+				<div class="card">Take a few weeks off</div>
+				<div class="card">Help with coaching the team</div>
+			</div>
+		</div>
+	</div>
+	<div class="activity">
+		<div class="screen">
+			<div class="deck">
+				<div class="card instructive herald">
+					<h1>PLAY TO YOUR STRENGTHS</h1>
+					<div class="icon" style="background-image:url('./icon/Play to your Strengths.svg')"></div>
+				</div>
+			</div>
+		</div>
+		<div class="screen screen-of-selection">
+			<h2 class="question">Choose one of your strengths<br>ON the field.</h2>
+			<div class="deck scatter-deck">
+				<div class="card">Passing</div>
+				<div class="card">Running</div>
+				<div class="card">Support play</div>
+				<div class="card">Tackling</div>
+				<div class="card">Decision making</div>
+				<div class="card">Fair play</div>
+				<div class="card">Team player</div>
+				<div class="card">Leadership</div>
+			</div>
+		</div>
+		<div class="screen screen-of-feature">
+			<h2 class="question">Let's explore this strength.</h2>
+			
+			<div class="deck">
+				<div class="card feature-card"><span class="previous-card"></span></div>
+				<div class="card">Can you use this strength more?</div>
+				<div class="card">Can you improve on this strength through training?</div>
+				<div class="card">Can you help others develop this strength?</div>
+			</div>
+		</div>
+		<!--div class="screen screen-of-exploration">
+			<h2 class="question">How can you<br>play to this strength?</h2>
+			<div class="deck">
+				<div class="card">
+					
+					<div class="card-q">Can you use this strength more?</div>
+					<div class="card-q">Can you improve on this strength through training?</div>
+					<div class="card-q">Can you help others develop this strength?</div>
+				</div>
+			</div>
+		</div-->
+		<div class="screen screen-of-selection">
+			<h2 class="question">Choose one of your strengths<br>OFF the field.</h2>
+			<div class="deck scatter-deck">
+				<div class="card">Sense of humour</div>
+				<div class="card">Adaptable</div>
+				<div class="card">Kind</div>
+				<div class="card">Motivated</div>
+				<div class="card">Creative</div>
+				<div class="card">Determined</div>
+				<div class="card">Dedicated</div>
+				<div class="card">Patient</div>
+				<div class="card">Trustworthy</div>
+			</div>
+		</div>
+		<div class="screen screen-of-feature">
+			<h2 class="question">How can you<br>play to this strength?</h2>
+			<div class="deck">
+				<div class="card feature-card"><span class="previous-card"></span></div>
+				<div class="card">Can you usethis strength more?</div>
+				<div class="card">Can you help others with this strength?</div>
+				<div class="card">Can you use this strength in your sport?</div>
+			</div>
+		</div>
+	</div>
+	<div class="activity">
+		<div class="screen">
+			<div class="deck">
+				<div class="card instructive herald">
+					<h1>CONTROL THE CONTROLLABLES</h1>
+					<div class="icon" style="background-image:url('./icon/Control the Controllables.svg')"></div>
+				</div>
+			</div>
+		</div>
+		<div class="screen screen-of-death">
+			<h2 class="question">Swipe away anything<br>he CAN'T control.</h2>
+			<div class="deck scatter-deck">
+				<div class="card bad">The Ref</div>
+				<div class="card good">His attitude</div>
+				<div class="card bad">The Opponents</div>
+				<div class="card bad">The weather</div>
+				<div class="card good">His language</div>
+				<div class="card good">His effort</div>
+			</div>
+		</div>
+		<div class="screen screen-of-selection">
+			<h2 class="question">What's the FIRST thing he can control?</h2>
+			<div class="deck scatter-deck">
+				<div class="card good">His attitude</div>
+				<div class="card good">His language</div>
+				<div class="card good">His effort</div>
+			</div>
+		</div>
+		<div class="screen">
+			<h2 class="question">When can YOU<br><b>Control the Controllables</b>?</h2>
+			<div class="deck">
+				<div class="card">When the ref is making bad calls.</div>
+				<div class="card">When I'm failing at school.</div>
+				<div class="card">When life sucks.</div>
 			</div>
 		</div>
 	</div>
 	
-	<div class="screen">
-		<h2 class="question">Is this positive?</h2>
-		<div class="deck">
-			<div class="card"></div>
-			<div class="card"></div>
-			<div class="card"></div>
-			<div class="card"></div>
-			<div class="card"></div>
-			<div class="card"></div>
-		</div>
-	</div>
-	<div class="screen">
-		<div class="deck">
-			<div class="card instructive">
-				<h1>INSTRUCTIVE THOUGHTS</h1>
-				<img src="./choose-positive.svg" width="120" style='width:120;display:block;margin:auto;'>
-					<p><b>Positive thoughts</b> are optimistic and motivational.</p>
-					<li>It will be fine.</li>
-					<li>No problemo.</li>
-					<li>You've got this.</li>
-					<li>You can do it.</li>
+	<div class="activity">
+		<div class="screen">
+			<div class="deck">
+				<div class="card instructive herald">
+					<h1>KEEP YOUR COOL</h1>
+					<div class="icon" style="background-image:url('./icon/Keep your Cool.svg')"></div>
+				</div>
 			</div>
 		</div>
-	</div>
-	<div class="screen">
-		<h2 class="question">Is this instructive?</h2>
-		<div class="deck">
-			<div class="card"></div>
-			<div class="card"></div>
-			<div class="card"></div>
-			<div class="card"></div>
-			<div class="card"></div>
-			<div class="card"></div>
+		<div class="screen">
+			<h2 class="question">Bring attention to your breath.</h2>
+			<div class="deck">
+
+				<div class="card instructive">
+					Controlled breathing is a quick hack to calm our body in tense moments. Find a quiet place and take a few moments to complete this exercise. It will take less than a minute.
+				</div>
+			</div>
 		</div>
-	</div>
-	<div class="screen">
-		<h2 class="question">When can you use<br>INSTRUCTIVE or POSITIVE thoughts?</h2>
-		<div class="deck">
-			<div class="card"></div>
-		</div>
-	</div>
-	<div class="screen">
-		<h2 class="question">When can you use<br>INSTRUCTIVE or POSITIVE thoughts?</h2>
-		<div class="deck">
-			<div class="card"></div>
-			<div class="card"></div>
-			<div class="card"></div>
-			<div class="card"></div>
-			<div class="card"></div>
-			<div class="card"></div>
+		<div class="screen">
+			<h2 class="question">Do the breathing thing</h2>
+			<div class="deck">
+
+				<div class="card instructive">
+					
+				</div>
+			</div>
 		</div>
 	</div>
 </body>
