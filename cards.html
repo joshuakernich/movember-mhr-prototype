@@ -276,6 +276,7 @@
 			white-space: normal;
 			background: url('./blurry-white-bg.jpeg');
 			background-size: cover;
+			overflow: hidden;
 		}
 
 		.screen{
@@ -321,10 +322,16 @@
 			outline: none;
 		}
 
+		.scatter-deck{
+			
+			height: auto;
+			padding-bottom: 40px;
+		}
+
 		.scatter-deck .card button.yesno{
-			width: 60px;
+			/*width: 60px;
 			height: 60px;
-			font-size: 20px;
+			font-size: 20px;*/
 		}
 
 		.card button.yes{
@@ -353,6 +360,9 @@
 			border-radius: 20px;
 			text-align: center;
 			vertical-align: top;
+			font-size: 1.2rem;
+			padding-top: 30px;
+
 		}
 
 		.card-q{
@@ -374,12 +384,13 @@
 			display: none;
 		}
 
-		.screen-of-death .yes{
+
+		.screen-of-death .yes, .screen-of-selection .no{
 			display: none;
 		}
 
-		.screen-of-selection .no{
-			display: none;
+		.screen-of-death .scatter-deck .card button.no, .screen-of-selection .scatter-deck .card button.yes{
+			width: 100%;
 		}
 
 		.card.swiped{
