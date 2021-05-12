@@ -163,8 +163,10 @@
 						lastSelected = $clone.text();
 						console.log('lastSelected',lastSelected);
 
-					} else if(screenMode == 'kill-all-bad' && $(this).closest('.screen').find('.bad:not(.swiped)').length==0){
+					} else if(screenMode == 'kill-all-bad' && $(scope).closest('.screen').find('.bad:not(.swiped)').length==0){
 						
+						
+
 						if($s.find('.question').length) $s.find('.question').animate({top:-100},500,nextScreen);
 						else setTimeout( nextScreen, 500);
 
@@ -233,7 +235,24 @@
 			white-space: nowrap;
 
 			--blue: #1c44ce;
+
+			--feature-a: #1c44ce;
+			--feature-b: #26908E;
+			--feature-c: #87A83B;
+			--feature-d: #B48619;
+			--feature-e: #B24444;
+
 		}
+
+		.activity:nth-of-type(2) h1 { color: var(--feature-b); }
+
+		.activity:nth-of-type(1) .herald,.activity:nth-of-type(1) .screen-of-selection .swiped,.activity:nth-of-type(1) .feature-card  { background: var(--feature-a); }
+		.activity:nth-of-type(2) .herald,.activity:nth-of-type(2) .screen-of-selection .swiped,.activity:nth-of-type(2) .feature-card { background: var(--feature-b); }
+		.activity:nth-of-type(3) .herald,.activity:nth-of-type(3) .screen-of-selection .swiped,.activity:nth-of-type(3) .feature-card { background: var(--feature-c); }
+		.activity:nth-of-type(4) .herald,.activity:nth-of-type(4) .screen-of-selection .swiped,.activity:nth-of-type(4) .feature-card { background: var(--feature-d); }
+		.activity:nth-of-type(5) .herald,.activity:nth-of-type(5) .screen-of-selection .swiped,.activity:nth-of-type(5) .feature-card { background: var(--feature-e); }
+
+
 
 		h1{
 			font-family: "HeaderFont";
@@ -388,20 +407,26 @@
 			background: var(--blue);
 
 			color: white;
-			font-size: 1.5em;
-			transform: translateY(-50px);
+			font-size: 2em;
 			font-family: "HeaderFont";
 			text-transform: uppercase;
 		}
 
 		.screen-of-feature .card:not(.feature-card){
-			transform: translateY(20px) scale(0.95);
+			font-size: 1.5rem;
+		    padding-top: 50px;
+		    text-align: center;
+		    transform: translateY(20%);
+		}
+
+		.screen-of-feature .card{
+			height: 80%;
 		}
 
 		.icon{
 			width: 200px;
 			height: 200px;
-			background-color: var(--blue);
+			
 
 			background-position: center;
 			background-size: 60%;
@@ -521,7 +546,7 @@
 		</div>
 		
 		<div class="screen">
-			<h2 class="question">When can you use<br>INSTRUCTIVE or POSITIVE thoughts?</h2>
+			<h2 class="question">When can you use<br><b>positive</b> or <b>instructive</b> thoughts?</h2>
 			<div class="deck">
 				<div class="card"></div>
 				<div class="card"></div>
