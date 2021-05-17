@@ -1147,13 +1147,16 @@
 					$('iframe')[0].contentWindow.postMessage('hello', '*');
 				}
 
+
+
 				if($s.is('.phone-down')){
 					$s.find('.next').css({opacity:0}).delay(8000).animate({opacity:1});
 				}
 
 				if($s.find('.card-deck-instruct').length){
-					
 
+					/*
+					
 					function flickLeft(){
 						$s.find('.card-front').removeClass('card-sad').addClass('card-happy').css({left:0}).animate({left:'100%'},500,flickRight);
 						$s.find('.card-back').removeClass('card-happy').addClass('card-sad');
@@ -1164,14 +1167,16 @@
 						$s.find('.card-back').removeClass('card-sad').addClass('card-happy');
 					}
 
+					flickLeft();*/
 
-					flickLeft();
+					$s.find('.card-deck-instruct').hide();
 				}
 
 				if($s.find('.screen-timer').length){
 					timerDuration = $s.find('.screen-timer').data('time') * 1000;
 					timerStart = new Date().getTime();
 					iTimerTick = setInterval(onTimerTick,60);
+					$s.find('.faux-phone').css({top:'50vh',left:'50vw'});
 				}
 
 				if($s.find('.flashy-play-button').length){
@@ -1185,10 +1190,29 @@
 				
 			}
 
+			var COUNTDOWN_BUFFER = 4;
+			var timerStartProper = false;
+
 			function onTimerTick(){
 				var timerNow = new Date().getTime();
 				var timerElapsed = timerNow-timerStart;
-				var timerRemaining = timerDuration-timerElapsed;
+
+				var timerRemainingTotal = timerDuration-timerElapsed + COUNTDOWN_BUFFER*1000;
+				
+				var timerRemaining = timerRemainingTotal;
+				if(timerRemaining>timerDuration) timerRemaining = timerDuration;
+
+				if(timerRemainingTotal>timerRemaining){
+					var gap = timerRemainingTotal-timerRemaining;
+					if(gap>3000) $sCurrent.find('h1').text('-');
+					else $sCurrent.find('h1').text(Math.ceil(gap/1000));
+					timerStartProper = false;
+				} else if(!timerStartProper){
+					$sCurrent.find('h1').text("PHONE'S UP!");
+					$sCurrent.find('.faux-phone').animate({top:0,left:0});
+					timerStartProper = true;
+				}
+
 
 				if(timerRemaining < 0) timerRemaining = 0;
 
@@ -1209,6 +1233,9 @@
 	</script>
 </head>
 <body>
+	<audio autoplay loop controls style='position: fixed;top:0px;left: 0px;'>
+				<source src="./Decisions.mp3" type="">
+			</audio>
 	<div class="screen-container">
 		<div class="screen screen-trailer is-for-facilitator">
 			<div class="static" style='background-image:url(./trailer.gif)'></div>
@@ -1223,26 +1250,18 @@
 				<button class='next-screen click-to-next-screen'>GET STARTED ></button>
 			</div>
 			<div class="static click-to-hide popup" style='background-image:url(./popup-notification.jpg);background-size:80%;'></div>
+			
 		</div>
 		<div class="screen is-for-facilitator black-screen phone-down">
 			<br><br><img src="./the-challenge-white.png" width=300>
 				<br>
 			<br><br><br>
-			<img width=150 src='./qr-code.png' style="vertical-align: middle;">
-			<div style='width: 200px;display: inline-block;vertical-align: middle;'>
-				<h1 style="font-size: 2rem;">JUMP ON THE WIFI</h1>
-				TeamLadsWIFI<br>
-				PrettyFlyForAWifi
-			</div>
-			<br><br><br>
-			<div style='width: 200px;display: inline-block;vertical-align: middle;'>
-				<h1 style="font-size: 2rem;">DOWNLOAD THE APP</h1>
-				aotg.app.com
-			</div>
-			
-			<img width=150 src='./qr-code.png' style="vertical-align: middle;">
-			
+
+				<h1 style="font-size: 2rem;">DOWNLOAD THE APP</h1><br>
+			<img width=150 src='./qr-code.png' style="vertical-align: middle;"><br><br>
+			aotg.app.com
 			<button class='next-screen click-to-next-screen'>READY TO GO ></button>
+			
 		</div>
 		<div class="screen is-for-student screen-signup">
 			<div class="static click-to-next-screen" style='background-image:url(./screen-team-code.jpg)'></div>
@@ -1360,10 +1379,12 @@
 					<h1>GET READY...</h1>
 
 					
-				<br><br><br><br><br><br><br><br><br><br><br><br><br>
+				<br><br>
+				
+				<br><br><br><br><br><br><br><br><br><br><br>
 				<button class='next click-to-next-screen'>GO ></button>
 		</div>
-		<div class='screen phone-down is-for-facilitator black-screen'>
+		<div class='screen phone-down is-for-facilitator black-screen screen-3-2-1'>
 			<!--div class="instruct">
 				<h1>OK GO!</h1>
 				<div class="card-deck-instruct">
@@ -1381,10 +1402,12 @@
 						<div class="card-deck-instruct">
 							<div class="card card-back"></div>
 							<div class="card card-front"></div>
+							
 						</div>
+						<br><br><br>
+						<h1 class="screen-timer" data-time='60'></h1>
 					</div>
-					<br><br>
-					<h1 class="screen-timer" data-time='60'></h1>
+					
 				<br><br>
 				<button class='next click-to-next-screen'>NEXT ></button>
 		</div>
