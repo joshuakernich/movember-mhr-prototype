@@ -834,6 +834,20 @@
 			margin-right: 5px;
 			background-image: url('./app-icon.png');
 			background-size: cover;
+			background-color: #1C44CE;
+		}
+
+		.app-icon{
+			width: 110px;
+			height: 110px;
+			background: black;
+			border-radius: 10px;
+			display: inline-block;
+			vertical-align: middle;
+			margin-right: 5px;
+			background-image: url('./app-icon.png');
+			background-size: cover;
+			background-color: #1C44CE;
 		}
 
 		.home-screen h1{
@@ -866,6 +880,39 @@
 			margin: 0px;
 			padding: 0px;
 			line-height: 20px;
+		}
+
+		.logo:before{
+			content: "";
+			width: 230px;
+			height: 100px;
+			background-image: url('./aotg-white.png');
+			
+			display: block;
+			background-size: 100%;
+			background-position: center;
+			background-repeat: no-repeat;
+			margin: auto;
+			display: none;
+			border-bottom: 2px solid rgba(255,255,255,0.6);
+		}
+
+		.logo{
+			border-top: 2px solid rgba(255,255,255,0.6);
+			letter-spacing: 0.3em;
+			font-size: 1.8em;
+			font-family: "HeaderFont";
+			font-weight: normal;
+			display: inline-block;
+			text-align: center;
+			padding: 5px;
+
+		}
+
+
+		.logo:after{
+			content: "THE CHALLENGE";
+
 		}
 
 
@@ -1308,7 +1355,9 @@
 			<div class="static black-screen" style='opacity: 0.5'></div>
 			<div class="static" style=''>
 				<br><br>
-				<img src="./the-challenge-white.png" width=300>
+				<img width=80%; src="aotg-white.png">
+				<br><br>
+				<div class="logo"></div>
 				<br><br><br>
 				<h1>WHAT'S BEEN YOUR<br>GREATEST CHALLENGE?</h1>
 				<br>
@@ -1319,7 +1368,7 @@
 			
 		</div>
 		<div class="screen is-for-facilitator black-screen phone-down">
-			<br><br><img src="./the-challenge-white.png" width=300>
+			<br><br><div class="logo"></div>
 				<br>
 			<br><br><br>
 
@@ -1328,6 +1377,16 @@
 			aotg.app.com
 			<button class='next-screen click-to-next-screen'>READY TO GO ></button>
 			
+		</div>
+		<div class="screen is-for-student screen-signup" style='background-image:url(./app-store.jpeg);background-size: 100%;'>
+			<div class="static" style='bottom:0px;top:auto;height:87px;background-image:url(./app-store.jpeg);background-size: 100%;background-position:bottom center;'></div>
+			<div style='position: absolute;top:100px;left:35px;' class="app-icon"></div>
+			<div style="position: absolute;top:153px;left:165px;width:200px;text-align:left;background: black;color:gray;">The Challenge</div>
+		</div>
+		<div class="screen is-for-student screen-signup" style='background-image:url(./home-screen.jpeg);background-size: 100%;'>
+			<div class="static" style='bottom:0px;top:auto;height:130px;background-image:url(./home-screen.jpeg);background-size: 100%;background-position:bottom center;'></div>
+			<div style='position: absolute;width:65px;height:65px;top:480px;right:23px;' class="app-icon"></div>
+			<div style="font-size:11px;position: absolute;top:550px;right:26px;width:70px;text-align:left;background: #264D77;color:white;">The Challenge</div>
 		</div>
 		<div class="screen is-for-student screen-signup">
 			<div class="static click-to-next-screen" style='background-image:url(./screen-team-code.jpg)'></div>
@@ -1339,17 +1398,17 @@
 		
 				<br><br>
 				<h1>WELCOME TO</h1>
-				<img width=300 src='the-challenge-black.png'>
+				<div class="logo"></div>
 				<br><br><br><br>
 				<h1>CAN WE SEND<br>A COUPLE OF<br>NOTIFICATIONS TO KEEP<br>THE CHALLENGE ALIVE?</h1>
 				<button class="next half click-to-next-screen">Nah</button><button class="next half click-to-notify">Yeah</button>
-			<div class="static click-to-next-screen popup" > 
+			<div class="static click-to-next-screen click-to-hide popup" > 
 				<img width='80%' style='border-radius: 10px;box-shadow: 0px 1px 5px black;margin-top:60%;' src='./popup-notification.jpg'>
 			</div>
 		</div>
 		<div class="screen is-for-student phone-down black-screen">
 			<br><br>
-				<img width=300 src='the-challenge-white.png'>
+				<div class="logo"></div>
 				<br><br><br><br><br>
 				
 					<h1>PHONE DOWN</h1>
@@ -1368,7 +1427,7 @@
 		</div>
 		<div class="screen is-for-facilitator phone-down black-screen">
 			<br><br>
-				<img width=300 src='the-challenge-white.png'>
+				<div class="logo"></div>
 				<br><br><br><br>
 			<h1>WHAT'S BEEN<br>ONE OF YOUR MOST<br>CHALLENGING MOMENTS?</h1>
 			<br><br>
@@ -1451,7 +1510,7 @@
 		</div>
 		<div class='screen phone-down is-for-facilitator black-screen'>
 			<br><br>
-				<img width=300 src='the-challenge-white.png'>
+				<div class="logo"></div>
 				<br><br><br><br>
 				
 					<h1>GET READY...</h1>
@@ -1472,7 +1531,7 @@
 				<h1>YOUR TEAM CODE IS "CHAMPS26"</h1>
 			</div-->
 			<br><br>
-				<img width=300 src='the-challenge-white.png'>
+				<div class="logo"></div>
 				<br><br><br><br>
 				
 					<h1>PHONE'S UP</h1>
@@ -1494,7 +1553,7 @@
 		</div>
 		<div class="screen is-for-student phone-down black-screen">
 			<br><br>
-				<img width=300 src='the-challenge-white.png'>
+				<div class="logo"></div>
 				<br><br><br><br><br>
 				
 					<h1>PHONE DOWN</h1>
