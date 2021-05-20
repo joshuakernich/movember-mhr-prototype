@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Sticker Tuner</title>
+	<script type="text/javascript" src='./jquery-3.4.1.min.js'></script>
+	<script type="text/javascript">
+		$(function(){
+
+			var chapters = ['0:00','1:31','3:48','5:24','7:01','8:19','9:22']
+
+			var moments = 
+			[
+				{start:'1:42',end:'1:45',options:["I'm so shit",'OMFG','$^#&%!']},
+				{start:'1:50',end:'1:51',options:['SO EMBARASSING!','MASSIVE FAIL!','./sticker/facepalm.png']},
+				{start:'2:03',end:'2:07',options:['100% LOSER','DISAPPOINTED','SCREW-UP']},
+
+				{start:'4:16',end:'4:17',options:['DISASTER!','URGH!','(bomb)']},
+				{start:'4:21',end:'4:23',options:['Make them pay','(angry)','Keep calm and PUNCH on']},
+				{start:'4:32',end:'4:34',options:['Might as well quit','I’m outta here','(run emoji)']},
+
+				{start:'5:40',end:'5:43',options:['I’m not strong enough','(sad face)','WEAK!']},
+				{start:'5:55',end:'5:58',options:['Lot’s to work on','WORK HARD','Gotta tune these skills']},
+				{start:'6:09',end:'6:11',options:['try harder!','never give up!','Make your weaknesses your strengths']},
+
+				{start:'7:10',end:'7:12',options:['The weather sucks.','(cloud)','(Slippery when wet)']},
+				{start:'7:23',end:'7:24',options:['The ref is blind.','Get some (glasses)','The coach is on my back']},
+				{start:'7:28',end:'7:31',options:['I should have trained harder']},
+
+				{start:'9:06',end:'9:07',options:[""]},
+				{start:'9:08',end:'9:09',options:["It's just me and the ball","keep calm"]},
+				{start:'9:11',end:'9:13',options:["I've got this","I've got this","I've REALLY got this!"]},
+			]
+
+			var v = $('video')[0];
+			var wasTime = 999999;
+			var iMomentActive = -1;
+			var didSelection = false;
+
+			
+
+			function tick(){
+
+				var iMoment = -1;
+				for(var i in moments){
+					if(v.currentTime > moments[i].start && v.currentTime < moments[i].end) iMoment = i;
+				}
+
+
+
+				if(iMoment != iMomentActive){
+
+					if( !didSelection && iMomentActive > -1 && v.currentTime>moments[iMomentActive].end && v.currentTime<(moments[iMomentActive].end+0.5)){
+						v.pause();
+					} else {
+						$('.overlay').hide();
+						
+						if(iMoment>-1){
+							$('.overlay').show();
+							$('.stickers').empty();
+							didSelection = false;
+
+							for(var o in moments[iMoment].options){
+								$('<div class="sticker text">').text(moments[iMoment].options[o]).click(onSticker).appendTo('.stickers');
+							}
+						}
+					}
+
+					iMomentActive = iMoment;
+
+					
+				}
+
+
+				
+
+				
+			}
+
+			for(var i in chapters){
+				chapters[i] = toSeconds(chapters[i]);
+			}
+
+			for(var i in moments){
+				moments[i].start = toSeconds(moments[i].start);
+				moments[i].end = toSeconds(moments[i].end);
+			}
+
+			for(var i in chapters){
+				$('<button>').appendTo('.nav-chapters').text(i).click(onNav).data({time:chapters[i]});
+			}
+
+			for(var i in moments){
+				$('<button>').appendTo('.nav-moments').text((parseInt(i)+1)).click(onNav).data({time:moments[i].start-1});
+			}
+
+			function toSeconds(timestamp){
+				var arr = timestamp.split(':');
+				return parseInt(arr[0])*60 + parseInt(arr[1]);
+			}
+
+			function onNav(){
+				$('.overlay').hide();
+				v.currentTime = $(this).data('time');
+				v.play();
+			}
+
+			function onSticker(){
+				
+				$('.feature-overlay').empty();
+				$(this).appendTo('.feature-overlay').animate({opacity:0});
+
+				$('.stickers').empty();
+				$('.overlay').hide();
+				didSelection = true;
+
+				v.play();
+			}
+
+
+			setInterval(tick,50);
+
+		})
+	</script>
+	<style type="text/css">
+		@font-face {
+			font-family: "HeaderFont";
+			src: url("./font-teko/Teko-Regular.ttf");
+		}
+
+		@font-face {
+			font-family: "BodyFont";
+			src: url("./Overpass-Light.ttf");
+		}
+
+		@font-face {
+		  font-family: BodyFont;
+		  src: url("./Overpass-Bold.ttf");
+		  font-weight: bold;
+		}	
+
+		body{
+			background: #333;
+			font-family: "BodyFont";
+			text-align: center;
+			margin: 0px;
+			padding: 0px;
+		}
+
+		.device{
+			width: 400px;
+			height: 708px;
+			text-align: left;
+			background: black;
+			display: inline-block;
+			position: relative;
+		}
+
+		.overlay{
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			right: 0px;
+			bottom: 0px;
+			border-top: 100px solid black;
+			border-bottom: 100px solid black;
+
+			color: white;
+			display: none;
+		}
+
+		.feature-overlay{
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			right: 0px;
+			bottom: 0px;
+		}
+
+		.overlay h1{
+			font-family: "HeaderFont";
+			font-weight: normal;
+			text-align: center;
+			margin-top:50px;
+		}
+
+		.sticker{
+			display: inline-block;
+			margin: 15px;
+			position: relative;	
+
+			animation-name: jiggle;
+			animation-iteration-count: infinite;
+			animation-duration: 0.2s;
+			cursor: pointer;
+
+		}
+
+		.sticker.text{
+			padding: 5px 10px 0px;
+			border: 3px solid white;
+			color: white;
+			font-weight: normal;
+		
+			transform: rotate(-5deg);
+			background: orange; 
+			text-transform: uppercase;
+			font-size: 40px;
+			box-shadow: 0px 1px 5px rgba(0,0,0,0.3);
+			font-family: "HeaderFont";
+			text-shadow: 0px 2px 0px #F25031;
+			white-space: nowrap;
+			line-height: 60px;
+		}
+
+		.sticker.featured{
+			margin-top:150px;
+			transform: rotate(-5deg) scale(2);
+		}
+
+		.stickers{
+			text-align: center;
+		}
+
+
+
+		.nav button{
+			width: 30px;
+			border: none;
+			margin-right: 1px;
+		}
+
+		.nav-chapters button{
+			width: 92px;
+		}
+
+		.nav-moments{
+			padding-left: 93px;
+		}
+
+		.nav-wrapper{
+			text-align: left;
+			display: inline-block;
+		}
+
+		.feature-overlay{
+			text-align: center;
+			line-height: 700px;
+
+		}
+
+		.feature-overlay .sticker{
+			transform: rotate(-5deg) scale(2);
+		}
+
+	</style>
+</head>
+<body>
+	<div class="device">
+		<div class="screen">
+			<video width=400 height=708 src='./video/full-edit.mp4'></video>
+			<div class="feature-overlay">
+
+			</div>
+			<div class="overlay">
+				<h1>WHAT'S HE THINKING?</h1>
+				<div class="stickers"></div>
+			</div>
+			
+		</div>
+	</div>
+	<br>
+	<div class="nav-wrapper">
+		<div class="nav nav-chapters"></div>
+		<div class="nav nav-moments"></div>
+	</div>
+</body>
+</html>

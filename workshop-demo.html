@@ -296,6 +296,18 @@
 			font-weight: normal;
 		}
 
+		.primer{
+			text-align: center;
+		}
+
+		.next.half{
+			width: 40%;
+			margin: 0px;
+			margin: 20% 3% 0px;
+
+			display: inline-block;
+		}
+
 		.next-screen, .carry-on{
 			position: absolute;
 			bottom: 40px;
@@ -351,13 +363,16 @@
 			text-align: center;
 		}
 
-		.phone-down h1{
+		.primer h1, .phone-down h1{
 			font-family: "HeaderFont";
 			padding: 0px;
 			margin:0px;
 			font-weight: normal;
 			font-size: 3em;
+			line-height: 3rem;
 		}
+
+
 
 		.stop-banner h1{
 			font-family: "HeaderFont";
@@ -766,6 +781,7 @@
 		.white-screen{
 			background: url(./blurry-white-bg.jpeg);
 			background-size: cover;
+			color: black;
 		}
 
 		.screen-timer span{
@@ -803,6 +819,54 @@
 			}
 		}
 
+		
+
+
+		
+
+		.mini-icon{
+			width: 20px;
+			height: 20px;
+			background: black;
+			border-radius: 5px;
+			display: inline-block;
+			vertical-align: middle;
+			margin-right: 5px;
+			background-image: url('./app-icon.png');
+			background-size: cover;
+		}
+
+		.home-screen h1{
+			font-weight: normal;
+			font-size: 100px;
+			margin-bottom: 0px;
+			padding: 0px;
+			line-height: 100px;
+		}
+
+		.home-screen h2{
+			font-weight: normal;
+			font-size: 20px;
+			margin-top: 20px;
+			padding: 0px;
+			line-height: 20px;
+		}
+
+		.push{
+			margin: 10px;
+			padding: 10px;
+			background: rgba(0,0,0,0.3);
+			border-radius: 10px;
+			text-align: left;
+		}
+
+		.push h1{
+			font-size: 12px;
+			color: gray;
+			margin: 0px;
+			padding: 0px;
+			line-height: 20px;
+		}
 
 
 	</style>
@@ -1098,6 +1162,10 @@
 				$(this).hide();
 			})
 
+			$('.click-to-notify').click(function(){
+				$('.popup').show().css({transform:'scale(1)'})
+			})
+
 			$('.click-to-next-screen').click(nextScreen);
 
 			function nextScreen(scope){
@@ -1106,8 +1174,8 @@
 
 				var iScreen = $('.screen').index( $(scope).closest('.screen') ) + 1;
 
-				while(isWorkshopMode && $('.screen').eq(iScreen).hasClass('is-for-facilitator')) iScreen++;
-				while(!isWorkshopMode && $('.screen').eq(iScreen).hasClass('is-for-student')) iScreen++;
+				//while(isWorkshopMode && $('.screen').eq(iScreen).hasClass('is-for-facilitator')) iScreen++;
+				//while(!isWorkshopMode && $('.screen').eq(iScreen).hasClass('is-for-student')) iScreen++;
 
 				if( iScreen < $('.screen').length ) toScreen(iScreen);
 			}
@@ -1121,13 +1189,11 @@
 
 				$('.nav button').removeClass('active').eq(iScreen).addClass('active')
 
-				var $s = $('.screen').hide().eq(iScreen).show().css({opacity:0}).animate({opacity:1},1000,function(){
-					
-					if(isWorkshopMode) $(this).find('.popup').addClass('reveal');
-
-				});
+				var $s = $('.screen').hide().eq(iScreen).show().css({opacity:0}).animate({opacity:1},1000);
 
 				$sCurrent = $s;
+
+				//if($s.find('.popup').length) $s.find('.popup').addClass('reveal');
 
 				if($s.hasClass('screen-video')){
 					videoLive = $s.find('video')[0];
@@ -1249,7 +1315,7 @@
 				<h1>WILL YOU<br>BOUNCE BACK?</h1>
 				<button class='next-screen click-to-next-screen'>GET STARTED ></button>
 			</div>
-			<div class="static click-to-hide popup" style='background-image:url(./popup-notification.jpg);background-size:80%;'></div>
+			
 			
 		</div>
 		<div class="screen is-for-facilitator black-screen phone-down">
@@ -1268,6 +1334,18 @@
 		</div>
 		<div class="screen is-for-student screen-signup">
 			<div class="static click-to-next-screen" style='background-image:url(./screen-signup.jpg)'></div>
+		</div>
+		<div class="screen is-for-student white-screen primer">
+		
+				<br><br>
+				<h1>WELCOME TO</h1>
+				<img width=300 src='the-challenge-black.png'>
+				<br><br><br><br>
+				<h1>CAN WE SEND<br>A COUPLE OF<br>NOTIFICATIONS TO KEEP<br>THE CHALLENGE ALIVE?</h1>
+				<button class="next half click-to-next-screen">Nah</button><button class="next half click-to-notify">Yeah</button>
+			<div class="static click-to-next-screen popup" > 
+				<img width='80%' style='border-radius: 10px;box-shadow: 0px 1px 5px black;margin-top:55%;' src='./popup-notification.jpg'>
+			</div>
 		</div>
 		<div class="screen is-for-student phone-down black-screen">
 			<br><br>
@@ -1480,6 +1558,15 @@
 				<source src="./video/transition.mp4" type="">
 			</video>
 			<button class="flashy-play-button">►</button>
+		</div>
+		<div class="screen is-for-student black-screen home-screen">
+			<h1>9:41</h1>
+			<h2>Tuesday, September 12</h2>
+			<div class="push">
+				<h1><div class='mini-icon'></div> THE CHALLENGE</h1>
+				<b>✊ Continue the Challenge</b><br>
+				Kick on with the next episode. Watch now. 🏉
+			</div>
 		</div>
 	</div>
 	
