@@ -1013,7 +1013,7 @@
 
 			function tickReflection(){
 
-				if(videoLive.currentTime > SCATTER[iReflection].at*videoLive.duration){
+				if(SCATTER[iReflection] && videoLive.currentTime > SCATTER[iReflection].at*videoLive.duration){
 
 					var $overlay = $('.reflection-overlay');
 
@@ -1111,13 +1111,7 @@
 				if($(videoLive).closest('.screen-stop-swipe').length){
 					$('.stop').show();
 
-					if(!isWorkshopMode){
-						setTimeout(function(){
-							var o = $('.screen-container').offset();
-							$('.qr-prompt').css({display:'inline-block',opacity:0,left:200}).animate({opacity:1,left:0},1000);
-							$('.screen-container').css({left:200}).animate({top:0,left:0},1000);
-						},1500);
-					}
+					
 					
 				}
 				else{
@@ -1131,22 +1125,23 @@
 
 				var iTickStick = setInterval(function(){
 
-					$('.dead').each(function(){
+					$('.dead:not(.gone)').each(function(){
 						var d = $(this).data();
 						var p = $(this).position();
 						d.dy += 1;
-						p.left += d.dx;
-						p.top += d.dy;
-						$(this).css(p);
 
-						if(p.top>900) $(this).addClass('gone')
+						d.x += d.dx;
+						d.y += d.dy;
+
+						$(this).css({left:d.x,top:d.y});
+
+						if(p.top>900) $(this).addClass('gone');
 					});
 
 
 					if($('.screen-stop-swipe .sticker').length == $('.gone').length){
 						clearInterval(iTickStick);
 						nextScreen($('.stop'));
-						
 					}
 
 				},20);
@@ -1186,10 +1181,12 @@
 						var p = $(this).position();
 						var dx = p.left + $(this).outerWidth()/2 - x;
 						var dy = p.top + $(this).outerHeight()/2 - y;
-						//var d = Math.sqrt(dx*dx+dy*dy);
 
 						if(Math.abs(dx)<$(this).outerWidth()/2 && Math.abs(dy)<$(this).outerHeight()/2){
-							$(this).addClass('dead').data({dx:x-wasx,dy:y-wasy});
+
+							var px = parseInt( $(this).css('left'));
+							var py = parseInt( $(this).css('top'));
+							$(this).addClass('dead').data({x:px,y:py,dx:x-wasx,dy:y-wasy});
 						}
 					})
 
@@ -1347,10 +1344,10 @@
 </head>
 <body>
 	<audio autoplay loop controls style='position: fixed;top:0px;left: 0px;'>
-				<source src="./Decisions.mp3" type="">
+				<source src="./127957929-challenge-begins.m4a" type="">
 			</audio>
 	<div class="screen-container">
-		<div class="screen screen-trailer is-for-facilitator">
+		<div class="screen screen-trailer is-for-facilitator click-to-next-screen">
 			<div class="static" style='background-image:url(./trailer.gif)'></div>
 			<div class="static black-screen" style='opacity: 0.5'></div>
 			<div class="static" style=''>
@@ -1362,7 +1359,7 @@
 				<h1>WHAT'S BEEN YOUR<br>GREATEST CHALLENGE?</h1>
 				<br>
 				<h1>WILL YOU<br>BOUNCE BACK?</h1>
-				<button class='next-screen click-to-next-screen'>GET STARTED ></button>
+				
 			</div>
 			
 			
@@ -1445,11 +1442,7 @@
 				<div class='timer-ticker'></div>
 			</div>
 		</div>
-		<div class='screen screen-video is-for-facilitator'>
-			<video preload controls width="100%" height="100%;">
-				<source src="./video/pickup-1.mp4" type="">
-			</video>
-		</div>
+		
 		<div class='screen is-for-facilitator screen-video screen-stop-swipe'>
 			<video preload controls width="100%" height="100%;">
 				<source src="./video/reflection-1.mp4" type="">
@@ -1468,7 +1461,7 @@
 				
 			</div>
 		</div>
-		<div class='screen is-for-facilitator white-screen'>
+		<div class='screen is-for-facilitator white-screen click-to-next-screen'>
 
 			<br><br><br><br>
 			<div class="stop-banner">
@@ -1476,11 +1469,11 @@
 				<h1 style='font-size: 2.5rem;'>POSITIVE THOUGHTS</h1>
 				
 			</div><br><br><br><br><br><br><br><br><br><br><br><br>
-				<button class="next click-to-next-screen">CARRY ON ></button>
+				
 
 
 		</div>
-		<div class='screen is-for-facilitator white-screen'>
+		<div class='screen is-for-facilitator white-screen click-to-next-screen'>
 			<div class="instruct">
 				<h1>POSITIVE THOUGHTS</h1>
 				<img src="./choose-positive.svg" width="120" style='width:120;display:block;margin:auto;'>
@@ -1494,7 +1487,7 @@
 			</div>
 
 		</div>
-		<div class='screen is-for-facilitator white-screen'>
+		<div class='screen is-for-facilitator white-screen click-to-next-screen'>
 			<div class="instruct">
 			<h1>INSTRUCTIVE THOUGHTS</h1>
 				<img src="./choose-instructional.svg" width="120" style='width:120;display:block;margin:auto;'>
@@ -1596,11 +1589,7 @@
 				<source src="./video/scene-2.mp4" type="">
 			</video>
 		</div>
-		<div class="screen screen-video is-for-facilitator">
-			<video preload controls width="100%" height="100%;">
-				<source src="./video/pickup-2.mp4" type="">
-			</video>
-		</div>
+		
 		<div class="screen screen-video is-for-facilitator">
 			<video preload controls width="100%" height="100%;">
 				<source src="./video/reflection-2.mp4" type="">

@@ -7,24 +7,24 @@
 	<script type="text/javascript">
 		$(function(){
 
-			var chapters = ['0:00','1:31','3:48','5:24','7:01','8:19','9:22']
+			var chapters = ['0:00','1:31','3:52','5:51','7:40','9:14','10:35']
 
 			var moments = 
 			[
-				{start:'1:50',end:'1:51',options:['THIS SUCKS',"SCREW-UP 😩",'$^#&%!']},
-				{start:'2:03',end:'2:07',options:['100% LOSER','😑 NUMPTY!',"I'LL NEVER LIVE THIS DOWN"]},
+				{start:'1:47',end:'1:57',options:['THIS SUCKS',"SCREW-UP 😩",'$^#&%!']},
+				{start:'2:10',end:'2:19',options:['100% LOSER','😑 NUMPTY!',"I'LL NEVER LIVE THIS DOWN"]},
 
-				{start:'4:25',end:'4:26',options:['DISASTER 💣!','UNBELIEVABLE!',"YOU'VE GOTTA BE JOKING!"]},
-				{start:'4:33',end:'4:34',options:['This sucks!','I’m outta here 🏃','$^#&% IT ALL!']},
+				{start:'4:28',end:'4:38',options:['DISASTER 💣!','UNBELIEVABLE!',"YOU'VE GOTTA BE JOKING!"]},
+				{start:'4:47',end:'4:57',options:['This sucks!','I’m outta here 🏃','$^#&% IT ALL!']},
 
-				{start:'5:40',end:'5:43',options:["NOT FEELING IT TODAY",'WHAT AM I DOING HERE?','BLURGH 😖']},
-				{start:'6:09',end:'6:11',options:['GET OFF MY CASE 😕',"WHY CAN'T I DO THIS!?",'GOTTA BEAT THIS!']},
+				{start:'6:05',end:'6:15',options:["NOT FEELING IT TODAY",'WHAT AM I DOING HERE?','BLURGH 😖']},
+				{start:'6:40',end:'6:49',options:['GET OFF MY CASE 😕',"WHY CAN'T I DO THIS!?",'GOTTA BEAT THIS!']},
 
-				{start:'7:23',end:'7:24',options:['this is stupid','🤨 unfair','what attitude!? 🤬']},
-				{start:'7:28',end:'7:31',options:["IT'S NOT MY FAULT 😡","WHY ARE THEY HOLDING ME BACK!?","THEY DON'T UNDERSTAND!"]},
+				{start:'7:52',end:'8:01',options:['this is stupid','🤨 unfair','what attitude!? 🤬']},
+				{start:'8:15',end:'8:25',options:["IT'S NOT MY FAULT 😡","WHY ARE THEY HOLDING ME BACK!?","THEY DON'T UNDERSTAND!"]},
 
-				{start:'9:08',end:'9:09',options:["just me and the ball 🏉","😌 keep calm","BREATHE"]},
-				{start:'9:11',end:'9:13',options:["I can do this ⭐","I can do this 🙂","I can do this 💪"]},
+				{start:'9:58',end:'10:08',options:["just me and the ball 🏉","😌 keep calm","BREATHE"]},
+				{start:'10:14',end:'10:24',options:["I can do this ⭐","I can do this 🙂","I can do this 💪"]},
 			]
 
 			var v = $('video')[0];
@@ -197,15 +197,26 @@
 			font-family: "HeaderFont";
 			font-weight: normal;
 			text-align: center;
-			margin-top:50px;
+
 			background: #1C44CE;
 			display: inline-block;
-			padding: 5px 20px;
-			margin: 40px;
+
+			margin: 0px;
 			border-radius: 5px;
-			position: relative;
+			position: absolute;
 			opacity: 0;
 			transition: all 1s;
+
+			
+
+			top: -100px;
+			left: 0px;
+			right: 0px;
+			line-height: 100px;
+			padding: 0px;
+
+			background: none;
+	
 		}
 
 		.sticker{
@@ -248,6 +259,7 @@
 
 		.stickers{
 			text-align: center;
+			padding: 80px 0px;
 		}
 
 		.sticker.n0{ background: #F7B752; text-shadow: 0px 2px 0px red; }
@@ -255,7 +267,7 @@
 		.sticker.n2{ background: #82C8F2; text-shadow: 0px 2px 0px blue; }
 		.sticker.n3{ background: #E66376; text-shadow: 0px 2px 0px red; }
 
-		.overlay h1:after {
+		/*.overlay h1:after {
 			content: "";
 			width: 0; 
 			height: 0; 
@@ -265,7 +277,7 @@
 			position: absolute;
 			bottom: -12px;
 			left: calc(50% - 6px);
-		}
+		}*/
 
 		.nav button{
 			width: 45px;
@@ -300,7 +312,7 @@
 
 		.timer{
 			position: absolute;
-			bottom: 0px;
+			bottom: -10px;
 			height: 10px;
 			background: white;
 			margin: auto;
@@ -315,7 +327,7 @@
 <body>
 	<div class="device">
 		<div class="screen">
-			<video playsinline width=400 height=708 src='./video/full-edit.mp4'></video>
+			<video playsinline controls width=400 height=708 src='./video/full-edit-310520.mp4'></video>
 			<div class="feature-overlay">
 
 			</div>
