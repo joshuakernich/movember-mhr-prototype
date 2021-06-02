@@ -457,10 +457,12 @@
 
 
 		.nav{
-			background: #1C44CE;
-			box-shadow: inset 0px 25px 0px rgba(255,0,0,0.3);
-			display: inline-block;
-			position: relative;
+			
+			display: block;
+			position: fixed;
+			bottom: 0px;
+			left:0px;
+			right: 0px;
 		}	
 
 		
@@ -468,32 +470,41 @@
 		.nav button{
 			display: inline-block;
 			
-			height: 48px;
-			width: 30px;
-			margin: 1px;
-			font-family: "BodyFont";
-			border: none;
 			position: relative;
-			background: rgba(255,255,255,0.5);
+			background: none;
 
 			
 			cursor: pointer;
 			outline: none;
 			vertical-align: top;
 
+			width: 15px;
+			height: 30px;
+			
+
+
+			color: transparent;
+			box-sizing: border-box;
+			border: none;
+			line-height: 30px;
+			text-align: center;
+			opacity: 0.2;
 		}
 
-		.nav button.is-for-facilitator{
-			height: 22px;
+		.nav button:after{
+			content: "";
+			width: 5px;
+			height: 5px;
+			display: inline-block;
+			background: white;
+			vertical-align: middle;
+			border-radius: 5px;
 		}
 
-		.nav button.is-for-student{
-			height: 22px;
-			vertical-align: bottom;
-		}
+
 
 		.nav button.active{
-			background: yellow;
+			opacity: 1;
 		}
 
 
@@ -1068,17 +1079,7 @@
 			right: 0px;
 		}
 
-		.toggle-nav{
-			position: fixed;
-			right: 10px;
-			bottom: 10px;
-		}
-
-		.toggle-fs{
-			position: fixed;
-			right: 10px;
-			bottom: 40px;
-		}
+		
 
 		.vertically-centered{
 			display: flex;
@@ -1144,12 +1145,28 @@
 			font-weight: normal;
 		}
 
+		.screen-container{
+			transform-origin: center top;
+		}
+
 
 
 	</style>
 	<script type="text/javascript" src='./jquery-3.4.1.min.js'></script>
 	<script type="text/javascript">
 		$(function(){
+
+			var wasHeight = 0;
+
+			function resize(){
+				var isHeight = $(window).innerHeight();
+				if(isHeight != wasHeight){
+					wasHeight = isHeight;
+					$('.screen-container').css({transform:'scale('+isHeight/800+')'})
+				}
+			}
+
+			setInterval(resize,1000);
 
 			function onNav(){
 				var idx = $('.nav button').index(this);
@@ -1171,7 +1188,7 @@
 			})
 
 			$('.screen').each(function(i){
-				var $b = $('<button>'+(i+1)+'</button>').appendTo('.nav').click(onNav);
+				var $b = $('<button></button>').appendTo('.nav').click(onNav);
 			})
 
 			var isWorkshopMode = (window.location.href.indexOf('student')>-1);
@@ -1307,30 +1324,7 @@
 				$('.sticker').eq(0).trigger('click');
 			}
 
-			/*function onStopSticker(e){
-
-				var o = $(this).offset();
-
-				$('.sticker-party .sticker').each(function(){
-					var o2 = $(this).offset();
-					var dx = o2.left-o.left;
-					var dy = o2.top-o.top;
-					var d = Math.sqrt(dx*dx+dy*dy);
-
-					if(d == 0){
-						dx = dy = 50;
-					}
-
-					if(d<150) $(this).addClass('dying').animate({top:'+='+dy*5,left:'+='+dx*5},500,function(){
-						
-						$(this).css({opacity:0});
-						if($('.sticker:not(.dying)').length == 0){
-							$('.swipe-prompt').hide();
-							$('.remember').show();
-						}
-					});
-				})
-			}*/
+			
 			
 			var stickerPack = [];
 
@@ -1463,9 +1457,7 @@
 				nextScreen($('iframe'));
 			}
 
-			$('.toggle-nav').click(function(){
-				$('.nav').toggle();
-			})
+			
 			
 			$('.click-to-hide').click(function(){
 				$(this).hide();
@@ -1835,15 +1827,10 @@
 		</div>
 		<div class="screen screen-video is-for-facilitator">
 			<video preload controls width="100%" height="100%;">
-				<source src="./video/scene-2.mp4" type="">
+				<source src="./video/ep-1-outro.mp4" type="">
 			</video>
 		</div>
 		
-		<div class="screen screen-video is-for-facilitator">
-			<video preload controls width="100%" height="100%;">
-				<source src="./video/reflection-2.mp4" type="">
-			</video>
-		</div>
 		
 		<div class="screen screen-faux-dashboard white-screen">
 			<div class="dash-scroller">
@@ -1911,12 +1898,11 @@
 		
 	</div>
 	
-	<br><br>
+	<br>
 	<div class="nav">
 		
 	</div>
 	
-	<button class="toggle-nav">Toggle Nav</button>
 	<button class="slide-prev-next slide-prev"></button>
 	<button class="slide-prev-next slide-next"></button>
 
