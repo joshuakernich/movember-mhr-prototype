@@ -1,0 +1,1924 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Workshop Demo</title>
+	<style type="text/css">
+		
+
+		.screen, .screen-container, .facilitator-screen{
+			width: 450px;
+			height: 800px;
+			margin: auto;
+			background: white;
+			text-align: center;
+			
+			position: relative;
+			display: inline-block;
+			vertical-align: top;
+			
+			color: white;
+			background: black;
+			overflow: hidden;
+			vertical-align: middle;
+		}
+
+		.facilitator-screen{
+
+		}
+
+
+		.screen{
+			position: absolute;
+			top: 0px;
+			left: 0px;
+		}
+
+		.remember{
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			width: 100%;
+			height: 100%;
+			
+			overflow-y: auto;
+			text-align: left;
+			color: black;
+		}
+
+		.remember-header{
+			background: #1C44CE;
+			padding: 10px 0px;
+			margin-bottom: 40px;
+			position: relative;
+			text-align: center;
+		}
+
+		.remember-content{
+			padding: 0px 10%;
+		}
+
+		.remember-header h1{
+			font-size: 45px;
+			color: white;
+			font-family: "HeaderFont";
+			text-transform: uppercase;
+		}
+
+		.remember-header h2{
+			color: white;
+
+			font-size:30px;
+			font-weight: normal;
+		}
+
+		.screen-trailer h1{
+			font-size: 2.5rem;
+			color: white;
+			font-family: "HeaderFont";
+			text-transform: uppercase;
+			font-weight: normal;
+		}
+
+		@font-face {
+			font-family: "HeaderFont";
+			src: url("./font-teko/Teko-Regular.ttf");
+		}
+
+		@font-face {
+			font-family: "BodyFont";
+			src: url("./Overpass-Light.ttf");
+		}
+
+		@font-face {
+		  font-family: BodyFont;
+		  src: url("./Overpass-Bold.ttf");
+		  font-weight: bold;
+		}	
+
+		body{
+			background: #333;
+			font-family: "BodyFont";
+			text-align: center;
+			margin: 0px;
+			padding: 0px;
+		}
+
+		@keyframes jiggle{
+			0%{
+				transform: rotate(1deg);
+			}
+			50%{
+				transform: rotate(-1deg);
+			}
+			100%{
+				transform: rotate(1deg);
+			}
+		}
+
+		.cta-app-icon{
+			position: relative;
+			animation-name: jiggle;
+			animation-iteration-count: infinite;
+			animation-duration: 0.2s;
+		}
+
+		.sticker{
+			display: inline-block;
+			margin: 15px;
+			position: relative;	
+
+			animation-name: jiggle;
+			animation-iteration-count: infinite;
+			animation-duration: 0.2s;
+			cursor: pointer;
+		}
+
+		.sticker.still{
+			animation: none;
+			cursor: default;
+		}
+
+		.sticker.image{
+			width: 200px;
+			height: 150px;
+			background-size: contain;
+			background-position: center;
+			background-repeat: no-repeat;
+		}
+
+		.sticker.text{
+			padding: 10px 12px 5px;
+			border: 3px solid white;
+			color: white;
+			font-weight: normal;
+		
+			transform: rotate(-5deg);
+			background: orange; 
+			text-transform: uppercase;
+			font-size: 45px;
+			box-shadow: 0px 1px 5px rgba(0,0,0,0.3);
+			font-family: "HeaderFont";
+			white-space: nowrap;
+			border-radius: 10px;
+			line-height: 45px;
+		}
+
+		.sticker.text.n0{ background: #408FB0; }
+		.sticker.text.n1{ background: #A852B8; }
+		.sticker.text.n2{ background: #B16240; }
+		.sticker.text.n3{ background: #418E7B; }
+
+		video{
+			position: relative;
+			
+			transition: all 0.5s;
+		}
+
+		.timer{
+			position: absolute;
+			width: 100%;
+			left: 0px;
+			bottom: -10px;
+			height: 10px;
+			
+			background: rgba(0,0,0,0.5);
+			line-height: 0px;
+			transition: all 2s;
+		}	
+
+		.timer .timer-ticker{
+			background: white;
+			height: 100%;
+			display: inline-block;
+			width: 50%;
+
+		}
+
+
+		.overlay,.reflection-overlay{
+			position: absolute;
+			top:0px;
+			left: 0px;
+			width: 100%;
+			height: 100%;
+			box-sizing: border-box;
+			pointer-events: none;
+		}
+
+		.overlay{
+			border-top: 0px solid black;
+			border-bottom: 0px solid black;
+			transition: all 0.1s;
+
+		}
+
+		.overlay.active{
+			border-top-width: 100px;
+			border-bottom-width: 100px;
+			transition: all 1s;
+			pointer-events: auto;
+		}
+
+		.overlay h1{
+			position: absolute;
+			top: -100px;
+			line-height: 100px;
+			font-family: "HeaderFont";
+			text-transform: uppercase;
+			width: 100%;
+			font-weight: normal;
+			padding: 0px;
+			margin: 0px;
+			font-size: 3rem;
+		}
+		
+		video.zoom{
+			transform: scale(2);
+			transition: all 5s;
+		}
+
+		.options{
+			display: inline-block;
+			vertical-align: middle;
+			margin: 10px;
+			padding: 10px;
+			background: white;
+		}
+
+		input{
+			color: white;
+		}
+
+		.play{
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			top:0px;
+			left:0px;
+			font-size: 100px;
+			color: white;
+			background: transparent;
+		}
+
+		.stop{
+			display: none;
+			position: absolute;
+			top:0px;
+			left: 0px;
+			width: 100%;
+			height: 100%;
+			box-sizing: border-box;
+			background: rgba(0,0,0,0.5);
+			color: white;
+		}
+
+
+		
+		.next, .next-screen, .carry-on{
+			display: block;
+			width: 80%;
+			margin: 0px 10%;
+			font: inherit;
+			margin-bottom: 10px;
+			padding: 5px 0px 0px;
+			color: white;
+			background: #1C44CE;
+			font-size: 1.2em;
+			border: none;
+			font-family: "HeaderFont";
+			text-transform: uppercase;
+			font-size: 1.8em;
+			font-weight: normal;
+		}
+
+		.primer{
+			text-align: center;
+		}
+
+		.next.half{
+			width: 40%;
+			margin: 0px;
+			margin: 20% 3% 0px;
+
+			display: inline-block;
+		}
+
+		.next-screen, .carry-on{
+			position: absolute;
+			bottom: 40px;
+		}
+
+		.swipe-prompt{
+			display: none;
+			position: absolute;
+			top:0px;
+			left:0px;
+			right: 0px;
+			bottom: 0px;
+			opacity: 1;
+			transition: 1s all;
+
+		}
+
+		.swipe-prompt.swiping{
+			opacity: 0.1;
+		}
+
+		.prompt{
+			font-family: "HeaderFont";
+
+			padding: 5px 10px 0px;
+			border-radius: 5px;
+			display: inline-block;
+			color: white;
+			text-transform: uppercase;
+			font-size: 35px;
+			position: relative;
+			text-align: center;
+			top: -30px;
+		}
+
+		
+
+		.stop-banner, .strategy-banner{
+			background: #1C44CE;
+			padding: 20px;
+			text-align: center;
+			color: white;
+			
+		}
+
+		.primer h1, .phone-down h1{
+			font-family: "HeaderFont";
+			padding: 0px;
+			margin:0px;
+			font-weight: normal;
+			font-size: 3em;
+			line-height: 3rem;
+		}
+
+
+
+		.strategy-banner h1, .stop-banner h1{
+			font-family: "HeaderFont";
+			padding: 0px;
+			margin:0px;
+			font-weight: normal;
+			font-size: 5em;
+		}
+
+		.stop-banner h1{
+			font-size: 10rem;
+			line-height: 0.6;
+			margin-top: 50px;
+
+		}
+
+		.stop-banner h2{
+			font-family: "BodyFont"
+			padding: 0px;
+			margin:0px;
+			font-weight: normal;
+			font-size: 1.3rem;
+			margin-bottom: 20px;
+			margin-top: 10px;
+			width: 50%;
+			margin: auto;
+		}
+
+		.swipe-prompt{
+			background: rgba(0,0,0,0.4);
+		}
+
+		.finger{
+			position: absolute;
+			left:20%;
+			top:20%;
+			width: 0px;
+			height: 0px;
+
+			animation-name: swipe;
+			animation-iteration-count: infinite;
+			animation-duration: 1.5s;
+		}
+
+		.finger:after{
+			content: "";
+
+			width: 100px;
+			height: 100px;
+			background-image: url('./finger.png');
+			background-size: contain;
+			background-position: center;
+			background-repeat: no-repeat;
+			
+			position: absolute;
+			left: -50px;
+			top: 0px;
+			display: block;
+		}
+
+		@keyframes swipe{
+			0%{
+				opacity: 0;
+				left:20%;
+				top:20%;
+				transform: rotate(-15deg);
+			}
+			10%{
+				opacity: 1;
+				left:20%;
+				top:20%;
+				transform: rotate(-15deg);
+			}
+			30%{
+				left:70%;
+				top:30%;
+				transform: rotate(15deg);
+			}
+			60%{
+				left:30%;
+				top:40%;
+				transform: rotate(-15deg);
+			}
+			90%{
+				left:80%;
+				top:50%;
+				transform: rotate(25deg);
+				opacity: 1;
+			}
+			100%{
+				left:80%;
+				top:50%;
+				transform: rotate(25deg);
+				opacity: 0;
+			}
+		}
+
+
+		.nav{
+			background: #1C44CE;
+			box-shadow: inset 0px 25px 0px rgba(255,0,0,0.3);
+			display: inline-block;
+			position: relative;
+		}	
+
+		
+
+		.nav button{
+			display: inline-block;
+			
+			height: 48px;
+			width: 30px;
+			margin: 1px;
+			font-family: "BodyFont";
+			border: none;
+			position: relative;
+			background: rgba(255,255,255,0.5);
+
+			
+			cursor: pointer;
+			outline: none;
+			vertical-align: top;
+
+		}
+
+		.nav button.is-for-facilitator{
+			height: 22px;
+		}
+
+		.nav button.is-for-student{
+			height: 22px;
+			vertical-align: bottom;
+		}
+
+		.nav button.active{
+			background: yellow;
+		}
+
+
+
+		.workshop-handoff{
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			right: 0px;
+			bottom: 0px;
+			background: #1C44CE;
+			display: none;
+
+			box-sizing: border-box;
+			
+			font-size: 25px;
+			font-family: "HeaderFont";
+			background-position: center;
+			background-repeat: no-repeat;
+			background-size: 150px;
+		}
+
+		.workshop-handoff h1{
+			font-size: 35px;
+		}
+
+		.workshop-timer{
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			right: 0px;
+			bottom: 0px;
+			background: #1C44CE;
+			display: block;
+
+			box-sizing: border-box;
+			padding-top: 50px;
+			font-size: 25px;
+			font-family: "HeaderFont";
+			background-position: center;
+			background-repeat: no-repeat;
+			background-size: 150px;
+
+		}
+
+		.workshop-timer button{
+			border: 1px solid white;
+		}
+
+
+
+		
+
+		.static{
+			position: absolute;
+			top: 0px;
+			left:0px;
+			width: 100%;
+			height: 100%;
+			background-size: cover;
+			background-position: center;
+			background-repeat: no-repeat;
+		}
+
+		.dash-scroller{
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			white-space: nowrap;
+		}
+
+		.dash{
+			width: 450px;
+			height: 800px;
+			background-size: cover;
+			background-position: center;
+			background-repeat: no-repeat;
+			display: inline-block;
+			white-space: normal;
+			box-sizing: border-box;
+			
+			vertical-align: top;
+		}
+
+		.popup{
+			transform: scale(0);
+			transition: all 0.5s;
+		}
+
+		.popup.reveal{
+			transform: scale(1);
+		}
+
+		.stopwatch{
+			width: 200px;
+			height: 200px;
+			border: 10px solid white;
+			border-radius: 150px;
+			margin: auto;
+			box-sizing: border-box;
+			position: relative;
+		}
+
+		@keyframes tick{
+			0%{
+				transform: rotate(0deg);
+			}
+			100%{
+				transform: rotate(360deg);
+			}
+		}
+
+		.stopwatch:after,.stopwatch:before{
+			content: "";
+			width: 40px;
+			height: 10px;
+			background: white;
+			position: absolute;
+			top: -10px;
+			left: 10px;
+			transform: rotate(-30deg);
+		}
+
+		.stopwatch:after{
+			left: 130px;
+			transform: rotate(30deg);
+		}
+
+		.stopwatch-hand{
+			width: 2px;
+			height: 80px;
+			position: absolute;
+			left: 89px;
+			top: 15px;
+			background: white;
+			animation: tick;
+			animation-duration: 30s;
+			transform-origin: 1px 79px;
+			animation-iteration-count: infinite;
+			animation-timing-function: steps(240);
+		}
+
+		.stopwatch-hand:after{
+			content: "";
+			width: 10px;
+			height: 10px;
+			position: absolute;
+			border: 2px solid white;
+			position: absolute;
+			bottom: -5px;
+			left: -5px;
+			border-radius: 100px;
+			background: #1C44CE;
+		}
+
+		.flashy-play-button{
+			color: #1C44CE;
+			border: 5px solid #1C44CE;
+			position: absolute;
+			left: 0px;
+			right: 0px;
+			top: 220px;
+			width: 70px;
+			height: 70px;
+			margin: auto;
+			background: none;
+			font-size: 30px;
+			border-radius: 100px;
+
+
+		}
+
+		.qr-prompt{
+			color: blue;
+			width: 100%;
+			height: 100%;
+			padding-top: 20px;
+			position: relative;
+		}
+
+		.qr-prompt img{
+			width: 150px;
+		}
+
+
+		.instruct{
+			
+			top: 0px;
+			left: 0px;
+			width: 100%;
+			
+			
+			text-align: left;
+			padding: 0px 80px;
+			box-sizing: border-box;
+			color: black;
+			overflow-y: auto;
+		}
+
+		.instruct h1{
+			font-family: "HeaderFont";
+			padding: 0px;
+			margin:0px;
+			font-weight: normal;
+			font-size: 2.5em;
+			color: rgba(28,68,206);
+			text-align: center;
+		}
+
+		.faux-phone{
+			width: 120px;
+			height: 200px;
+			display: block;
+			margin: auto;
+			border: 5px solid white;
+			position: relative;
+			border-radius: 20px;
+			overflow: hidden;
+			background: #555;
+		}
+
+		.faux-phone:before{
+			content: "";
+			width: 50%;
+			position: absolute;
+			top: 0px;
+			left: 25%;
+			height: 5%;
+			background: white;
+			display: block;
+			border-radius: 0px 0px 10px 10px;
+		}
+
+		.faux-phone:after{
+			content: "";
+			width: 60%;
+			height: 100%;
+			position: absolute;
+			top: 0px;
+			left: 30%;
+			background: white;
+			display: block;
+			opacity: 0.4;
+			transform: skewX(20deg);
+			background: linear-gradient( to top, white, transparent);
+		}
+
+		.card-deck-instruct{
+			position: absolute;
+			top: 30px;
+			left: 10px;
+			right: 10px;
+			bottom: 30px;
+		}
+
+		.card{
+			width: 100%;
+			height: 100%;
+			
+			background: #777;
+			border: 1px solid rgba(255,255,255,0.3);
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			border-radius: 20px;
+
+			
+			background-size: 80%;
+			background-position: center;
+			background-repeat: no-repeat;
+
+
+		}
+
+		.card-happy{
+			background-image: url('./choose-positive.svg');
+		}
+
+		.card-sad{
+			background-image: url('./choose-negative.svg');
+		}
+
+		@keyframes scrollbg{
+			0%{
+				background-position: 0%;
+			}
+			100%{
+				background-position: -38%;
+			}
+		}
+
+		.black-screen{
+			background: url(./blurry-black-bg.jpeg);
+
+			background: url(./chevron-bg-opaque.svg);
+			background-size: cover;
+			animation-name: scrollbg;
+			animation-duration: 5s;
+			animation-iteration-count: infinite;
+			animation-timing-function: linear;
+		}
+
+		.white-screen{
+			background: url(./blurry-white-bg.jpeg);
+			background-size: cover;
+			color: black;
+
+
+			background: url(./chevron-bg.svg);
+			background-color: #f8f8f8;
+			background-size: cover;
+			animation-name: scrollbg;
+			animation-duration: 5s;
+			animation-iteration-count: infinite;
+			animation-timing-function: linear;
+		}
+
+		h1.screen-timer{
+			position: absolute;
+			top: 0px;
+			line-height: 350px;
+			font-size: 5rem;
+			text-align: center;
+			width: 100%;
+		}
+
+		.screen-timer span{
+			width: 2rem;
+			display: inline-block;
+			text-align: center;
+		}
+
+		.screen-trailer h1{
+			opacity: 0;
+			animation: throb;
+			animation-duration: 14s;
+			animation-iteration-count: infinite;
+		}
+
+		.screen-trailer h1:nth-of-type(2){
+			animation-delay: 7s;
+		}
+
+		@keyframes throb{
+			60%{
+				opacity: 0;
+			}
+
+			70%{
+				opacity: 1;
+			}
+
+			90%{
+				opacity: 1;
+			}
+
+			100%{
+				opacity: 0;
+			}
+		}
+
+		
+
+
+		
+
+		.mini-icon{
+			width: 20px;
+			height: 20px;
+			background: black;
+			border-radius: 5px;
+			display: inline-block;
+			vertical-align: middle;
+			margin-right: 5px;
+			background-image: url('./app-icon.png');
+			background-size: cover;
+			background-color: #1C44CE;
+		}
+
+		.app-icon{
+			width: 110px;
+			height: 110px;
+			background: black;
+			border-radius: 10px;
+			display: inline-block;
+			vertical-align: middle;
+			margin-right: 5px;
+			background-image: url('./app-icon.png');
+			background-size: cover;
+			background-color: #1C44CE;
+			overflow: hidden;
+			position: relative;
+		}
+
+		@keyframes shimmer{
+			0%{
+				left:-150%;
+			}
+			50%{
+				left:150%;
+			}
+			100%{
+				left:150%;
+			}
+		}
+
+		.app-icon:after{
+			content: "";
+			width: 100%;
+			height: 150%;
+			top:-25%;
+			left:0px;
+			position: absolute;
+			
+			display: block;
+			animation-name: shimmer;
+			animation-iteration-count: infinite;
+			animation-duration: 4s;
+
+			transform: rotate(-20deg);
+
+			background-image:linear-gradient(to right, transparent, rgba(255,240,220,0.8), transparent);
+		}
+
+		.home-screen h1{
+			font-weight: normal;
+			font-size: 100px;
+			margin-bottom: 0px;
+			padding: 0px;
+			line-height: 100px;
+		}
+
+		.home-screen h2{
+			font-weight: normal;
+			font-size: 20px;
+			margin-top: 20px;
+			padding: 0px;
+			line-height: 20px;
+		}
+
+		.push{
+			margin: 10px;
+			padding: 10px;
+			background: rgba(0,0,0,0.3);
+			border-radius: 10px;
+			text-align: left;
+		}
+
+		.push h1{
+			font-size: 12px;
+			color: gray;
+			margin: 0px;
+			padding: 0px;
+			line-height: 20px;
+		}
+
+		.logo:before{
+			content: "";
+			width: 300px;
+			height: 130px;
+			background-image: url('./aotg-white.png');
+			
+			display: block;
+			background-size: 100%;
+			background-position: center;
+			background-repeat: no-repeat;
+			margin: auto;
+			
+			border-bottom: 2px solid rgba(255,255,255,0.6);
+		}
+
+		.logo{
+			
+			letter-spacing: 0.3em;
+			font-size: 1.8em;
+			font-family: "HeaderFont";
+			font-weight: normal;
+			display: block;
+			text-align: center;
+			padding: 5px;
+
+		}
+
+
+		.logo:after{
+			content: "THE CHALLENGE";
+
+		}
+
+		.logo.black:before{
+			background-image: url('./aotg-black.png');
+			border-bottom-color: black;
+		}
+
+		.screen-faux-dashboard h2{
+			font-weight: normal;
+			color: gray;
+			margin: 0px;
+			padding: 0px;
+			font-size: 2rem;
+		}
+
+		.screen-faux-dashboard h1{
+			font-weight: normal;
+	
+			font-size: 4rem;
+			line-height: 1;
+			font-family: "HeaderFont";
+			text-transform: uppercase;
+			margin: 0px;
+			padding: 0px;
+		}
+
+		.strategy-icon{
+			width: 150px;
+			height: 150px;
+			color: white;
+			background: #1C44CE;
+			margin: auto;
+			border-radius: 20px;
+			background-image: url('./icon/Choose your Thoughts.svg');
+			background-size: 60%;
+			background-position: center 10px;
+			background-repeat: no-repeat;
+			padding-top: 100px;
+			box-sizing: border-box;
+		}
+
+		.strategy-icon h1{
+			font-size: 1.5rem;
+			line-height: 1.3rem;
+		}
+
+		.strategy-icon.mystery{
+			background: gray;
+			padding: 0px;
+			padding-top:10px;
+			line-height: 150px;
+			font-size: 100px;
+			font-family: "HeaderFont";
+		}
+
+		
+
+		.slide-prev-next{
+			position: fixed;
+			height: 30vh;
+			top: 35vh;
+			width: 100px;
+			background: rgba(255,255,255,0.2);
+			border: none;
+		}
+
+		.slide-prev-next:after{
+			content: "";
+			width: 30px;
+			height: 30px;
+			display: inline-block;
+			border-right: 5px solid white;
+			border-top: 5px solid white;
+			transform: rotate(45deg);
+		}
+
+		.slide-prev-next.slide-prev{
+			left: 0px;
+			transform: scaleX(-1);
+		}
+
+
+
+		.slide-prev-next.slide-next{
+			right: 0px;
+		}
+
+		.toggle-nav{
+			position: fixed;
+			right: 10px;
+			bottom: 10px;
+		}
+
+		.toggle-fs{
+			position: fixed;
+			right: 10px;
+			bottom: 40px;
+		}
+
+		.vertically-centered{
+			display: flex;
+			align-items: center;
+			flex-wrap: wrap;
+		}
+
+		.vertically-centered .full-span{
+			flex: 1 0 100%;
+			position: relative;
+			box-sizing: border-box;
+		}
+
+		.svg-timer{
+			fill:none;
+			stroke: #1C44CE;
+			stroke-width:4;
+			stroke-linecap:round;
+			width: 100%;
+			height: 350px;
+			transform: scaleX(-1) rotate(-90deg);
+		}
+
+		.corner{
+			width: 100px;
+			height: 100px;
+			position: absolute;
+			
+		}
+
+		.corner:nth-of-type(1){
+			top: 0px;
+			left: 0px;
+			border-top:2px solid red;
+			border-left:2px solid red;
+		}
+
+		.corner:nth-of-type(2){
+			top: 0px;
+			right: 0px;
+			border-top:2px solid red;
+			border-right:2px solid red;
+		}
+
+		.corner:nth-of-type(3){
+			bottom: 0px;
+			left: 0px;
+			border-bottom:2px solid red;
+			border-left:2px solid red;
+		}
+
+		.corner:nth-of-type(4){
+			bottom: 0px;
+			right: 0px;
+			border-bottom:2px solid red;
+			border-right:2px solid red;
+		}
+
+		.screen-setup h1{
+			font-family: "HeaderFont";
+			font-size: 3rem;
+			line-height: 1;
+			font-weight: normal;
+		}
+
+
+
+	</style>
+	<script type="text/javascript" src='./jquery-3.4.1.min.js'></script>
+	<script type="text/javascript">
+		$(function(){
+
+			function onNav(){
+				var idx = $('.nav button').index(this);
+				toScreen(idx);
+			}
+
+			$('.nav-toggle').click(function(){
+				$('.nav').toggle();
+			})
+
+			$('.slide-next').click(function(){
+				var iScreen = $('.screen').index($sCurrent);
+				toScreen(Math.min($('.screen').length-1,iScreen+1));
+			})
+
+			$('.slide-prev').click(function(){
+				var iScreen = $('.screen').index($sCurrent);
+				toScreen(Math.max(0,iScreen-1));
+			})
+
+			$('.screen').each(function(i){
+				var $b = $('<button>'+(i+1)+'</button>').appendTo('.nav').click(onNav);
+			})
+
+			var isWorkshopMode = (window.location.href.indexOf('student')>-1);
+
+			if(isWorkshopMode){
+				toScreen(2);
+			} else {
+				toScreen(0);
+			}
+			
+
+			var MESS = 9;
+			
+			var SCATTER = [
+				{at:0.5,x:0.25,y:0.2,scale:1},
+				{at:0.65,x:0.75,y:0.8,scale:0.8},
+				{at:0.8,x:0.75,y:0.1,scale:1.1},
+
+				{at:0.85,x:0.25,y:0.9,scale:1},
+				{at:0.88,x:0.4,y:0.05,scale:1.2},
+				{at:0.90,x:0.6,y:0.95,scale:1.3},
+
+				{at:0.92,x:0.7,y:0.3,scale:1.6},
+				{at:0.94,x:0.3,y:0.7,scale:1.8},
+				{at:0.95,x:0.5,y:0.5,scale:2.2},
+	
+			]
+			//var SCATTER = {cx:200,cy:350,rx:200,ry:350}
+			var iMoment = 0;
+			var iReflection = 0;
+
+			var moments = [
+				/*{start:32,end:40,options:['DISASTER!','./sticker/explosion.png','$^#&%!']},
+				{start:60,end:70,options:['SO EMBARASSING!','MASSIVE FAIL!','./sticker/facepalm.png']},
+				{start:90,end:100,options:['100% LOSER','DISAPPOINTED','SCREW-UP']},*/
+
+				{start:32,end:40,options:['THIS SUCKS',"SCREW-UP 😩",'$^#&%!']},
+				{start:60,end:70,options:['100% LOSER','😑 NUMPTY!',"I'LL NEVER LIVE THIS DOWN"]},
+			]
+
+
+			
+			var videoLive;
+			var audioLive;
+			var iVideoTicker;
+			var iTimerTick;
+			var timerStart;
+			var timerDuration;
+			var $sCurrent;
+
+			function tickSticker(){
+				if(moments[iMoment] && !moments[iMoment].isShown && videoLive.currentTime > moments[iMoment].start){
+					moments[iMoment].isShown = true;
+
+
+					$('.stickers').empty();
+
+
+					for(var s in moments[iMoment].options){
+						var $s = $('<div class="sticker n'+s+'">').appendTo('.stickers').click(onSticker);
+						$s.addClass('text').html(moments[iMoment].options[s]);
+						$s.css({'animation-delay':0.1*s});
+
+						$("<br>").appendTo('.stickers');
+					}
+					$('.overlay').addClass('active');
+				}
+
+				if(moments[iMoment] && videoLive.currentTime > moments[iMoment].end){
+					videoLive.playbackRate = 0;
+				}
+
+				if(moments[iMoment] && videoLive.currentTime > moments[iMoment].start){
+
+					var p = (videoLive.currentTime-moments[iMoment].start)/(moments[iMoment].end-moments[iMoment].start);
+					$('.timer-ticker').width(p*100+'%');
+				}
+			}
+
+
+			var STICKERS_START_AT = 25;
+			var STICKERS_END_AT = 42;
+
+			function tickReflection(){
+
+				if(SCATTER[iReflection] && videoLive.currentTime > SCATTER[iReflection].at*videoLive.duration){
+
+					var $overlay = $('.reflection-overlay');
+
+					while(stickerPack.length < moments.length){
+						var $s =  $('<div class="sticker still text n'+stickerPack.length+'">').text(moments[stickerPack.length].options[stickerPack.length]);
+						stickerPack.push($s);
+					}
+					
+					var progress = iReflection/MESS;
+					var drain = 1 - progress*progress*progress;
+
+
+					var iRandom = Math.floor(Math.random()*stickerPack.length);
+					iRandom = iReflection%stickerPack.length;
+					var $s = stickerPack[iRandom].clone().appendTo($overlay);
+
+					//var scale = 0.7 + iReflection * 0.1 + Math.random()*0.2;
+
+
+					//if(iReflection == SCATTER.length-1) scale = 2.2;
+					scale = SCATTER[iReflection].scale;
+
+					$s.css({margin:0,transform:'scale('+scale+') rotate('+(-20+Math.random()*40)+'deg)'});
+					$s.data({scale:scale});
+					//$s.css({transform:'scale(1)',margin:0});
+
+				
+					var r = (iReflection*137.5)*(Math.PI/180);
+
+					var x = SCATTER[iReflection].x*400 - $s.outerWidth()/2;
+					var y = SCATTER[iReflection].y*700 - $s.outerHeight()/2;
+					/*var x = SCATTER.cx + Math.cos(r)*SCATTER.rx*drain;
+					var y = SCATTER.cy + Math.sin(r)*SCATTER.ry*drain;
+
+
+					x = Math.max(0,Math.min(400-200,x));
+					y = Math.max(0,Math.min(700-100,y));*/
+
+					$s.css({position:'absolute',left:x,top:y,margin:0});
+					
+					
+					iReflection++;
+				}
+			}
+
+			function forceSelection(){
+				$('.sticker').eq(0).trigger('click');
+			}
+
+			/*function onStopSticker(e){
+
+				var o = $(this).offset();
+
+				$('.sticker-party .sticker').each(function(){
+					var o2 = $(this).offset();
+					var dx = o2.left-o.left;
+					var dy = o2.top-o.top;
+					var d = Math.sqrt(dx*dx+dy*dy);
+
+					if(d == 0){
+						dx = dy = 50;
+					}
+
+					if(d<150) $(this).addClass('dying').animate({top:'+='+dy*5,left:'+='+dx*5},500,function(){
+						
+						$(this).css({opacity:0});
+						if($('.sticker:not(.dying)').length == 0){
+							$('.swipe-prompt').hide();
+							$('.remember').show();
+						}
+					});
+				})
+			}*/
+			
+			var stickerPack = [];
+
+			function onSticker(e){
+
+				var $screen = $(e.target).closest('.screen');
+				var $party = $screen.find('.stickers');
+
+				$party.empty();
+				$(e.target).addClass('still').appendTo($party).css({transform:'scale(2) rotate(-5deg)'}).delay(2000).animate({opacity:0});
+				$screen.find('.overlay').removeClass('active');
+				iMoment++;
+
+				stickerPack.push( $(e.target).clone() );
+
+				videoLive.playbackRate = 1;
+			}
+
+			$('video').on('ended',onVideoEnd);
+
+			function onVideoEnd(){
+				if($(videoLive).closest('.screen-stop-swipe').length){
+					$('.stop').show();
+
+					$('.stop-banner h2 span').each(function(n){
+						$(this).css({opacity:0}).delay(1000 + n*50).animate({opacity:1},10);
+					})
+					
+				}
+				else{
+					nextScreen(this);
+				} 
+			}
+
+			// split stop message up into bits
+			var t = '<span>'+$('.stop h2').text().split('').join('</span><span>')+'</span>';
+			$('.stop h2').html(t);
+
+
+			$('.stop').click(function(){
+				$('.stop').hide();
+				$('.swipe-prompt').show();
+
+				var iTickStick = setInterval(function(){
+
+					$('.dead:not(.gone)').each(function(){
+						var d = $(this).data();
+						var p = $(this).position();
+						d.dy += 1;
+
+						d.x += d.dx;
+						d.y += d.dy;
+
+						$(this).css({left:d.x,top:d.y});
+
+						if(p.top>900) $(this).addClass('gone');
+					});
+
+
+					if($('.screen-stop-swipe .sticker').length == $('.gone').length){
+						clearInterval(iTickStick);
+						nextScreen($('.stop'));
+					}
+
+				},20);
+			});
+
+			var isMouseDown = false;
+
+			
+
+			$('.swipe-prompt').on('mousedown',function(e){
+				$(this).addClass('swiping');
+				isMouseDown = true;
+
+				var o = $('.screen').offset();
+
+				wasx = e.pageX - o.left;
+				wasy = e.pageY - o.top;
+			})
+
+			$(window).on('mouseup',function(){
+				isMouseDown = false;
+			})
+
+			var wasx = 0;
+			var wasy = 0;
+
+			$('.swipe-prompt').on('mousemove',function(e){
+				if(isMouseDown){
+
+					var o = $('.screen-container').offset();
+
+					var x = e.pageX - o.left;
+					var y = e.pageY - o.top;
+
+					$sCurrent.find('.sticker:not(.dead)').each(function(n){
+						var p = $(this).position();
+			
+						var px = p.left + $(this).outerWidth()/2;
+						var py = p.top + $(this).outerHeight()/2;
+						
+						var dx = px - x;
+						var dy = py - y;
+
+						var scale = $(this).data('scale');
+
+						if(Math.abs(dx)<$(this).outerWidth()/2*scale && Math.abs(dy)<$(this).outerHeight()/2*scale){
+
+							px = parseInt( $(this).css('left'));
+							py = parseInt( $(this).css('top'));
+
+							//calculate the speed of the sticker flick
+							var sx = Math.min( 100, Math.max( x-wasx, -100 ));
+							var sy = Math.min( 100, Math.max( y-wasy, -100 ));
+
+
+							$(this).addClass('dead').data({x:px,y:py,dx:sx,dy:sy});
+						}
+					})
+
+					wasx = x;
+					wasy = y;
+
+
+				}
+			});
+
+			window.doFinishActivity = function(){
+				nextScreen($('iframe'));
+			}
+
+			$('.toggle-nav').click(function(){
+				$('.nav').toggle();
+			})
+			
+			$('.click-to-hide').click(function(){
+				$(this).hide();
+			})
+
+			$('.click-to-notify').click(function(){
+				$('.popup').show().css({transform:'scale(1)'})
+			})
+
+			$('.click-to-next-screen').click(nextScreen);
+
+			$('.click-to-full-screen').click(function(){
+
+				$('body')[0].requestFullscreen();
+			})
+
+			function nextScreen(scope){
+
+				if(scope.target) scope = scope.target;
+
+				var iScreen = $('.screen').index( $(scope).closest('.screen') ) + 1;
+
+				if( iScreen < $('.screen').length ) toScreen(iScreen);
+			}
+
+			function toScreen(iScreen){
+
+				clearInterval(iVideoTicker);
+				clearInterval(iTimerTick);
+
+				if(videoLive) videoLive.pause();
+				if(audioLive){
+					$(audioLive).animate({volume:0},1000,function(){
+						audioLive.pause();
+					});
+				}
+
+
+				$('.nav button').removeClass('active').eq(iScreen).addClass('active')
+
+				var $s = $('.screen').hide().eq(iScreen).show().css({opacity:0}).animate({opacity:1},1000);
+
+				$sCurrent = $s;
+
+
+				if($s.find('audio').length){
+					audioLive = $s.find('audio')[0];
+					audioLive.play();
+				}
+
+
+				if($s.hasClass('screen-video')){
+					videoLive = $s.find('video')[0];
+					videoLive.play();
+				}
+
+				if($s.hasClass('screen-stickers')){
+					iVideoTicker = setInterval(tickSticker,100);
+				}
+
+				if($s.hasClass('screen-stop-swipe')){
+					$s.find('.stop').hide();
+					iVideoTicker = setInterval(tickReflection,100);
+					if(isWorkshopMode) videoLive.currentTime = videoLive.duration-10;
+				}
+
+				if($s.hasClass('screen-strategy')){
+					$('iframe')[0].contentWindow.postMessage('hello', '*');
+				}
+
+				if($s.hasClass('screen-faux-dashboard')){
+					
+					var $i = $s.find('.strategy-icon').css({opacity:0}).delay(500).animate({opacity:1},300);
+
+					var slam = {s:3};
+
+					$(slam).delay(500).animate({s:1},{easing:'linear',duration:300,step:function(a){
+						$i.css({transform:'scale('+a+')'})
+					}})
+
+					$('.screen-container').delay(800)
+						.animate({left:-5,top:-5},10)
+						.animate({left:10,top:5},10)
+						.animate({left:-3,top:-20},10)
+						.animate({left:0,top:0},10);
+
+					$('.dash-scroller')
+					.delay(2500).animate({left:'-100%'})
+					.delay(1000).animate({left:'-200%'})
+					.animate({left:'-500%'});
+					
+				}
+
+				if($s.is('.phone-down')){
+					$s.find('.next').css({opacity:0}).delay(8000).animate({opacity:1});
+				}
+
+				if($s.find('.card-deck-instruct').length){
+
+					
+
+					$s.find('.card-deck-instruct').hide();
+				}
+
+				if($s.find('.screen-timer').length){
+					timerDuration = $s.find('.screen-timer').data('time') * 1000;
+					timerStart = new Date().getTime();
+					iTimerTick = setInterval(onTimerTick,60);
+					$s.find('.faux-phone').css({top:'50vh',left:'50vw'});
+				}
+
+				if($s.find('.flashy-play-button').length){
+					$s.find('.flashy-play-button').css({opacity:0}).delay(3500)
+					.animate({opacity:1}).animate({opacity:0})
+					.animate({opacity:1}).animate({opacity:0})
+					.animate({opacity:1}).animate({opacity:0})
+					.animate({opacity:1}).animate({opacity:0})
+					.animate({opacity:1});
+				}
+				
+			}
+
+			var COUNTDOWN_BUFFER = 4;
+			var timerStartProper = false;
+
+			function onTimerTick(){
+
+				var $timer = $sCurrent.find('.screen-timer');
+				var timerNow = new Date().getTime();
+				var timerElapsed = timerNow-timerStart;
+
+				var timerRemainingTotal = timerDuration-timerElapsed + COUNTDOWN_BUFFER*1000;
+				
+				var timerRemaining = timerRemainingTotal;
+				if(timerRemaining>timerDuration) timerRemaining = timerDuration;
+
+				if(timerRemainingTotal>timerRemaining){
+					var gap = timerRemainingTotal-timerRemaining;
+					if(gap>4000) $timer.text('');
+					else if(gap>1000) $timer.text(Math.ceil(gap/1000)-1);
+					else $timer.text("GO!");
+
+					var cmds = 'M 100 50 A 50 50 0 1 1 100 49.999';
+					$('.svg-timer path').attr('d',cmds);
+
+
+				} else {
+
+					if(timerRemaining < 0) timerRemaining = 0;
+
+
+					var seconds = Math.floor(timerRemaining/1000);
+					var jiffy = Math.floor(timerRemaining/10)%100;
+
+					if(seconds<10) seconds = '0'+seconds;
+					if(jiffy<10) jiffy = '0'+jiffy;
+
+					var str = seconds+':'+jiffy;
+					str = '<span>' + str.split('').join('</span><span>') + '</span>';
+					$timer.html(str);
+
+					//A rx ry x-axis-rotation large-arc-flag sweep-flag x y
+					var p = (timerElapsed-COUNTDOWN_BUFFER*1000)/timerDuration;
+					if(p<0) p = 0;
+
+					p=1-p;
+
+					var longWayAround = p>0.5?1:0;
+					var r = p * Math.PI*2;
+					var x = 50+Math.cos(r)*50;
+					var y = 50+Math.sin(r)*50;
+					var cmds = 'M 100 50 A 50 50 0 '+longWayAround+' 1 '+x+' '+y;
+					$('.svg-timer path').attr('d',cmds);
+				}
+
+			}
+		})
+	</script>
+</head>
+<body>
+	
+	<div class="screen-container">
+		<div class="screen screen-setup black-screen click-to-next-screen click-to-full-screen vertically-centered">
+			<div class="full-span">
+				<div class="logo"></div><br><br><br><br>
+				<h1>CLICK TO GO FULL SCREEN</h1>
+		</div>
+		</div>
+		<div class="screen screen-setup black-screen click-to-next-screen vertically-centered">
+			<div class="corner"></div>
+			<div class="corner"></div>
+			<div class="corner"></div>
+			<div class="corner"></div>
+			<div class="full-span">
+				<div class="logo"></div><br><br><br><br>
+				<h1>SET UP YOUR PROJECTOR TO<br>FIT THE RED CROSSHAIRS<hr>THEN CLICK TO START</h1>
+				
+			</div>
+
+		</div>
+		<div class="screen screen-trailer is-for-facilitator click-to-next-screen">
+			<div class="static" style='background-image:url(./trailer.gif)'></div>
+			<div class="static black-screen" style='opacity: 0.5'></div>
+			<div class="static" style=''>
+				<br><br>
+				<div class="logo"></div>
+				<br><br><br>
+				<h1>WHAT'S BEEN YOUR<br>GREATEST CHALLENGE?</h1>
+				<br>
+				<h1>WILL YOU<br>BOUNCE BACK?</h1>
+				
+			</div>
+			
+			<audio loop style='position: absolute;top:0px;left: 0px;'>
+				<source src="./145944550-quiz-game-show-timer-long-vers.m4a" type="">
+			</audio>
+		</div>
+		<div class="screen is-for-facilitator black-screen phone-down click-to-next-screen">
+			<br><br>
+				<div class="logo"></div>
+				<br>
+			<br><br><br>
+
+				<h1 style="font-size: 2rem;">DOWNLOAD THE APP</h1><br>
+			<img width=150 src='./qr-code.png' style="vertical-align: middle;"><br><br>
+			aotg.app.com	
+		</div>
+		
+
+		<div class="screen screen-video is-for-facilitator">
+			<video preload controls width="100%" height="100%;">
+				<source src="./video/prologue.mp4" type="">
+			</video>
+		</div>
+		<div class="screen is-for-facilitator phone-down black-screen vertically-centered click-to-next-screen">
+
+			<div class="full-span"><h1>WHAT'S BEEN<br>ONE OF YOUR MOST<br>CHALLENGING MOMENTS?</h1><h2 style="font-weight: normal;">...ON or OFF the field?</h2></div>
+		
+		</div>
+		<div class='screen screen-video screen-stickers is-for-facilitator'>
+			<video preload controls width="100%" height="100%;">
+				<source src="./video/ep-1.mp4" type="">
+			</video>
+			<div class='overlay vertically-centered'>
+				<h1>What's he thinking?</h1>
+				<div class='stickers full-span'></div>
+				<div class='timer'>
+					<div class='timer-ticker'></div>
+				</div>
+			</div>
+			
+			
+		</div>
+		
+		<div class='screen is-for-facilitator screen-video screen-stop-swipe'>
+			<video preload controls width="100%" height="100%;">
+				<source src="./video/ep-1-reflection.mp4" type="">
+			</video>
+			<div class='reflection-overlay'></div>
+			<div class='swipe-prompt'>
+				<div class="finger"></div>
+			</div>
+			<div class='stop vertically-centered'>
+				<div class='stop-banner full-span'>
+					<h1>STOP</h1>
+					<h2>Don't get caught up in negative thoughts.</h2>
+				</div>
+			</div>
+		</div>
+		<div class='screen is-for-facilitator white-screen click-to-next-screen vertically-centered'>
+
+			
+			<div class="strategy-banner full-span">
+				<img src="./icon/Choose your Thoughts.svg" width="120" style='width:100;display:block;margin:auto;'>
+				<br>
+				<h1 style='font-size: 2.5rem;'>CHOOSE YOUR THOUGHTS</h1>	
+			</div>
+				
+
+
+		</div>
+		<div class='screen is-for-facilitator white-screen click-to-next-screen vertically-centered'>
+			<div class="instruct">
+				
+				<img src="./icon/C1-thumb.png" width="120" style='width:120;display:block;margin:auto;'><br>
+				<h1>POSITIVE THOUGHTS</h1>
+					<p><b>Positive thoughts</b> are optimistic and motivational.</p>
+					<li>It will be fine.</li>
+					<li>No problemo.</li>
+					<li>You've got this.</li>
+					<li>You can do it.</li>
+			</div>
+
+		</div>
+		<div class='screen is-for-facilitator white-screen click-to-next-screen vertically-centered'>
+			<div class="instruct">
+				<img src="./icon/C1-lightbulb.png" width="120" style='width:120;display:block;margin:auto;'><br>
+				<h1>INSTRUCTIVE THOUGHTS</h1>
+				
+					<p><b>Instructive thoughts</b> are actionable.</p>
+					<li>I just need to keep training.</li>
+					<li>I need to work harder.</li>
+					<li>I just need to try again.</li>
+					<p><b>Instructive thoughts</b> focus on what you should do, not what you shouldn't do.</p>
+					<p style="text-align: center;"><i>"I should work on my catching."</i><br>
+					instead of<br><i>"Stop dropping the ball."</i></p>
+
+			</div>
+		</div>
+		<div class='screen phone-down is-for-facilitator black-screen vertically-centered'>
+			<div class="full-span">
+				<h1>PHONE'S UP</h1>
+				<br>
+				<img src="./icon/Phones-up.svg" width="200">
+				<br><br>
+				<h1>GET READY...</h1>
+			</div>
+		</div>
+		<div class='screen phone-down is-for-facilitator black-screen screen-3-2-1 vertically-centered'>
+			<div class="full-span">
+				<svg viewBox="-5 -5 110 110" class='svg-timer' width=100 height=100>
+					<circle cx="50" cy="50" r="50" stroke="#999"/>
+					<path d=""/>
+				</svg>
+				<h1 class="screen-timer" data-time='60'></h1>
+			</div>
+			<audio loop style='position: absolute;top:0px;left: 0px;'>
+				<source src="./145944550-quiz-game-show-timer-long-vers.m4a" type="">
+			</audio>
+		</div>
+		
+		<div class='screen is-for-facilitator white-screen'>
+			<div class="remember">
+			<div class='remember-header'>
+				<h2>REMEMBER</h2>
+				<img src="./icon/Choose your Thoughts.svg" width="120" style='width:100;display:block;margin:auto;'>
+				<h1>Choose your Thoughts</h1>
+			</div>
+			<div class="instruct">
+				<img src="./choose-positive.svg" width="120" style='width:120;display:block;margin:auto;'>
+						<p>Choose <b>Positive thoughts</b> that are optimistic and motivational.</p>
+						<li>It will be fine.</li>
+						<li>No problemo.</li>
+						<li>You've got this.</li>
+						<li>You can do it.</li>
+					
+				</div>
+			</div>
+		</div>
+		<div class='screen is-for-facilitator white-screen'>
+			<div class="remember">
+			<div class='remember-header'>
+				<h2>REMEMBER</h2>
+				<img src="./icon/Choose your Thoughts.svg" width="120" style='width:100;display:block;margin:auto;'>
+				<h1>Choose your Thoughts</h1>
+			</div>
+			<div class="instruct">
+					<img src="./choose-instructional.svg" width="120" style='width:120;display:block;margin:auto;'>
+						<p>Choose <b>instructive thoughts</b> that are actionable and focus on what you should do.</p>
+						<li>I need to keep training.</li>
+						<li>I need to work harder.</li>
+						<li>I should work on my catching.</li>
+					
+				</div>
+				
+			</div>
+		</div>
+		<div class="screen screen-video is-for-facilitator">
+			<video preload controls width="100%" height="100%;">
+				<source src="./video/scene-2.mp4" type="">
+			</video>
+		</div>
+		
+		<div class="screen screen-video is-for-facilitator">
+			<video preload controls width="100%" height="100%;">
+				<source src="./video/reflection-2.mp4" type="">
+			</video>
+		</div>
+		
+		<div class="screen screen-faux-dashboard white-screen">
+			<div class="dash-scroller">
+				<div class="dash">
+					<br><br><br><br>
+					<h2>Chapter 1</h2>
+					<h1>Showstopper</h1><br><br><br><br><br><br><br><br><br><br>
+					<div class="strategy-icon">
+						<h1>CHOOSE YOUR THOUGHTS</h1>
+					</div>
+				</div><div class="dash">
+					<br><br><br><br>
+					<h2>Chapter 2</h2>
+					<h1>Scout's Game</h1><br><br><br><br><br><br><br><br><br><br>
+					<div class="strategy-icon mystery">
+						?
+					</div>
+				</div><div class="dash">
+					<br><br><br><br>
+					<h2>Chapter 3</h2>
+					<h1>Scout's Game</h1><br><br><br><br><br><br><br><br><br><br>
+					<div class="strategy-icon mystery">
+						?
+					</div>
+				</div><div class="dash">
+					<br><br><br><br>
+					<h2>Chapter 4</h2>
+					<h1>Scout's Game</h1><br><br><br><br><br><br><br><br><br><br>
+					<div class="strategy-icon mystery">
+						?
+					</div>
+				</div><div class="dash">
+					<br><br><br><br>
+					<h2>Chapter 5</h2>
+					<h1>Scout's Game</h1><br><br><br><br><br><br><br><br><br><br>
+					<div class="strategy-icon mystery">
+						?
+					</div>
+				</div><div class="dash">
+					<br><br>
+					
+				<div class="logo black"></div>
+					<br><br><br><br>
+					<div class="cta-app-icon">
+						<div class="app-icon"></div>
+						<h2 style="font-size: 1.2rem;color:black;">The Challenge</h2>
+					</div>
+					<br><br><br><br>
+					<h1>Continue the journey...</h1>
+				</div>
+			</div>
+		</div>
+		<!--div class="screen is-for-facilitator black-screen">
+			<br><br>
+				
+				<div class="logo"></div>
+
+			<br><br><br><br><br><br>
+			<h1>Continue the journey...</h1>
+			<div class="cta-app-icon">
+				<div class="app-icon"></div>
+				<h2 style="font-size: 1.2rem;">The Challenge</h2>
+			</div>
+		</div-->
+		
+	</div>
+	
+	<br><br>
+	<div class="nav">
+		
+	</div>
+	
+	<button class="toggle-nav">Toggle Nav</button>
+	<button class="slide-prev-next slide-prev"></button>
+	<button class="slide-prev-next slide-next"></button>
+
+</body>
+</html>
