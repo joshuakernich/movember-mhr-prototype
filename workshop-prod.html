@@ -1631,6 +1631,9 @@
 					var x = 50+Math.cos(r)*50;
 					var y = 50+Math.sin(r)*50;
 					var cmds = 'M 100 50 A 50 50 0 '+longWayAround+' 1 '+x+' '+y;
+
+					if(timerRemaining==0) cmds = '';
+
 					$('.svg-timer path').attr('d',cmds);
 				}
 
