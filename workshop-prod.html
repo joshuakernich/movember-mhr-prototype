@@ -1400,6 +1400,7 @@
 			
 
 			$('.swipe-prompt').on('mousedown touchstart',function(e){
+				e.preventDefault();
 				$(this).addClass('swiping');
 				isMouseDown = true;
 
@@ -1410,6 +1411,7 @@
 			})
 
 			$(window).on('mouseup touchend',function(){
+				e.preventDefault();
 				isMouseDown = false;
 			})
 
@@ -1417,6 +1419,7 @@
 			var wasy = 0;
 
 			$('.swipe-prompt').on('mousemove touchmove',function(e){
+				e.preventDefault();
 				if(isMouseDown){
 
 					var o = $('.screen-container').offset();
