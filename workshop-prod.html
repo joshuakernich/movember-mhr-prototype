@@ -80,7 +80,8 @@
 		}
 
 		.screen-trailer h1{
-			font-size: 2.5rem;
+			font-size: 3rem;
+			line-height: 1;
 			color: white;
 			font-family: "HeaderFont";
 			text-transform: uppercase;
@@ -357,6 +358,8 @@
 			color: white;
 			
 		}
+
+
 
 		.primer h1, .phone-down h1{
 			font-family: "HeaderFont";
@@ -809,8 +812,8 @@
 
 		.black-screen{
 			background: url(./blurry-black-bg.jpeg);
-
-			background: url(./chevron-bg-opaque.svg);
+			background-color: black;
+			background-image: url(./chevron-bg-opaque.svg);
 			background-size: cover;
 			animation-name: scrollbg;
 			animation-duration: 5s;
@@ -1707,7 +1710,11 @@
 
 		</div>
 		<div class="screen screen-trailer is-for-facilitator click-to-next-screen">
-			<div class="static" style='background-image:url(./trailer.gif)'></div>
+			<div class="static">
+				<video playsinline autoplay preload muted loop width="100%" height="100%;">
+					<source src="./video/prologue.mp4" type="">
+				</video>
+			</div>
 			<div class="static black-screen" style='opacity: 0.5'></div>
 			<div class="static" style=''>
 				<br><br>
