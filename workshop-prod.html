@@ -1160,6 +1160,36 @@
 		}
 
 
+		.qr-code{
+			width: 250px;
+			height: 250px;
+			background-image: url('./qr-demo.png');
+			background-size: cover;
+			border-radius:10px;
+			border:4px solid white;
+
+			margin: auto;
+			position: relative;
+		}
+
+		.qr-code:after{
+			content: "";
+			width: 65px;
+			height: 65px;
+			background: blue;
+			position: absolute;
+			top: 7px;
+			left: 5px;
+			right: 0px;
+			bottom: 0px;
+			margin: auto;
+			border-radius: 10px;
+
+			background-image: url('./app-icon.png');
+			background-size: cover;
+			background-color: #1C44CE;
+		}
+
 
 	</style>
 	<script type="text/javascript" src='./jquery-3.4.1.min.js'></script>
@@ -1699,9 +1729,9 @@
 				<br>
 			<br><br><br>
 
-				<h1 style="font-size: 2rem;">DOWNLOAD THE APP</h1><br>
-			<img width=150 src='./qr-code.png' style="vertical-align: middle;"><br><br>
-			aotg.app.com	
+				<h1 style="font-size: 3rem;">DOWNLOAD THE APP</h1><br>
+			<div class="qr-code"></div> 
+			<br>aheadofthegame.org.au/challenge	
 		</div>
 		
 
