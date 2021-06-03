@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<meta name="mobile-web-app-capable" content="yes">
 <html>
 <head>
 	<title>Workshop Demo</title>
@@ -1418,7 +1419,7 @@
 				wasy = e.pageY - o.top;
 			})
 
-			$(window).on('mouseup touchend',function(){
+			$(window).on('mouseup touchend',function(e){
 				e.preventDefault();
 				isMouseDown = false;
 			})
@@ -1505,8 +1506,9 @@
 				if(videoLive) videoLive.pause();
 				if(audioLive){
 					$(audioLive).animate({volume:0},1000,function(){
-						audioLive.pause();
+						this.pause();
 					});
+					audioLive = null;
 				}
 
 
@@ -1519,6 +1521,9 @@
 
 				if($s.find('audio').length){
 					audioLive = $s.find('audio')[0];
+					$(audioLive).stop();
+					audioLive.currentTime = 0;
+					audioLive.volume = 1;
 					audioLive.play();
 				}
 
