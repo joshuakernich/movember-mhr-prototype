@@ -1399,7 +1399,7 @@
 
 			
 
-			$('.swipe-prompt').on('mousedown',function(e){
+			$('.swipe-prompt').on('mousedown touchstart',function(e){
 				$(this).addClass('swiping');
 				isMouseDown = true;
 
@@ -1409,14 +1409,14 @@
 				wasy = e.pageY - o.top;
 			})
 
-			$(window).on('mouseup',function(){
+			$(window).on('mouseup touchend',function(){
 				isMouseDown = false;
 			})
 
 			var wasx = 0;
 			var wasy = 0;
 
-			$('.swipe-prompt').on('mousemove',function(e){
+			$('.swipe-prompt').on('mousemove touchmove',function(e){
 				if(isMouseDown){
 
 					var o = $('.screen-container').offset();
@@ -1691,7 +1691,7 @@
 		
 
 		<div class="screen screen-video is-for-facilitator">
-			<video playsinline preload controls width="100%" height="100%;">
+			<video playsinline preload width="100%" height="100%;">
 				<source src="./video/prologue.mp4" type="">
 			</video>
 		</div>
@@ -1701,7 +1701,7 @@
 		
 		</div>
 		<div class='screen screen-video screen-stickers is-for-facilitator'>
-			<video playsinline preload controls width="100%" height="100%;">
+			<video playsinline preload width="100%" height="100%;">
 				<source src="./video/ep-1.mp4" type="">
 			</video>
 			<div class='overlay vertically-centered'>
@@ -1716,7 +1716,7 @@
 		</div>
 		
 		<div class='screen is-for-facilitator screen-video screen-stop-swipe'>
-			<video playsinline preload controls width="100%" height="100%;">
+			<video playsinline preload width="100%" height="100%;">
 				<source src="./video/ep-1-reflection.mp4" type="">
 			</video>
 			<div class='reflection-overlay'></div>
@@ -1856,7 +1856,7 @@
 			</div>
 		</div>
 		<div class="screen screen-video is-for-facilitator">
-			<video playsinline preload controls width="100%" height="100%;">
+			<video playsinline preload width="100%" height="100%;">
 				<source src="./video/ep-1-outro.mp4" type="">
 			</video>
 		</div>
