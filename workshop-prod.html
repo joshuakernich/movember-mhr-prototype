@@ -96,12 +96,13 @@
 		}	
 
 		body{
-			background: #333;
+			background: black;
 			font-family: "BodyFont";
 			text-align: center;
 			margin: 0px;
 			padding: 0px;
 			overflow: hidden;
+
 		}
 
 		@keyframes jiggle{
@@ -470,7 +471,7 @@
 
 		
 
-		.nav button{
+		.train-stations button{
 			display: inline-block;
 			
 			position: relative;
@@ -496,7 +497,7 @@
 
 		}
 
-		.nav button:after{
+		.train-stations button:after{
 			content: "";
 			width: 5px;
 			height: 5px;
@@ -709,6 +710,7 @@
 			box-sizing: border-box;
 			color: black;
 			overflow-y: auto;
+			font-size: 1.1rem;
 		}
 
 		.instruct h1{
@@ -716,7 +718,7 @@
 			padding: 0px;
 			margin:0px;
 			font-weight: normal;
-			font-size: 2.5em;
+			font-size: 2.5rem;
 			color: rgba(28,68,206);
 			text-align: center;
 		}
@@ -962,42 +964,23 @@
 			line-height: 20px;
 		}
 
-		.logo:before{
-			content: "";
-			width: 300px;
-			height: 130px;
-			background-image: url('./aotg-white.png');
+		.logo{
+			
+			width: 350px;
+			height: 200px;
+			background-image: url('./aotg-white.svg');
 			
 			display: block;
 			background-size: 100%;
 			background-position: center;
 			background-repeat: no-repeat;
 			margin: auto;
-			
-			border-bottom: 2px solid rgba(255,255,255,0.6);
 		}
 
-		.logo{
-			
-			letter-spacing: 0.3em;
-			font-size: 1.8em;
-			font-family: "HeaderFont";
-			font-weight: normal;
-			display: block;
-			text-align: center;
-			padding: 5px;
+		
 
-		}
-
-
-		.logo:after{
-			content: "THE CHALLENGE";
-
-		}
-
-		.logo.black:before{
-			background-image: url('./aotg-black.png');
-			border-bottom-color: black;
+		.logo.black{
+			background-image: url('./aotg-black.svg');
 		}
 
 		.screen-faux-dashboard h2{
@@ -1048,26 +1031,44 @@
 			font-family: "HeaderFont";
 		}
 
+		.train-stations{
+			display: inline-block;
+		}
 		
 
 		.slide-prev-next{
-			position: fixed;
+			/*position: fixed;
 			height: 30vh;
 			top: 35vh;
 			width: 100px;
 			background: rgba(255,255,255,0.2);
+			border: none;*/
+
 			border: none;
+			display: inline-block;
+			background: none;
+			width: 60px;
+			height: 30px;
+			cursor: pointer;
+
+			line-height: 30px;
+			opacity: 0.3;
+
 		}
 
 		.slide-prev-next:after{
 			content: "";
-			width: 30px;
-			height: 30px;
+			width: 10px;
+			height: 10px;
 			display: inline-block;
-			border-right: 5px solid white;
-			border-top: 5px solid white;
+			border-right: 2px solid white;
+			border-top: 2px solid white;
 			transform: rotate(45deg);
+			position: relative;
+			top: 3px;
+			left: -2px;
 		}
+
 
 		.slide-prev-next.slide-prev{
 			left: 0px;
@@ -1154,6 +1155,7 @@
 
 	</style>
 	<script type="text/javascript" src='./jquery-3.4.1.min.js'></script>
+	<script type="text/javascript" src='./easing.js'></script>
 	<script type="text/javascript">
 		$(function(){
 
@@ -1163,14 +1165,14 @@
 				var isHeight = $(window).innerHeight();
 				if(isHeight != wasHeight){
 					wasHeight = isHeight;
-					$('.screen-container').css({transform:'scale('+isHeight/800+')'})
+					$('.screen-container').css({transform:'scale('+(isHeight-30)/800+')'})
 				}
 			}
 
 			setInterval(resize,1000);
 
 			function onNav(){
-				var idx = $('.nav button').index(this);
+				var idx = $('.train-stations button').index(this);
 				toScreen(idx);
 			}
 
@@ -1189,7 +1191,7 @@
 			})
 
 			$('.screen').each(function(i){
-				var $b = $('<button></button>').appendTo('.nav').click(onNav);
+				var $b = $('<button></button>').appendTo('.train-stations').click(onNav);
 			})
 
 			var isWorkshopMode = (window.location.href.indexOf('student')>-1);
@@ -1497,7 +1499,7 @@
 				}
 
 
-				$('.nav button').removeClass('active').eq(iScreen).addClass('active')
+				$('.train-stations button').removeClass('active').eq(iScreen).addClass('active')
 
 				var $s = $('.screen').hide().eq(iScreen).show().css({opacity:0}).animate({opacity:1},1000);
 
@@ -1545,10 +1547,7 @@
 						.animate({left:-3,top:-20},10)
 						.animate({left:0,top:0},10);
 
-					$('.dash-scroller')
-					.delay(2500).animate({left:'-100%'})
-					.delay(1000).animate({left:'-200%'})
-					.animate({left:'-500%'});
+					$('.dash-scroller').css({left:0}).delay(2500).animate({left:'-500%'},{duration:4000,easing:"easeInQuart"});
 					
 				}
 
@@ -1773,7 +1772,7 @@
 		</div>
 		<div class='screen phone-down is-for-facilitator black-screen vertically-centered'>
 			<div class="full-span">
-				<h1>PHONE'S UP</h1>
+				<h1>PHONES UP</h1>
 				<br>
 				<img src="./icon/Phones-up.svg" width="200">
 				<br><br>
@@ -1837,7 +1836,7 @@
 
 			</div>
 			<br>
-			<div style="text-align: left;margin-left: 30px;">
+			<div style="text-align: left;margin-left: 30px;font-size: 1.1rem;">
 				<img src="./icon/C1-thumb.png" width="80" style='padding:20px;vertical-align:middle;display:inline-block;margin:auto;'>
 				<div style='display: inline-block;text-align: left;vertical-align: middle;'>
 					<p>Choose <b>Positive thoughts</b></p>
@@ -1845,7 +1844,7 @@
 					<li>No problemo.</li>
 					<li>I've got this.</li>
 				</div>
-				<br><br><br>
+				<br><br>
 
 				<img src="./icon/C1-lightbulb.png" width="80" style='padding: 20px; vertical-align:middle;display:inline-block;margin:auto;'>
 				<div style="display: inline-block;text-align: left;vertical-align: middle;">
@@ -1931,11 +1930,9 @@
 	
 	<br>
 	<div class="nav">
-		
+		<button class="slide-prev-next slide-prev"></button>
+		<div class="train-stations"></div>
+		<button class="slide-prev-next slide-next"></button>
 	</div>
-	
-	<button class="slide-prev-next slide-prev"></button>
-	<button class="slide-prev-next slide-next"></button>
-
 </body>
 </html>
