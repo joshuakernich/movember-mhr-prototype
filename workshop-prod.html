@@ -1165,7 +1165,9 @@
 		}
 
 		.screen-container{
-			transform-origin: center top;
+			transform-origin: left top;
+			position: relative;
+			margin: auto;
 		}
 
 
@@ -1254,6 +1256,12 @@
 			background-image: url('./icon/video-play-circle.svg');
 		}
 
+		.screen-container-wrapper{
+			vertical-align: middle;
+			display: inline-block;
+			text-align: center;
+		}
+
 
 	</style>
 	<script type="text/javascript" src='./jquery-3.4.1.min.js'></script>
@@ -1267,7 +1275,12 @@
 				var isHeight = $(window).innerHeight();
 				if(isHeight != wasHeight){
 					wasHeight = isHeight;
-					$('.screen-container').css({transform:'scale('+(isHeight-30)/800+')'})
+
+					var scale = (isHeight-30)/800;
+
+					$('.screen-container').css({transform:'scale('+scale+')'})
+
+					$('.screen-container-wrapper').css({width:450*scale});
 				}
 			}
 
@@ -1775,6 +1788,7 @@
 </head>
 <body>
 	<button class="slide-prev-next slide-prev"></button>
+	<div class="screen-container-wrapper">
 	<div class="screen-container">
 		<div class="screen screen-setup black-screen click-to-next-screen click-to-full-screen vertically-centered">
 			<div class="full-span">
@@ -2071,7 +2085,7 @@
 			</div>
 		</div-->
 		
-	</div><button class="slide-prev-next slide-next"></button>
+	</div></div><button class="slide-prev-next slide-next"></button>
 	
 	<br>
 	<div class="nav">
