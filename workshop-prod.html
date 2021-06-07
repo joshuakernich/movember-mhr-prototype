@@ -203,6 +203,7 @@
 			display: inline-block;
 			width: 50%;
 
+			display: none;
 		}
 
 
@@ -1059,18 +1060,23 @@
 			display: inline-block;
 			background: none;
 			width: 60px;
-			height: 30px;
+			height: 150px;
 			cursor: pointer;
+
 
 			line-height: 30px;
 			opacity: 0.3;
 
 		}
 
+		.slide-prev-next:hover{
+			opacity: 0.6;
+		}
+
 		.slide-prev-next:after{
 			content: "";
-			width: 10px;
-			height: 10px;
+			width: 30px;
+			height: 30px;
 			display: inline-block;
 			border-right: 2px solid white;
 			border-top: 2px solid white;
@@ -1193,6 +1199,61 @@
 			background-color: #1C44CE;
 		}
 
+		.video-controlled{
+			position: relative;
+		}
+
+		.video-controls{
+			position: absolute;
+			top:0px;
+			left: 0px;
+			right: 0px;
+			bottom: 0px;
+			background: rgba(0,0,0,0.5);
+			opacity: 0;
+			line-height: 800px;
+			transition: opacity 0.3s;
+			cursor: pointer;
+		}
+
+		.video-controls:hover{
+			opacity: 1;
+		}
+
+		.control{
+			width: 100px;
+			height: 100px;
+			margin: 10px;
+		
+			display: inline-block;
+			vertical-align: middle;
+			background-position: center;
+			background-repeat: no-repeat;
+			background-size: 70%;
+			
+			opacity: 0.5;
+		}
+
+		.control:hover{
+			opacity: 1;
+		}
+
+		.control-pause-play{
+			background-image: url('./icon/video-pause-circle.svg');
+		}
+
+		.control-rw{
+			background-image: url('./icon/video-rw.svg');
+		}
+
+		.control-ff{
+			background-image: url('./icon/video-ff.svg');
+		}
+
+		.video-controlled.paused .control-pause-play{
+			background-image: url('./icon/video-play-circle.svg');
+		}
+
 
 	</style>
 	<script type="text/javascript" src='./jquery-3.4.1.min.js'></script>
@@ -1233,6 +1294,30 @@
 
 			$('.screen').each(function(i){
 				var $b = $('<button></button>').appendTo('.train-stations').click(onNav);
+			})
+
+			$('<div class="video-controls"><div class="control control-rw"></div><div class="control control-pause-play"></div><div class="control control-ff"></div></div>').appendTo('.video-controlled');
+
+			$('.video-controls').click(function(){
+				var $master = $(this).closest('.video-controlled').toggleClass('paused');
+				var v = $master.find('video')[0];
+
+				if($master.hasClass('paused')) v.pause();
+				else v.play();
+			})
+
+			$('.control-rw').click(function(e){
+				e.stopPropagation();
+
+				var v = $(this).closest('.video-controlled').find('video')[0];
+				v.currentTime -= 10;
+			})
+
+			$('.control-ff').click(function(e){
+				e.stopPropagation();
+
+				var v = $(this).closest('.video-controlled').find('video')[0];
+				v.currentTime += 10;
 			})
 
 			var isWorkshopMode = (window.location.href.indexOf('student')>-1);
@@ -1689,7 +1774,7 @@
 	</script>
 </head>
 <body>
-	
+	<button class="slide-prev-next slide-prev"></button>
 	<div class="screen-container">
 		<div class="screen screen-setup black-screen click-to-next-screen click-to-full-screen vertically-centered">
 			<div class="full-span">
@@ -1743,9 +1828,11 @@
 		
 
 		<div class="screen screen-video is-for-facilitator">
-			<video playsinline preload width="100%" height="100%;">
-				<source src="./video/prologue.mp4" type="">
-			</video>
+			<div class="video-controlled">
+				<video playsinline preload width="100%" height="100%;">
+					<source src="./video/prologue.mp4" type="">
+				</video>
+			</div>
 		</div>
 		<div class="screen is-for-facilitator phone-down black-screen vertically-centered click-to-next-screen">
 
@@ -1753,9 +1840,11 @@
 		
 		</div>
 		<div class='screen screen-video screen-stickers is-for-facilitator'>
-			<video playsinline preload width="100%" height="100%;">
-				<source src="./video/ep-1.mp4" type="">
-			</video>
+			<div class="video-controlled">
+				<video playsinline preload width="100%" height="100%;">
+					<source src="./video/ep-1.mp4" type="">
+				</video>
+			</div>
 			<div class='overlay vertically-centered'>
 				<h1>What's he thinking?</h1>
 				<div class='stickers full-span'></div>
@@ -1768,9 +1857,11 @@
 		</div>
 		
 		<div class='screen is-for-facilitator screen-video screen-stop-swipe'>
-			<video playsinline preload width="100%" height="100%;">
-				<source src="./video/ep-1-reflection.mp4" type="">
-			</video>
+			<div class="video-controlled">
+				<video playsinline preload width="100%" height="100%;">
+					<source src="./video/ep-1-reflection.mp4" type="">
+				</video>
+			</div>
 			<div class='reflection-overlay'></div>
 			<div class='swipe-prompt'>
 				<div class="finger"></div>
@@ -1908,9 +1999,11 @@
 			</div>
 		</div>
 		<div class="screen screen-video is-for-facilitator">
-			<video playsinline preload width="100%" height="100%;">
-				<source src="./video/ep-1-outro.mp4" type="">
-			</video>
+			<div class="video-controlled">
+				<video playsinline preload width="100%" height="100%;">
+					<source src="./video/ep-1-outro.mp4" type="">
+				</video>
+			</div>
 		</div>
 		
 		
@@ -1978,13 +2071,12 @@
 			</div>
 		</div-->
 		
-	</div>
+	</div><button class="slide-prev-next slide-next"></button>
 	
 	<br>
 	<div class="nav">
-		<button class="slide-prev-next slide-prev"></button>
+		
 		<div class="train-stations"></div>
-		<button class="slide-prev-next slide-next"></button>
 	</div>
 </body>
 </html>
