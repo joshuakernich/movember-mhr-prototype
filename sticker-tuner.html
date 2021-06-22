@@ -11,8 +11,8 @@
 
 			var moments = 
 			[
-				{start:'1:47',end:'1:57',options:['THIS SUCKS',"SCREW-UP 😩",'$^#&%!']},
-				{start:'2:10',end:'2:19',options:['100% LOSER','😑 NUMPTY!',"I'LL NEVER LIVE THIS DOWN"]},
+				{start:'1:47',end:'1:57',options:['I SUCK',"SCREW-UP 😩",'$^#&%!'],f:"Our brains are built to find negatives. It helps us recognise when we've made mistakes." },
+				{start:'2:10',end:'2:19',options:['100% LOSER','😑 NUMPTY!',"I'LL NEVER LIVE THIS DOWN"],f:"Our negative thoughts can be very dramatic. Sometimes this means we beat ourselves up, and make things worse."},
 
 				{start:'4:28',end:'4:38',options:['DISASTER 💣!','UNBELIEVABLE!',"YOU'VE GOTTA BE JOKING!"]},
 				{start:'4:47',end:'4:57',options:['This sucks!','I’m outta here 🏃','$^#&% IT ALL!']},
@@ -31,8 +31,6 @@
 			var wasTime = 999999;
 			var iMomentActive = -1;
 			var didSelection = false;
-
-			
 
 			function tick(){
 
@@ -104,13 +102,22 @@
 
 			function onSticker(){
 				
-				$('.feature-overlay').empty();
-				$(this).appendTo('.feature-overlay').delay(1000).animate({opacity:0});
+				$('.feature-overlay').empty().css({opacity:1}).show();
+				$(this).appendTo('.feature-overlay').css({top:100}).animate({top:0});
+
+				$('<p>').appendTo('.feature-overlay').html(moments[iMomentActive].f).css({opacity:0}).delay(1000).animate({opacity:1});
+				$('<button>CARRY ON →</button>').appendTo('.feature-overlay').css({opacity:0}).delay(2500).animate({opacity:1}).click(onContinue);
 
 				$('.stickers').empty();
 				$('.overlay').removeClass('active');
-				didSelection = true;
+				//didSelection = true;
 
+				//v.play();
+			}
+
+			function onContinue(e){
+				$('.feature-overlay').animate({opacity:0});
+				didSelection = true;
 				v.play();
 			}
 
@@ -173,12 +180,14 @@
 			text-align: center;
 			transition: all 1s;
 			display: block;
+			pointer-events: none;
 		}
 
 		.overlay.active{
 			border-top-width: 100px;
 			border-bottom-width: 100px;
 			bottom: 0px;
+			pointer-events: auto;
 		}
 
 		.overlay.active h1{
@@ -191,6 +200,16 @@
 			left: 0px;
 			right: 0px;
 			bottom: 0px;
+			box-sizing: border-box;
+			padding-top: 100px;
+		}
+
+		.feature-overlay p{
+			color: white;
+			text-align: left;
+			width: 70%;
+			margin: 15%;
+			font-size: 1.5rem;
 		}
 
 		.overlay h1{
@@ -206,17 +225,25 @@
 			position: absolute;
 			opacity: 0;
 			transition: all 1s;
-
-			
-
 			top: -100px;
 			left: 0px;
 			right: 0px;
-			line-height: 100px;
+			line-height: 80px;
 			padding: 0px;
-
 			background: none;
+			font-size: 2.5rem;
 	
+		}
+
+		.overlay h2{
+			position: absolute;
+			top: -50px;
+			left: 0px;
+			right: 0px;
+			line-height: 20px;
+			color: white;
+			font-weight: normal;
+			font-size: 1rem;
 		}
 
 		.sticker{
@@ -226,8 +253,6 @@
 
 			
 			cursor: pointer;
-
-
 		}
 
 		
@@ -302,12 +327,25 @@
 
 		.feature-overlay{
 			text-align: center;
-			line-height: 700px;
-
+			background: rgba(100,100,100,0.5);
+			display: none;
 		}
 
 		.feature-overlay .sticker{
+			margin: 50px;
 			transform: rotate(-5deg) scale(2);
+		}
+
+		.feature-overlay button{
+			width: 70%;
+			background: #1C44CE;
+			padding: 5px;
+			color: white;
+			font-family: "HeaderFont";
+			font-size: 2rem;
+			font-weight: normal;
+			border: none;
+			
 		}
 
 		.timer{
@@ -327,12 +365,13 @@
 <body>
 	<div class="device">
 		<div class="screen">
-			<video playsinline controls width=400 height=708 src='./video/full-edit-310520-compressed.mp4'></video>
+			<video playsinline width=400 height=708 src='./video/full-edit-310520-compressed.mp4'></video>
 			<div class="feature-overlay">
 
 			</div>
 			<div class="overlay">
 				<h1>WHAT'S HE THINKING?</h1>
+				<h2>This is not a test</h2>
 				<div class="stickers"></div>
 				<div class="timer"></div>
 			</div>
