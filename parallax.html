@@ -5,8 +5,9 @@
 	<script type="text/javascript" src='./jquery-3.4.1.min.js'></script>
 	<script type="text/javascript">
 		$(function(){
-			$('.screen').scroll(function(){
-				var left = $(this).scrollLeft();
+
+			function repaint(){
+				var left = $('.screen').scrollLeft();
 
 				
 				$('.parallax').css({left:(Math.min(400*3,left)/2)});
@@ -23,6 +24,13 @@
 						$(this).removeClass('active');
 					}
 				})
+			}
+
+			$('.screen').scroll(function(){
+
+				window.requestAnimationFrame(repaint);
+
+				
 			})
 		})
 	</script>
